@@ -1,0 +1,212 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+import Drop from '../components/Drop.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import FaqItem from '../components/FaqItem.astro';
+import ImagePlaceholder from '../components/ImagePlaceholder.astro';
+import ReviewCard from '../components/ReviewCard.astro';
+import Stars from '../components/Stars.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site, counties } from '../data/site';
+import { featuredServices, serviceCategories } from '../data/services';
+import { reviews, ratingSummary } from '../data/reviews';
+import { faqs } from '../data/faqs';
+
+const trustStats = [
+  { value: site.license, label: 'Licensed, insured & bonded' },
+  { value: '24/7', label: 'Emergency service' },
+  { value: '5 counties', label: 'Across Tampa Bay' },
+  { value: 'Upfront', label: 'Flat-rate pricing' },
+];
+
+const whyStats = [
+  { value: '5.0★', label: 'Average rating from real neighbors' },
+  { value: '24/7', label: 'A live person answers, every time' },
+  { value: '100%', label: 'Workmanship guaranteed' },
+  { value: '$0', label: 'Surprise charges — you approve first' },
+];
+---
+
+<BaseLayout title="Plumbing & Water Filtration in Tampa Bay" headerVariant="dark">
+  <!-- Hero -->
+  <section class="relative overflow-hidden bg-ink-deep">
+    <div
+      class="absolute inset-0"
+      aria-hidden="true"
+      style="background:
+        radial-gradient(700px 500px at 18% 15%, rgb(225 29 42 / 0.28), transparent 65%),
+        radial-gradient(850px 600px at 85% 80%, rgb(30 127 194 / 0.30), transparent 65%),
+        repeating-linear-gradient(135deg, rgb(255 255 255 / 0.025) 0 2px, transparent 2px 26px);"
+    >
+    </div>
+    <div class="relative mx-auto max-w-4xl px-4 pb-36 pt-36 text-center sm:px-6 sm:pt-40">
+      <p
+        class="mx-auto inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 backdrop-blur"
+      >
+        <Stars />
+        <span>{ratingSummary.average} rating · {ratingSummary.source}</span>
+      </p>
+      <h1
+        class="mt-8 font-heading text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl"
+      >
+        Plumbing done right.<br />
+        <span class="text-brand-red">Water you can trust.</span>
+      </h1>
+      <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/70">
+        Your friendly neighborhood pros for plumbing repairs, water heaters, and whole-home
+        filtration — serving five counties across Tampa Bay with upfront pricing and a smile.
+      </p>
+      <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <Button href="/contact" size="lg">Book Online</Button>
+        <Button href={site.phoneHref} variant="outline" size="lg" class="text-white">
+          Call {site.phone}
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust strip (overlaps hero) -->
+  <section aria-label="Why homeowners trust us" class="relative z-10 px-4 sm:px-6 lg:px-8">
+    <div
+      class="mx-auto -mt-16 grid max-w-5xl grid-cols-2 gap-px overflow-hidden rounded-panel bg-line shadow-lift lg:grid-cols-4"
+    >
+      {
+        trustStats.map((stat) => (
+          <div class="bg-white px-6 py-7 text-center">
+            <p class="font-heading text-xl font-extrabold text-ink sm:text-2xl">{stat.value}</p>
+            <p class="mt-1 text-sm text-ink/55">{stat.label}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8" aria-labelledby="services-title">
+    <SectionHeading
+      id="services-title"
+      eyebrow="What we do"
+      title="Plumbing & filtration, handled."
+      description="From a dripping faucet to a whole-home water overhaul — one call covers it all."
+    />
+    <div class="mt-14 grid gap-6 md:grid-cols-2">
+      {
+        featuredServices.map((service) => (
+          <article class="group rounded-panel border border-line bg-white p-8 shadow-card transition hover:shadow-soft">
+            <Drop color={service.accent} size="lg" />
+            <h3 class="mt-5 font-heading text-xl font-extrabold text-ink">{service.title}</h3>
+            <p class="mt-3 leading-relaxed text-ink/60">{service.blurb}</p>
+            <a
+              href={`/our-services#${service.id}`}
+              class="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-btn font-heading font-bold text-brand-red transition group-hover:gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-water"
+            >
+              Learn more
+              <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))
+      }
+    </div>
+    <ul class="mt-10 flex flex-wrap justify-center gap-3">
+      {
+        serviceCategories.map((cat) => (
+          <li>
+            <a
+              href={`/our-services#${cat.id}`}
+              class="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-line bg-mist px-5 py-2 font-semibold text-ink/70 transition hover:border-water hover:text-water focus:outline-none focus-visible:ring-2 focus-visible:ring-water"
+            >
+              <Drop size="sm" color={cat.label.startsWith('Emergency') ? 'red' : 'blue'} />
+              {cat.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- Why choose us -->
+  <section class="bg-ink-deep" aria-labelledby="why-title">
+    <div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+      <SectionHeading
+        id="why-title"
+        eyebrow="Why choose us"
+        title="Neighbors first, plumbers second."
+        description="We built this company on the radical idea that plumbing should be honest, tidy, and pleasant."
+        tone="dark"
+      />
+      <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          whyStats.map((stat) => (
+            <div class="rounded-panel border border-white/10 bg-white/5 p-8 text-center">
+              <p class="font-heading text-3xl font-extrabold text-water-light">{stat.value}</p>
+              <p class="mt-2 leading-relaxed text-white/65">{stat.label}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="bg-mist" aria-labelledby="reviews-title">
+    <div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+      <SectionHeading
+        id="reviews-title"
+        eyebrow="Reviews"
+        title="Your neighbors said it best."
+        description={`A perfect ${ratingSummary.average} across ${ratingSummary.source} — here's why.`}
+      />
+      <div class="mt-14 grid gap-6 md:grid-cols-3">
+        {reviews.slice(0, 3).map((review) => <ReviewCard review={review} />)}
+      </div>
+      <div class="mt-10 text-center">
+        <Button href="/reviews" variant="outline" class="text-brand-red">
+          Read all reviews
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service area -->
+  <section class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8" aria-labelledby="area-title">
+    <div class="grid items-center gap-12 lg:grid-cols-2">
+      <div>
+        <SectionHeading
+          id="area-title"
+          eyebrow="Service area"
+          title="Proudly serving five counties."
+          description="If you're in the greater Tampa Bay area, chances are we're already in your neighborhood."
+          align="left"
+        />
+        <ul class="mt-8 flex flex-wrap gap-3">
+          {
+            counties.map((county) => (
+              <li class="inline-flex items-center gap-2 rounded-full border border-line bg-mist px-5 py-2.5 font-semibold text-ink/70">
+                <Drop size="sm" />
+                {county} County
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-8 text-ink/60">
+          On the edge of the map? <a
+            href={site.phoneHref}
+            class="font-bold text-brand-red underline-offset-4 hover:underline">Call us</a
+          > — we'll do our best to get to you.
+        </p>
+      </div>
+      <ImagePlaceholder label="Service area map" class="aspect-[4/3] w-full" />
+    </div>
+  </section>
+
+  <CtaBand />
+
+  <!-- FAQ -->
+  <section class="mx-auto max-w-3xl px-4 py-24 sm:px-6" aria-labelledby="faq-title">
+    <SectionHeading id="faq-title" eyebrow="FAQ" title="Good questions, straight answers." />
+    <div class="mt-12 space-y-4">
+      {faqs.map((faq) => <FaqItem question={faq.question} answer={faq.answer} />)}
+    </div>
+  </section>
+</BaseLayout>

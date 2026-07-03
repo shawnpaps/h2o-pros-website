@@ -1,0 +1,32 @@
+---
+import { site } from '../data/site';
+
+interface Props {
+  tone?: 'light' | 'dark';
+}
+
+const { tone = 'light' } = Astro.props;
+const wordColor = tone === 'dark' ? 'text-white' : 'text-ink';
+const subColor = tone === 'dark' ? 'text-white/60' : 'text-ink/50';
+---
+
+<a
+  href="/"
+  class="inline-flex items-center gap-3 rounded-btn focus:outline-none focus-visible:ring-2 focus-visible:ring-water"
+  aria-label={`${site.shortName} — home`}
+>
+  <span
+    class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-red font-heading text-sm font-extrabold tracking-tight text-white shadow-card"
+    aria-hidden="true"
+  >
+    H2O
+  </span>
+  <span class="leading-none">
+    <span class={`block font-heading text-lg font-extrabold tracking-tight ${wordColor}`}>
+      H2O PROS
+    </span>
+    <span class={`mt-1 block text-[0.65rem] font-semibold uppercase tracking-[0.22em] ${subColor}`}>
+      Plumbing &amp; Filtration
+    </span>
+  </span>
+</a>
