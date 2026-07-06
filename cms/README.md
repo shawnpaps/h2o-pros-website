@@ -5,7 +5,7 @@ Payload CMS scaffold for editable site services, locations, gallery images, and 
 ## Local setup
 
 1. Copy `.env.example` to `.env`.
-2. Set `DATABASE_URL` to a Postgres database.
+2. Set `DATABASE_URL` to a Postgres database. If using Vercel's Supabase integration, `DATABASE_POSTGRES_URL_NON_POOLING` or `DATABASE_POSTGRES_URL` can be used instead.
 3. Set `PAYLOAD_SECRET` to a long random value.
 4. Run `npm install` from this `cms/` directory.
 5. Run `npm run dev` and open `http://localhost:3000/admin`.
@@ -16,7 +16,7 @@ Payload runs on Next.js, so this app can deploy to Vercel as a separate project 
 
 Required environment variables:
 
-- `DATABASE_URL` for Postgres.
+- `DATABASE_URL` for Postgres. With Vercel's Supabase integration, the CMS also accepts `DATABASE_POSTGRES_URL_NON_POOLING` and `DATABASE_POSTGRES_URL`.
 - `PAYLOAD_SECRET` for auth/session signing.
 - `NEXT_PUBLIC_SITE_URL`, usually the Astro site URL.
 - `BLOB_READ_WRITE_TOKEN` after Vercel Blob is added to the project.

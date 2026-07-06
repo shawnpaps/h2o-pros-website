@@ -12,7 +12,10 @@ import { Services } from './collections/Services';
 import { Users } from './collections/Users';
 import { SiteSettings } from './globals/SiteSettings';
 
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl =
+  process.env.DATABASE_URL ||
+  process.env.DATABASE_POSTGRES_URL_NON_POOLING ||
+  process.env.DATABASE_POSTGRES_URL;
 const databaseSslRejectUnauthorized =
   process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false';
 const databaseConnectionString =
