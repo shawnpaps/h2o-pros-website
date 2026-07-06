@@ -16,6 +16,18 @@ const databaseUrl =
   process.env.DATABASE_URL ||
   process.env.DATABASE_POSTGRES_URL_NON_POOLING ||
   process.env.DATABASE_POSTGRES_URL;
+const payloadSecret = process.env.PAYLOAD_SECRET;
+
+if (!databaseUrl) {
+  throw new Error(
+    'Missing CMS database connection. Set DATABASE_URL, DATABASE_POSTGRES_URL_NON_POOLING, or DATABASE_POSTGRES_URL.',
+  );
+}
+
+if (!payloadSecret) {
+  throw new Error('Missing PAYLOAD_SECRET for the CMS.');
+}
+
 const databaseSslRejectUnauthorized =
   process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false';
 const databaseConnectionString =
@@ -55,7 +67,7 @@ export default buildConfig({
       clientUploads: true,
     }),
   ],
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: payloadSecret,
   sharp: sharp as never,
   typescript: {
     outputFile: 'src/payload-types.ts',
