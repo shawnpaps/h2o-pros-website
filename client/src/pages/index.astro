@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeHero from '../components/HomeHero.astro';
+import HomeSections from '../components/HomeSections.astro';
+import { getSiteContent } from '../lib/cms';
+import { getRatingSummary } from '../lib/reviews';
+
+const { site } = await getSiteContent();
+const ratingSummary = await getRatingSummary();
+---
+
+<BaseLayout
+	title="Plumbing & Water Filtration in Tampa Bay"
+	headerVariant="dark"
+>
+	<!-- Hero -->
+	<HomeHero site={site} ratingSummary={ratingSummary} />
+
+	<HomeSections />
+</BaseLayout>

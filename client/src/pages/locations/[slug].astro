@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LocationHero from '../../components/LocationHero.astro';
+import HomeSections from '../../components/HomeSections.astro';
+import { getLocations } from '../../lib/cms';
+
+export async function getStaticPaths() {
+	const locations = await getLocations();
+	return locations.map((location) => ({
+		params: { slug: location.slug },
+		props: { location },
+	}));
+}
+
+const { location } = Astro.props;
+---
+
+<BaseLayout
+	title={`Plumber in ${location.city}, FL`}
+	description={location.metaDescription}
+	headerVariant="dark"
+>
+	<LocationHero location={location} />
+
+	<HomeSections />
+</BaseLayout>

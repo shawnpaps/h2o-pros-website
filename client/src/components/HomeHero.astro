@@ -1,0 +1,281 @@
+---
+const { site, ratingSummary } = Astro.props;
+import Button from './Button.astro';
+import Stars from './Stars.astro';
+import Drop from './Drop.astro';
+import heroVideo from '../assets/videos/hero.mp4';
+import { getSiteSettings } from '../lib/cms';
+
+const settings = await getSiteSettings();
+
+const heroServices = [
+	{
+		title: 'Water Heater Replacements',
+		blurb:
+			'Tank or tankless — we size the unit to your home, install it clean, and haul the old one away. Reliable hot water, guaranteed.',
+		href: '/our-services#WaterHeater',
+		accent: 'red',
+	},
+	{
+		title: 'Water Filtration & Treatment',
+		blurb:
+			'Free in-home water testing, whole-home carbon filtration, softeners, and reverse-osmosis systems tailored to Tampa Bay water.',
+		href: '/our-services#Filtration',
+		accent: 'blue',
+	},
+	{
+		title: 'Hydro-Jetting',
+		blurb:
+			'High-pressure jetting scours grease, scale, and roots out of your sewer lines — restoring pipes to like-new flow.',
+		href: '/our-services#DrainandSewer',
+		accent: 'blue',
+	},
+] as const;
+---
+
+<section
+	class="relative flex h-[115vh] flex-col justify-center overflow-hidden bg-ink-deep text-white"
+>
+	<video
+		src={settings.homeHeroVideoUrl ?? heroVideo}
+		class="absolute inset-0 h-full w-full object-cover"
+		autoplay
+		muted
+		loop
+		playsinline></video>
+	<div
+		class="absolute inset-0 bg-gradient-to-b from-ink-deep/60 via-ink-deep/20 to-ink-deep/60"
+		aria-hidden="true"
+	>
+	</div>
+
+	<div
+		class="relative z-10 w-full cursor-grab touch-pan-y select-none overflow-hidden py-10"
+		data-hero-scroller
+	>
+		<div class="flex will-change-transform" data-hero-track>
+			{
+				[false, true].map((dup) => {
+					const TitleTag = dup ? 'div' : 'h1';
+					const CardTag = dup ? 'div' : 'h2';
+					return (
+						<div
+							class="flex shrink-0 items-stretch gap-6 pr-6"
+							aria-hidden={dup ? 'true' : undefined}
+							inert={dup}>
+							{/* Company card */}
+							<article class="flex w-[min(88vw,30rem)] shrink-0 flex-col justify-between rounded-panel border border-white/15 bg-white/50 p-8 shadow-lift z-10 backdrop-blur-2xl sm:p-10">
+								<div>
+									<TitleTag class="font-heading text-3xl font-extrabold sm:text-4xl">
+										{site.name}
+										<span class="text-water-light">Plumbing</span>
+									</TitleTag>
+									<p class="mt-4 text-lg text-white/80">
+										Your trusted local plumbing & water filtration experts in
+										Tampa Bay.
+									</p>
+								</div>
+								<div>
+									<div class="mt-8 flex flex-col gap-3 sm:flex-row">
+										<Button href="/contact" variant="primary">
+											Request Service
+										</Button>
+										<Button
+											href="/our-services"
+											variant="outline"
+											class="text-white">
+											View Services
+										</Button>
+									</div>
+									<div class="mt-6 flex items-center gap-3">
+										<Stars rating={Number(ratingSummary.average)} />
+										<p class="text-sm font-medium text-white/80">
+											{ratingSummary.average} · {ratingSummary.count}
+											{ratingSummary.source}
+										</p>
+									</div>
+								</div>
+							</article>
+
+							{/* Service cards */}
+							{heroServices.map((service) => (
+								<article class="flex w-[min(80vw,24rem)] shrink-0 flex-col rounded-panel border border-white/15 bg-white/10 p-8 shadow-lift backdrop-blur-2xl">
+									<Drop color={service.accent} size="lg" />
+									<CardTag class="mt-5 font-heading text-2xl font-extrabold">
+										{service.title}
+									</CardTag>
+									<p class="mt-3 leading-relaxed text-white/70">
+										{service.blurb}
+									</p>
+									<a
+										href={service.href}
+										class="mt-auto inline-flex min-h-[44px] items-center gap-2 pt-6 font-heading font-bold text-water-light transition hover:gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-water">
+										Learn more
+										<span aria-hidden="true">→</span>
+									</a>
+								</article>
+							))}
+						</div>
+					);
+				})
+			}
+		</div>
+	</div>
+</section>
+
+<script>
+	const scroller = document.querySelector<HTMLElement>('[data-hero-scroller]');
+	const track = document.querySelector<HTMLElement>('[data-hero-track]');
+	const firstSet = track?.firstElementChild as HTMLElement | null;
+
+	if (scroller && track && firstSet) {
+		const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+		const DRIFT_SPEED = 24; // px/s the track moves on its own
+		const SCROLL_FACTOR = 0.75; // extra px of card travel per px of page scroll
+		const FRICTION = 3; // momentum decay rate after a flick
+		const MAX_FLING = 2000; // px/s cap on release momentum
+		const RESUME_DELAY = 1.2; // s of stillness before autoscroll returns
+		const RESUME_RAMP = 1.5; // s to ease autoscroll back up to full speed
+
+		let loopWidth = firstSet.getBoundingClientRect().width;
+
+		// Duplicate sets stay clickable but are hidden from screen readers and
+		// keep their links out of the tab order.
+		const neuterDuplicates = () => {
+			for (const set of Array.from(track.children).slice(1)) {
+				set.setAttribute('aria-hidden', 'true');
+				set.removeAttribute('inert');
+				for (const el of set.querySelectorAll<HTMLElement>('a, button')) {
+					el.tabIndex = -1;
+				}
+			}
+		};
+
+		// The loop is seamless only while the track extends at least one full
+		// viewport past any wrap offset — clone extra sets until it does.
+		const ensureCoverage = () => {
+			loopWidth = firstSet.getBoundingClientRect().width;
+			while (
+				loopWidth * (track.children.length - 1) < window.innerWidth &&
+				track.children.length < 10
+			) {
+				track.appendChild(firstSet.cloneNode(true));
+			}
+			neuterDuplicates();
+		};
+		ensureCoverage();
+		window.addEventListener('resize', ensureCoverage);
+
+		// Skip the animation work entirely once the hero is scrolled out of view.
+		let visible = true;
+		new IntersectionObserver(([entry]) => {
+			visible = entry.isIntersecting;
+		}).observe(track);
+
+		// Manual drag / swipe / horizontal-wheel offset, layered on top of the
+		// automatic drift + page-scroll movement.
+		let manual = 0;
+		let velocity = 0;
+		let dragging = false;
+		let dragMoved = 0;
+		let lastX = 0;
+		let lastMoveTime = 0;
+
+		scroller.addEventListener('pointerdown', (e) => {
+			if (e.pointerType === 'mouse' && e.button !== 0) return;
+			dragging = true;
+			dragMoved = 0;
+			velocity = 0;
+			lastX = e.clientX;
+			lastMoveTime = e.timeStamp;
+			scroller.setPointerCapture(e.pointerId);
+			scroller.classList.add('cursor-grabbing');
+		});
+
+		scroller.addEventListener('pointermove', (e) => {
+			if (!dragging) return;
+			const dx = e.clientX - lastX;
+			const dtMove = Math.max((e.timeStamp - lastMoveTime) / 1000, 0.008);
+			lastX = e.clientX;
+			lastMoveTime = e.timeStamp;
+			manual -= dx;
+			dragMoved += Math.abs(dx);
+			const blended = velocity * 0.8 + (-dx / dtMove) * 0.2;
+			velocity = Math.max(-MAX_FLING, Math.min(MAX_FLING, blended));
+		});
+
+		const endDrag = () => {
+			dragging = false;
+			scroller.classList.remove('cursor-grabbing');
+		};
+		scroller.addEventListener('pointerup', endDrag);
+		scroller.addEventListener('pointercancel', endDrag);
+
+		// A drag shouldn't trigger the links inside the cards on release.
+		scroller.addEventListener(
+			'click',
+			(e) => {
+				if (dragMoved > 6) {
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			},
+			true,
+		);
+		scroller.addEventListener('dragstart', (e) => e.preventDefault());
+
+		// Sideways trackpad / shift-wheel scrolling.
+		let lastManualAt = -Infinity;
+
+		scroller.addEventListener(
+			'wheel',
+			(e) => {
+				if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+					manual += e.deltaX;
+					lastManualAt = performance.now();
+					e.preventDefault();
+				}
+			},
+			{ passive: false },
+		);
+
+		let drift = 0;
+		let current = 0;
+		let last = performance.now();
+
+		const frame = (now: number) => {
+			const dt = Math.min((now - last) / 1000, 0.1);
+			last = now;
+
+			if (visible && loopWidth > 0) {
+				if (dragging) {
+					lastManualAt = now;
+				} else {
+					// Let a flick glide out, then ease the autoscroll back in
+					// after a short pause.
+					manual += velocity * dt;
+					velocity *= Math.exp(-FRICTION * dt);
+					if (Math.abs(velocity) < 1) velocity = 0;
+					else lastManualAt = now;
+
+					const idle = (now - lastManualAt) / 1000 - RESUME_DELAY;
+					const ramp = Math.min(Math.max(idle / RESUME_RAMP, 0), 1);
+					if (!reducedMotion.matches) drift += DRIFT_SPEED * ramp * dt;
+				}
+				const auto = reducedMotion.matches
+					? 0
+					: drift + window.scrollY * SCROLL_FACTOR;
+				const target = auto + manual;
+				// Stick 1:1 to the pointer while dragging; ease otherwise.
+				current = dragging
+					? target
+					: current + (target - current) * Math.min(1, dt * 6);
+				const x = ((current % loopWidth) + loopWidth) % loopWidth;
+				track.style.transform = `translate3d(${-x}px, 0, 0)`;
+			}
+
+			requestAnimationFrame(frame);
+		};
+		requestAnimationFrame(frame);
+	}
+</script>

@@ -1,0 +1,360 @@
+---
+/**
+ * Interactive "What we do" showcase: an expanding service list on the left
+ * synced to a crossfading image panel on the right. Auto-rotates until the
+ * visitor interacts; respects prefers-reduced-motion.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import Drop from './Drop.astro';
+import SectionHeading from './SectionHeading.astro';
+import drainImage from '../assets/services/samuel-sianipar-scUBcasSvbE-unsplash.jpg';
+import heaterImage from '../assets/services/waterheater.jpg';
+import filtrationImage from '../assets/services/timur-shakerzianov-c314Gh8dXAo-unsplash.jpg';
+import leakImage from '../assets/services/pan-xiaozhen-IYE0ImQlY90-unsplash.jpg';
+import { serviceCategories } from '../data/services';
+import { getServices } from '../lib/cms';
+
+/** Panel image + floating badge copy per featured service. */
+const showcaseMeta: Record<string, { image: ImageMetadata; badge: string }> = {
+	DrainandSewer: {
+		image: drainImage,
+		badge: 'Pipes scoured back to like-new',
+	},
+	WaterHeater: {
+		image: heaterImage,
+		badge: 'Reliable hot water, guaranteed',
+	},
+	Filtration: {
+		image: filtrationImage,
+		badge: 'Free in-home water testing',
+	},
+	LeakDetection: {
+		image: leakImage,
+		badge: 'Hidden leaks, pinpointed fast',
+	},
+};
+
+const services = await getServices();
+const featuredServices = services.filter((service) => service.featured);
+
+const items = featuredServices.map((service, i) => ({
+	...service,
+	index: String(i + 1).padStart(2, '0'),
+	image: showcaseMeta[service.id]?.image ?? drainImage,
+	imageUrl: service.showcaseImageUrl,
+	badge: service.showcaseBadge ?? showcaseMeta[service.id]?.badge ?? service.title,
+}));
+
+const total = String(items.length).padStart(2, '0');
+---
+
+<section
+	class="relative overflow-hidden bg-gradient-to-b from-white to-mist"
+	aria-labelledby="services-title"
+	data-svc-root
+>
+	<!-- Decorative color washes -->
+	<div
+		aria-hidden="true"
+		class="pointer-events-none absolute -left-40 top-24 h-[28rem] w-[28rem] rounded-full bg-water/10 blur-3xl"
+	>
+	</div>
+	<div
+		aria-hidden="true"
+		class="pointer-events-none absolute -right-32 bottom-16 h-96 w-96 rounded-full bg-brand-red/[0.07] blur-3xl"
+	>
+	</div>
+
+	<div class="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+		<SectionHeading
+			id="services-title"
+			eyebrow="What we do"
+			title="Plumbing & filtration, handled."
+			description="From a dripping faucet to a whole-home water overhaul — one call covers it all."
+		/>
+
+		<div class="mt-14 grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
+			<!-- Visual panel -->
+			<div
+				class="svc-reveal relative order-first lg:order-last lg:sticky lg:top-28"
+				style="--d: 100ms"
+			>
+				<div
+					class="relative aspect-[4/3] overflow-hidden rounded-panel bg-fog shadow-lift ring-1 ring-ink/5 sm:aspect-[5/4]"
+				>
+					{
+						items.map((item, i) => (
+							<div
+								class="svc-layer absolute inset-0"
+								data-svc-layer
+								data-active={i === 0 ? '' : undefined}>
+								{item.imageUrl ? (
+									<img
+										src={item.imageUrl}
+										alt={item.title}
+										loading={i === 0 ? 'eager' : 'lazy'}
+										class="h-full w-full object-cover"
+									/>
+								) : (
+									<Image
+										src={item.image}
+										alt={item.title}
+										width={1280}
+										class="h-full w-full object-cover"
+									/>
+								)}
+								<div
+									class={`absolute inset-0 bg-gradient-to-tr ${item.accent === 'red' ? 'from-brand-red/15' : 'from-water/15'} via-transparent to-transparent`}
+									aria-hidden="true"
+								/>
+							</div>
+						))
+					}
+					<p
+						class="absolute right-4 top-4 rounded-full bg-ink/70 px-3 py-1 font-mono text-xs tracking-widest text-white backdrop-blur"
+					>
+						<span data-svc-counter>01</span> / {total}
+					</p>
+				</div>
+				<!-- Floating badge that swaps with the active service -->
+			</div>
+
+			<!-- Expanding service list -->
+			<ol class="space-y-3">
+				{
+					items.map((item, i) => (
+						<li
+							class="svc-item svc-reveal group relative overflow-hidden rounded-panel border border-line bg-white/70 transition-all duration-300 hover:bg-white data-[active]:border-water/40 data-[active]:bg-white data-[active]:shadow-card"
+							data-svc-item
+							data-active={i === 0 ? '' : undefined}
+							style={`--d: ${i * 90}ms`}>
+							<button
+								type="button"
+								class="flex min-h-[44px] w-full items-center gap-4 px-6 py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-water sm:gap-5 sm:px-8"
+								data-svc-btn
+								aria-expanded={i === 0 ? 'true' : 'false'}
+								aria-controls={`svc-panel-${item.id}`}>
+								<span class="font-heading text-2xl font-extrabold tracking-tight text-ink/10 transition-colors duration-300 group-data-[active]:text-water/60">
+									{item.index}
+								</span>
+								<Drop color={item.accent} />
+								<span class="flex-1 font-heading text-lg font-extrabold text-ink sm:text-xl">
+									{item.title}
+								</span>
+								<svg
+									class="h-5 w-5 shrink-0 text-ink/30 transition-transform duration-300 group-data-[active]:rotate-180 group-data-[active]:text-water"
+									viewBox="0 0 20 20"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									aria-hidden="true">
+									<path d="m5 8 5 5 5-5" />
+								</svg>
+							</button>
+							<div id={`svc-panel-${item.id}`} class="svc-panel">
+								<div class="svc-panel-inner">
+									<div class="px-6 pb-7 sm:px-8">
+										<p class="leading-relaxed text-ink/60">{item.blurb}</p>
+										<ul class="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+											{item.bullets.map((bullet) => (
+												<li class="flex items-start gap-2.5 text-sm text-ink/70">
+													<Drop size="sm" color={item.accent} class="mt-1" />
+													{bullet}
+												</li>
+											))}
+										</ul>
+										<a
+											href={`/our-services#${item.id}`}
+											class="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-btn font-heading font-bold text-brand-red transition-all hover:gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-water">
+											Learn more
+											<span aria-hidden="true">→</span>
+										</a>
+									</div>
+								</div>
+							</div>
+							<span class="svc-progress" data-svc-progress aria-hidden="true" />
+						</li>
+					))
+				}
+			</ol>
+		</div>
+
+		<ul class="mt-16 flex flex-wrap justify-center gap-3">
+			{
+				serviceCategories.map((cat, i) => (
+					<li class="svc-reveal" style={`--d: ${350 + i * 60}ms`}>
+						<a
+							href={`/our-services#${cat.id}`}
+							class="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-line bg-white px-5 py-2 font-semibold text-ink/70 transition hover:-translate-y-0.5 hover:border-water hover:text-water hover:shadow-card focus:outline-none focus-visible:ring-2 focus-visible:ring-water">
+							<Drop size="sm" />
+							{cat.label}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</section>
+
+<style>
+	/* Smooth expand/collapse without fixed heights */
+	.svc-panel {
+		display: grid;
+		grid-template-rows: 0fr;
+		transition: grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	.svc-item[data-active] .svc-panel {
+		grid-template-rows: 1fr;
+	}
+	.svc-panel-inner {
+		min-height: 0;
+		overflow: hidden;
+		visibility: hidden;
+		transition: visibility 0.5s;
+	}
+	.svc-item[data-active] .svc-panel-inner {
+		visibility: visible;
+	}
+
+	/* Auto-rotate progress bar (only while [data-autoplay] is set by JS) */
+	.svc-progress {
+		position: absolute;
+		inset-inline: 0;
+		bottom: 0;
+		height: 3px;
+		width: 0%;
+		background: linear-gradient(90deg, #1e7fc2, #5cb4e6, #e11d2a);
+	}
+	[data-svc-root][data-autoplay] .svc-item[data-active] .svc-progress {
+		animation: svc-fill 7s linear forwards;
+	}
+	[data-svc-root][data-autoplay]:hover .svc-progress,
+	[data-svc-root][data-autoplay]:focus-within .svc-progress {
+		animation-play-state: paused;
+	}
+	@keyframes svc-fill {
+		from {
+			width: 0%;
+		}
+		to {
+			width: 100%;
+		}
+	}
+
+	/* Crossfading image layers + floating badge */
+	.svc-layer {
+		opacity: 0;
+		transform: scale(1.06);
+		transition:
+			opacity 0.6s ease,
+			transform 0.9s ease;
+	}
+	.svc-layer[data-active] {
+		opacity: 1;
+		transform: scale(1);
+	}
+	.svc-badge {
+		opacity: 0;
+		transform: translateY(10px);
+		transition:
+			opacity 0.45s ease,
+			transform 0.45s ease;
+	}
+	.svc-badge[data-active] {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	/* Staggered scroll-reveal (elements set --d for their delay) */
+	.svc-reveal {
+		opacity: 0;
+		transform: translateY(24px);
+		transition:
+			opacity 0.7s ease var(--d, 0ms),
+			transform 0.7s ease var(--d, 0ms);
+	}
+	.svc-in .svc-reveal {
+		opacity: 1;
+		transform: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.svc-reveal,
+		.svc-layer,
+		.svc-badge,
+		.svc-panel,
+		.svc-panel-inner {
+			transition: none;
+		}
+		.svc-reveal {
+			opacity: 1;
+			transform: none;
+		}
+		.svc-progress {
+			animation: none !important;
+		}
+	}
+</style>
+
+<script>
+	const root = document.querySelector('[data-svc-root]');
+	if (root) {
+		const items = Array.from(root.querySelectorAll('[data-svc-item]'));
+		const buttons = Array.from(root.querySelectorAll('[data-svc-btn]'));
+		const layers = Array.from(root.querySelectorAll('[data-svc-layer]'));
+		const badges = Array.from(root.querySelectorAll('[data-svc-badge]'));
+		const counter = root.querySelector('[data-svc-counter]');
+		const reducedMotion = window.matchMedia(
+			'(prefers-reduced-motion: reduce)',
+		).matches;
+		let current = 0;
+
+		const setActive = (list: Element[], index: number) =>
+			list.forEach((el, i) =>
+				i === index
+					? el.setAttribute('data-active', '')
+					: el.removeAttribute('data-active'),
+			);
+
+		const activate = (index: number, fromUser: boolean) => {
+			current = index;
+			setActive(items, index);
+			setActive(layers, index);
+			setActive(badges, index);
+			buttons.forEach((btn, i) =>
+				btn.setAttribute('aria-expanded', String(i === index)),
+			);
+			if (counter) counter.textContent = String(index + 1).padStart(2, '0');
+			// First interaction hands control to the visitor for good.
+			if (fromUser) root.removeAttribute('data-autoplay');
+		};
+
+		buttons.forEach((btn, i) =>
+			btn.addEventListener('click', () => activate(i, true)),
+		);
+
+		// The CSS progress bar finishing is the auto-advance signal.
+		root.addEventListener('animationend', (e) => {
+			if (
+				e.target instanceof Element &&
+				e.target.hasAttribute('data-svc-progress')
+			) {
+				activate((current + 1) % items.length, false);
+			}
+		});
+
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				if (!entry.isIntersecting) return;
+				root.classList.add('svc-in');
+				if (!reducedMotion) root.setAttribute('data-autoplay', '');
+				observer.disconnect();
+			},
+			{ threshold: 0.2 },
+		);
+		observer.observe(root);
+	}
+</script>

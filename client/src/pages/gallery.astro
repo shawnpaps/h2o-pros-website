@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ImagePlaceholder from '../components/ImagePlaceholder.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getGalleryItems } from '../lib/cms';
+
+const galleryItems = await getGalleryItems();
+---
+
+<BaseLayout
+  title="Gallery"
+  description="A look at our recent plumbing and water filtration work across Tampa Bay."
+>
+  <PageHero
+    eyebrow="Gallery"
+    title="Work we're proud of."
+    description="Installs, repairs, and before-and-afters from around the neighborhood."
+  />
+
+  <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8" aria-label="Project gallery">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        galleryItems.map((item) => (
+          item.imageUrl ? (
+            <img
+              src={item.imageUrl}
+              alt={item.label}
+              loading="lazy"
+              class={`${item.tall ? 'aspect-[3/4]' : 'aspect-[4/3]'} w-full rounded-panel object-cover shadow-card`}
+            />
+          ) : (
+            <ImagePlaceholder
+              label={item.label}
+              class={item.tall ? 'aspect-[3/4] w-full' : 'aspect-[4/3] w-full'}
+            />
+          )
+        ))
+      }
+    </div>
+  </section>
+
+  <CtaBand
+    title="Want your project in this gallery?"
+    description="Book online or call — we'll bring the camera."
+  />
+</BaseLayout>
