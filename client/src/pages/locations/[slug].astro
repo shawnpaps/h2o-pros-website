@@ -4,15 +4,13 @@ import LocationHero from '../../components/LocationHero.astro';
 import HomeSections from '../../components/HomeSections.astro';
 import { getLocations } from '../../lib/cms';
 
-export async function getStaticPaths() {
-	const locations = await getLocations();
-	return locations.map((location) => ({
-		params: { slug: location.slug },
-		props: { location },
-	}));
-}
+const { slug } = Astro.params;
+const locations = await getLocations();
+const location = locations.find((item) => item.slug === slug);
 
-const { location } = Astro.props;
+if (!location) {
+	return new Response(null, { status: 404 });
+}
 ---
 
 <BaseLayout

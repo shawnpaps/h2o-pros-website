@@ -56,7 +56,10 @@ export interface SiteSettings {
 }
 
 const payloadUrl = (
-  import.meta.env.PAYLOAD_URL || import.meta.env.PUBLIC_PAYLOAD_URL || ''
+  import.meta.env.PAYLOAD_URL ||
+  import.meta.env.PUBLIC_PAYLOAD_URL ||
+  (typeof process !== 'undefined' ? process.env.PAYLOAD_URL : undefined) ||
+  ''
 ).replace(/\/$/, '');
 
 const fallbackGalleryItems: GalleryItem[] = [
