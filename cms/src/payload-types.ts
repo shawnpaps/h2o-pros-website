@@ -69,11 +69,6 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
-    services: Service;
-    locations: Location;
-    'gallery-items': GalleryItem;
-    faqs: Faq;
-    reviews: Review;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -83,26 +78,17 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    services: ServicesSelect<false> | ServicesSelect<true>;
-    locations: LocationsSelect<false> | LocationsSelect<true>;
-    'gallery-items': GalleryItemsSelect<false> | GalleryItemsSelect<true>;
-    faqs: FaqsSelect<false> | FaqsSelect<true>;
-    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: number;
+    defaultIDType: string;
   };
   fallbackLocale: null;
-  globals: {
-    'site-settings': SiteSetting;
-  };
-  globalsSelect: {
-    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
-  };
+  globals: {};
+  globalsSelect: {};
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -136,7 +122,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: number;
+  id: string;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -161,10 +147,8 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: number;
+  id: string;
   alt: string;
-  caption?: string | null;
-  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -176,126 +160,13 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
-  sizes?: {
-    card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    hero?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "services".
- */
-export interface Service {
-  id: number;
-  title: string;
-  /**
-   * Keeps existing URLs stable, for example /our-services#WaterHeater.
-   */
-  anchorId: string;
-  blurb: string;
-  bullets: {
-    text: string;
-    id?: string | null;
-  }[];
-  accent: 'blue' | 'red';
-  /**
-   * Shows this service in the home-page service showcase.
-   */
-  featured?: boolean | null;
-  sortOrder?: number | null;
-  showcaseBadge?: string | null;
-  showcaseImage?: (number | null) | Media;
-  detailImage?: (number | null) | Media;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "locations".
- */
-export interface Location {
-  id: number;
-  city: string;
-  /**
-   * URL slug under /locations/.
-   */
-  slug: string;
-  county: string;
-  intro: string;
-  nearby: {
-    area: string;
-    id?: string | null;
-  }[];
-  metaDescription: string;
-  heroImage?: (number | null) | Media;
-  sortOrder?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "gallery-items".
- */
-export interface GalleryItem {
-  id: number;
-  label: string;
-  image: number | Media;
-  tall?: boolean | null;
-  published?: boolean | null;
-  sortOrder?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "faqs".
- */
-export interface Faq {
-  id: number;
-  question: string;
-  answer: string;
-  sortOrder?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "reviews".
- */
-export interface Review {
-  id: number;
-  name: string;
-  rating: number;
-  text: string;
-  location?: string | null;
-  service?: string | null;
-  source?: string | null;
-  date?: string | null;
-  published?: boolean | null;
-  sortOrder?: number | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: number;
+  id: string;
   key: string;
   data:
     | {
@@ -312,40 +183,20 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: number;
+  id: string;
   document?:
     | ({
         relationTo: 'users';
-        value: number | User;
+        value: string | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: number | Media;
-      } | null)
-    | ({
-        relationTo: 'services';
-        value: number | Service;
-      } | null)
-    | ({
-        relationTo: 'locations';
-        value: number | Location;
-      } | null)
-    | ({
-        relationTo: 'gallery-items';
-        value: number | GalleryItem;
-      } | null)
-    | ({
-        relationTo: 'faqs';
-        value: number | Faq;
-      } | null)
-    | ({
-        relationTo: 'reviews';
-        value: number | Review;
+        value: string | Media;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: number | User;
+    value: string | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -355,10 +206,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: number;
+  id: string;
   user: {
     relationTo: 'users';
-    value: number | User;
+    value: string | User;
   };
   key?: string | null;
   value?:
@@ -378,7 +229,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: number;
+  id: string;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -412,8 +263,6 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
-  caption?: T;
-  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -425,115 +274,6 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
-  sizes?:
-    | T
-    | {
-        card?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        hero?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-      };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "services_select".
- */
-export interface ServicesSelect<T extends boolean = true> {
-  title?: T;
-  anchorId?: T;
-  blurb?: T;
-  bullets?:
-    | T
-    | {
-        text?: T;
-        id?: T;
-      };
-  accent?: T;
-  featured?: T;
-  sortOrder?: T;
-  showcaseBadge?: T;
-  showcaseImage?: T;
-  detailImage?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "locations_select".
- */
-export interface LocationsSelect<T extends boolean = true> {
-  city?: T;
-  slug?: T;
-  county?: T;
-  intro?: T;
-  nearby?:
-    | T
-    | {
-        area?: T;
-        id?: T;
-      };
-  metaDescription?: T;
-  heroImage?: T;
-  sortOrder?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "gallery-items_select".
- */
-export interface GalleryItemsSelect<T extends boolean = true> {
-  label?: T;
-  image?: T;
-  tall?: T;
-  published?: T;
-  sortOrder?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "faqs_select".
- */
-export interface FaqsSelect<T extends boolean = true> {
-  question?: T;
-  answer?: T;
-  sortOrder?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "reviews_select".
- */
-export interface ReviewsSelect<T extends boolean = true> {
-  name?: T;
-  rating?: T;
-  text?: T;
-  location?: T;
-  service?: T;
-  source?: T;
-  date?: T;
-  published?: T;
-  sortOrder?: T;
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -574,106 +314,6 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-settings".
- */
-export interface SiteSetting {
-  id: number;
-  name: string;
-  shortName: string;
-  tagline?: string | null;
-  phone: string;
-  phoneHref: string;
-  email: string;
-  emailHref: string;
-  license: string;
-  serviceArea: string;
-  description: string;
-  logo?: (number | null) | Media;
-  nav: {
-    label: string;
-    href: string;
-    id?: string | null;
-  }[];
-  hours: {
-    label: string;
-    value: string;
-    id?: string | null;
-  }[];
-  counties: {
-    name: string;
-    id?: string | null;
-  }[];
-  ratingAverage: string;
-  ratingCount: number;
-  ratingSource: string;
-  socials?:
-    | {
-        label: string;
-        href: string;
-        id?: string | null;
-      }[]
-    | null;
-  homeHeroVideo?: (number | null) | Media;
-  teamPhoto?: (number | null) | Media;
-  serviceAreaMap?: (number | null) | Media;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-settings_select".
- */
-export interface SiteSettingsSelect<T extends boolean = true> {
-  name?: T;
-  shortName?: T;
-  tagline?: T;
-  phone?: T;
-  phoneHref?: T;
-  email?: T;
-  emailHref?: T;
-  license?: T;
-  serviceArea?: T;
-  description?: T;
-  logo?: T;
-  nav?:
-    | T
-    | {
-        label?: T;
-        href?: T;
-        id?: T;
-      };
-  hours?:
-    | T
-    | {
-        label?: T;
-        value?: T;
-        id?: T;
-      };
-  counties?:
-    | T
-    | {
-        name?: T;
-        id?: T;
-      };
-  ratingAverage?: T;
-  ratingCount?: T;
-  ratingSource?: T;
-  socials?:
-    | T
-    | {
-        label?: T;
-        href?: T;
-        id?: T;
-      };
-  homeHeroVideo?: T;
-  teamPhoto?: T;
-  serviceAreaMap?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

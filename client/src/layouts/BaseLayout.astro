@@ -4,35 +4,45 @@ import Footer from '../components/Footer.astro';
 import { getSiteContent } from '../lib/cms';
 
 interface Props {
-  title: string;
-  description?: string;
-  /** "dark" for the home hero, "light" for interior pages. */
-  headerVariant?: 'dark' | 'light';
+	title: string;
+	description?: string;
+	/** "dark" for the home hero, "light" for interior pages. */
+	headerVariant?: 'dark' | 'light';
 }
 
 const { site } = await getSiteContent();
-const { title, description = site.description, headerVariant = 'light' } = Astro.props;
+const {
+	title,
+	description = site.description,
+	headerVariant = 'light',
+} = Astro.props;
 ---
 
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title} | {site.name}</title>
-  </head>
-  <body class="bg-white font-sans text-ink antialiased">
-    <a
-      href="#main"
-      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-btn focus:bg-brand-red focus:px-4 focus:py-3 focus:font-bold focus:text-white"
-    >
-      Skip to content
-    </a>
-    <Header variant={headerVariant} />
-    <main id="main">
-      <slot />
-    </main>
-    <Footer />
-  </body>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+			rel="stylesheet"
+		/>
+		<title>{title} | {site.name}</title>
+	</head>
+	<body class="bg-white text-ink">
+		<a
+			href="#main"
+			class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-btn focus:bg-brand-red focus:px-4 focus:py-3 focus:font-bold focus:text-white"
+		>
+			Skip to content
+		</a>
+		<Header variant={headerVariant} />
+		<main id="main">
+			<slot />
+		</main>
+		<Footer />
+	</body>
 </html>
