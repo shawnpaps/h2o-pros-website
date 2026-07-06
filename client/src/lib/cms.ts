@@ -79,7 +79,10 @@ type PayloadMedia = {
 const mediaUrl = (media: unknown, preferredSize?: string) => {
   if (!media || typeof media !== 'object') return undefined;
   const item = media as PayloadMedia;
-  return preferredSize ? item.sizes?.[preferredSize]?.url || item.url : item.url;
+  const url = preferredSize ? item.sizes?.[preferredSize]?.url || item.url : item.url;
+  if (!url) return undefined;
+  // Payload returns media URLs relative to its own host.
+  return url.startsWith('/') ? `${payloadUrl}${url}` : url;
 };
 
 export const fetchPayload = async <T>(path: string): Promise<T | undefined> => {
