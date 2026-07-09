@@ -4,16 +4,19 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				'brand-red': '#E11D2A',
-				'brand-red-dark': '#B4141F',
-				ink: '#12161A',
-				'ink-deep': '#0D1013',
-				water: '#1E7FC2',
-				'water-light': '#5CB4E6',
+				// Dark-first palette pulled from the H2O Pros logo: black field,
+				// vivid web-red, cobalt water drops, copper pipes.
+				'brand-red': '#E8232F',
+				'brand-red-dark': '#B5121D',
+				ink: '#E9EEF5', // primary text on dark surfaces
+				'ink-deep': '#080A0F', // page base / heroes / footer
+				water: '#3D7BEE',
+				'water-light': '#8FB5FA',
 				star: '#F5A623',
-				mist: '#F6F9FB',
-				fog: '#EEF1F4',
-				line: '#E9EDF1',
+				copper: '#C9803F',
+				mist: '#0F141C', // raised section background
+				fog: '#151B25', // cards, chips, panels
+				line: '#242B37',
 			},
 			fontFamily: {
 				heading: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
@@ -25,9 +28,9 @@ export default {
 				panel: '22px',
 			},
 			boxShadow: {
-				card: '0 8px 30px rgb(13 16 19 / 0.08)',
-				soft: '0 20px 50px -12px rgb(13 16 19 / 0.18)',
-				lift: '0 30px 60px -15px rgb(13 16 19 / 0.25)',
+				card: '0 8px 30px rgb(0 0 0 / 0.4)',
+				soft: '0 20px 50px -12px rgb(0 0 0 / 0.55)',
+				lift: '0 30px 60px -15px rgb(0 0 0 / 0.65)',
 			},
 		},
 	},

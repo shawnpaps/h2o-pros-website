@@ -7,13 +7,13 @@ interface Props {
 const { question, answer } = Astro.props;
 ---
 
-<details class="group rounded-card border border-line bg-white shadow-card open:shadow-soft">
+<details class="group rounded-card border border-line bg-fog shadow-card open:shadow-soft">
   <summary
     class="flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-4 rounded-card px-5 py-4 font-heading font-bold text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-water [&::-webkit-details-marker]:hidden"
   >
     <span>{question}</span>
     <span
-      class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-fog text-water transition group-open:rotate-45 group-open:bg-water group-open:text-white"
+      class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-water/15 text-water-light transition group-open:rotate-45 group-open:bg-water group-open:text-white"
       aria-hidden="true"
     >
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
