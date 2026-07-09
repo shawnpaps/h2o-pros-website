@@ -2,8 +2,9 @@ import React from 'react'
 import './styles.css'
 
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+  description: 'Content management for the Your Friendly Neighborhood H2O Pros website.',
+  title: 'H2O Pros CMS',
+  icons: [{ rel: 'icon', type: 'image/webp', url: '/h2o-logo.webp' }],
 }
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
