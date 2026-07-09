@@ -3,22 +3,18 @@
  * Everything below the hero on the home page — shared verbatim by the
  * city landing pages under /locations/.
  */
-import Button from './Button.astro';
 import Drop from './Drop.astro';
 import SectionHeading from './SectionHeading.astro';
 import FaqItem from './FaqItem.astro';
-import ReviewCard from './ReviewCard.astro';
+import ReviewsSpotlight from './ReviewsSpotlight.astro';
 import CtaBand from './CtaBand.astro';
 import ServicesShowcase from './ServicesShowcase.astro';
 import { Image } from 'astro:assets';
 import tampaServiceAreaImage from '../assets/tampa-service-area.jpg';
-import { getReviews, getRatingSummary } from '../lib/reviews';
 import { getFaqs, getSiteContent, getSiteSettings } from '../lib/cms';
 
 const { site, counties } = await getSiteContent();
 const settings = await getSiteSettings();
-const reviews = await getReviews();
-const ratingSummary = await getRatingSummary();
 const faqs = await getFaqs();
 
 const trustStats = [
@@ -36,25 +32,7 @@ const whyStats = [
 ];
 ---
 
-<!-- Trust strip (overlaps hero) -->
-<section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-	<div
-		class="relative -mt-12 grid grid-cols-2 gap-6 rounded-panel border border-line bg-fog p-6 shadow-card sm:grid-cols-4 sm:p-8"
-	>
-		{
-			trustStats.map((stat) => (
-				<div class="flex flex-col items-center gap-2 text-center">
-					<p class="font-heading text-xl font-extrabold text-brand-red">
-						{stat.value}
-					</p>
-					<p class="text-sm text-ink/60">{stat.label}</p>
-				</div>
-			))
-		}
-	</div>
-</section>
-
-<!-- Services -->
+<!-- Trust strip (overlaps hero) --><!-- Services -->
 <ServicesShowcase />
 
 <!-- Why choose us -->
@@ -83,24 +61,7 @@ const whyStats = [
 </section>
 
 <!-- Reviews -->
-<section class="bg-mist" aria-labelledby="reviews-title">
-	<div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
-		<SectionHeading
-			id="reviews-title"
-			eyebrow="Reviews"
-			title="Your neighbors said it best."
-			description={`A ${ratingSummary.average} average across ${ratingSummary.count} ${ratingSummary.source} — here's why.`}
-		/>
-		<div class="mt-14 grid gap-6 md:grid-cols-3">
-			{reviews.slice(0, 3).map((review) => <ReviewCard review={review} />)}
-		</div>
-		<div class="mt-10 text-center">
-			<Button href="/reviews" variant="outline" class="text-brand-red">
-				Read all reviews
-			</Button>
-		</div>
-	</div>
-</section>
+<ReviewsSpotlight />
 
 <!-- Service area -->
 <section

@@ -1,36 +1,24 @@
 ---
 const { site, ratingSummary } = Astro.props;
-import Button from './Button.astro';
-import Stars from './Stars.astro';
-import Drop from './Drop.astro';
-import heroVideo from '../assets/videos/hero.mp4';
+import { Image } from 'astro:assets';
+import heroVideo from '../assets/videos/hero-2.mp4';
+import cardPipes from '../assets/services/waterheater.jpg';
+import cardPlumber from '../assets/services/timur-shakerzianov-c314Gh8dXAo-unsplash.jpg';
+import cardValves from '../assets/services/samuel-sianipar-scUBcasSvbE-unsplash.jpg';
 
-const heroServices = [
-	{
-		title: 'Water Heater Replacements',
-		blurb:
-			'Tank or tankless — we size the unit to your home, install it clean, and haul the old one away. Reliable hot water, guaranteed.',
-		href: '/our-services#WaterHeater',
-		accent: 'red',
-	},
-	{
-		title: 'Water Filtration & Treatment',
-		blurb:
-			'Free in-home water testing, whole-home carbon filtration, softeners, and reverse-osmosis systems tailored to Tampa Bay water.',
-		href: '/our-services#Filtration',
-		accent: 'blue',
-	},
-	{
-		title: 'Hydro-Jetting',
-		blurb:
-			'High-pressure jetting scours grease, scale, and roots out of your sewer lines — restoring pipes to like-new flow.',
-		href: '/our-services#DrainandSewer',
-		accent: 'blue',
-	},
-] as const;
+const tickerItems = [
+	'Water Heaters',
+	'Filtration',
+	'Hydro-Jetting',
+	'Leak Detection',
+	'Drain & Sewer',
+	'Softeners',
+	'Reverse Osmosis',
+	'Repiping',
+];
 ---
 
-<section class="relative min-h-screen overflow-hidden bg-ink-deep text-white">
+<section class="relative min-h-screen flex flex-col overflow-hidden bg-ink-deep text-white">
 	<video
 		src={heroVideo}
 		class="absolute inset-0 h-full w-full object-cover"
@@ -46,10 +34,137 @@ const heroServices = [
 	>
 	</div>
 	<div
-		class="relative z-10 mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 py-36 text-center sm:px-6 lg:px-8"
+		class="absolute inset-0 bg-gradient-to-t from-ink-deep/90 via-transparent to-ink-deep/40"
+		aria-hidden="true"
 	>
-		<h1 class="text-7xl max-w-3xl mt-8 font-heading text-white drop-shadow-lg">
-			We are your friendly, neighborhood plumbing experts
-		</h1>
+	</div>
+
+	<h1 class="sr-only">We are your friendly, neighborhood plumbing experts</h1>
+
+	<div
+		class="relative z-10 mx-auto w-full max-w-7xl flex-1 grid grid-cols-1 items-center gap-12 px-4 pt-40 pb-16 sm:px-6 md:grid-cols-[1fr_auto_1fr] md:gap-6 lg:px-8"
+	>
+		<p
+			class="order-1 text-center font-heading text-xl leading-snug uppercase tracking-tight drop-shadow-md md:text-left lg:text-2xl"
+		>
+			<span class="block font-extrabold">Friendly plumbers.</span>
+			<span class="block font-medium">Honest pricing.</span>
+		</p>
+
+		<div class="order-2 flex items-center justify-center" aria-hidden="true">
+			<div class="hero-card -rotate-6 translate-y-5 -mr-14 z-0 w-44 sm:w-56 lg:w-64">
+				<Image src={cardPipes} alt="" widths={[400, 640]} class="h-full w-full object-cover" />
+			</div>
+			<div class="hero-card z-10 w-56 sm:w-72 lg:w-80">
+				<Image src={cardPlumber} alt="" widths={[400, 640]} class="h-full w-full object-cover" />
+			</div>
+			<div class="hero-card rotate-6 translate-y-5 -ml-14 z-0 w-44 sm:w-56 lg:w-64">
+				<Image src={cardValves} alt="" widths={[400, 640]} class="h-full w-full object-cover" />
+			</div>
+		</div>
+
+		<p
+			class="order-3 text-center font-heading text-xl leading-snug uppercase tracking-tight drop-shadow-md md:text-right lg:text-2xl"
+		>
+			<span class="block font-medium">Quality workmanship.</span>
+			<span class="block font-extrabold">Proven results.</span>
+		</p>
+	</div>
+
+	<div class="relative z-10 pb-24" aria-hidden="true">
+		<div class="ruler mb-5"></div>
+		<div class="ticker">
+			<div class="ticker-track">
+				{
+					[0, 1].map(() =>
+						tickerItems.map((item) => <span class="ticker-item text-white/25">{item}</span>),
+					)
+				}
+			</div>
+			<div class="ticker-window">
+				<div class="ticker-track">
+					{
+						[0, 1].map(() =>
+							tickerItems.map((item) => <span class="ticker-item text-white">{item}</span>),
+						)
+					}
+				</div>
+			</div>
+		</div>
 	</div>
 </section>
+
+<style>
+	.hero-card {
+		flex-shrink: 0;
+		aspect-ratio: 3 / 4;
+		padding: 6px;
+		background: #fff;
+		box-shadow: 0 30px 60px -15px rgb(13 16 19 / 0.6);
+	}
+
+	.hero-card img {
+		height: 100%;
+		width: 100%;
+		object-fit: cover;
+	}
+
+	.ruler {
+		height: 12px;
+		background-image:
+			repeating-linear-gradient(
+				90deg,
+				rgb(255 255 255 / 0.7) 0 2px,
+				transparent 2px 120px
+			),
+			repeating-linear-gradient(90deg, rgb(255 255 255 / 0.35) 0 1px, transparent 1px 10px);
+		background-position: bottom;
+		background-size:
+			100% 100%,
+			100% 58%;
+		background-repeat: no-repeat, repeat-x;
+	}
+
+	.ticker {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.ticker-track {
+		display: flex;
+		gap: 4rem;
+		width: max-content;
+		padding-right: 4rem;
+		animation: ticker-scroll 40s linear infinite;
+	}
+
+	.ticker-item {
+		font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+		font-weight: 800;
+		font-size: clamp(2rem, 5vw, 3.75rem);
+		line-height: 1.1;
+		text-transform: uppercase;
+		letter-spacing: -0.02em;
+		white-space: nowrap;
+	}
+
+	/* Second synced copy of the track, clipped to the center, creates the
+	   "active item" highlight as names pass through the middle. */
+	.ticker-window {
+		position: absolute;
+		inset: 0;
+		clip-path: inset(0 39%);
+	}
+
+	@keyframes ticker-scroll {
+		to {
+			transform: translateX(-50%);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ticker-track {
+			animation: none;
+		}
+	}
+</style>

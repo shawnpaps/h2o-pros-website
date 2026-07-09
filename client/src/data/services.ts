@@ -6,6 +6,8 @@ export interface Service {
   bullets: string[];
   accent: 'red' | 'blue';
   featured?: boolean;
+  /** Short display name for the home showcase's giant title (falls back to title). */
+  showcaseTitle?: string;
   showcaseBadge?: string;
   showcaseImageUrl?: string;
   detailImageUrl?: string;
@@ -25,6 +27,7 @@ export const services: Service[] = [
     ],
     accent: 'blue',
     featured: true,
+    showcaseTitle: 'Drains & Sewer',
   },
   {
     id: 'WaterHeater',
@@ -39,6 +42,7 @@ export const services: Service[] = [
     ],
     accent: 'red',
     featured: true,
+    showcaseTitle: 'Water Heaters',
   },
   {
     id: 'Filtration',
@@ -53,6 +57,7 @@ export const services: Service[] = [
     ],
     accent: 'blue',
     featured: true,
+    showcaseTitle: 'Filtration',
   },
   {
     id: 'LeakDetection',
@@ -67,6 +72,7 @@ export const services: Service[] = [
     ],
     accent: 'red',
     featured: true,
+    showcaseTitle: 'Leak Detection',
   },
   {
     id: 'ResidentialPlumbing',

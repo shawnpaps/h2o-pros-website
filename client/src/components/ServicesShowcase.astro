@@ -1,222 +1,263 @@
 ---
 /**
- * Interactive "What we do" showcase: an expanding service list on the left
- * synced to a crossfading image panel on the right. Auto-rotates until the
- * visitor interacts; respects prefers-reduced-motion.
+ * Editorial split-screen services showcase: full-bleed photo on the left,
+ * spec-sheet panel on the right, and a giant title straddling the seam —
+ * solid over the photo, outlined over the panel. A horizontal selector bar
+ * along the bottom switches the active service (tabs pattern). Auto-rotates
+ * until the visitor interacts; respects prefers-reduced-motion.
  */
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
-import Drop from './Drop.astro';
-import SectionHeading from './SectionHeading.astro';
+import BookOnlineButton from './BookOnlineButton.astro';
 import drainImage from '../assets/services/samuel-sianipar-scUBcasSvbE-unsplash.jpg';
 import heaterImage from '../assets/services/waterheater.jpg';
 import filtrationImage from '../assets/services/timur-shakerzianov-c314Gh8dXAo-unsplash.jpg';
 import leakImage from '../assets/services/pan-xiaozhen-IYE0ImQlY90-unsplash.jpg';
-import { serviceCategories } from '../data/services';
-import { getServices } from '../lib/cms';
+import { getServices, getSiteContent } from '../lib/cms';
+import cardBackground from '../assets/graphics/webs.png';
 
-/** Panel image + floating badge copy per featured service. */
-const showcaseMeta: Record<string, { image: ImageMetadata; badge: string }> = {
-	DrainandSewer: {
-		image: drainImage,
-		badge: 'Pipes scoured back to like-new',
-	},
-	WaterHeater: {
-		image: heaterImage,
-		badge: 'Reliable hot water, guaranteed',
-	},
-	Filtration: {
-		image: filtrationImage,
-		badge: 'Free in-home water testing',
-	},
-	LeakDetection: {
-		image: leakImage,
-		badge: 'Hidden leaks, pinpointed fast',
-	},
+/** Fallback panel image per featured service, used when the CMS has none. */
+const fallbackImages: Record<string, ImageMetadata> = {
+	DrainandSewer: drainImage,
+	WaterHeater: heaterImage,
+	Filtration: filtrationImage,
+	LeakDetection: leakImage,
 };
 
-const services = await getServices();
+const [services, { site }] = await Promise.all([
+	getServices(),
+	getSiteContent(),
+]);
 const featuredServices = services.filter((service) => service.featured);
 
 const items = featuredServices.map((service, i) => ({
 	...service,
 	index: String(i + 1).padStart(2, '0'),
-	image: showcaseMeta[service.id]?.image ?? drainImage,
+	image: fallbackImages[service.id] ?? drainImage,
 	imageUrl: service.showcaseImageUrl,
-	badge: service.showcaseBadge ?? showcaseMeta[service.id]?.badge ?? service.title,
+	displayName: service.showcaseTitle || service.title,
+	badge: service.showcaseBadge,
 }));
 
 const total = String(items.length).padStart(2, '0');
 ---
 
 <section
-	class="relative overflow-hidden bg-gradient-to-b from-ink-deep to-mist"
+	class="relative overflow-hidden bg-mist"
 	aria-labelledby="services-title"
 	data-svc-root
 >
-	<!-- Decorative color washes -->
-	<div
-		aria-hidden="true"
-		class="pointer-events-none absolute -left-40 top-24 h-[28rem] w-[28rem] rounded-full bg-water/10 blur-3xl"
-	>
-	</div>
-	<div
-		aria-hidden="true"
-		class="pointer-events-none absolute -right-32 bottom-16 h-96 w-96 rounded-full bg-brand-red/[0.07] blur-3xl"
-	>
-	</div>
+	<h2 id="services-title" class="sr-only">What we do — featured services</h2>
 
-	<div class="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
-		<SectionHeading
-			id="services-title"
-			eyebrow="What we do"
-			title="Plumbing & filtration, handled."
-			description="From a dripping faucet to a whole-home water overhaul — one call covers it all."
-		/>
-
-		<div class="mt-14 grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
-			<!-- Visual panel -->
-			<div
-				class="svc-reveal relative order-first lg:order-last lg:sticky lg:top-28"
-				style="--d: 100ms"
-			>
-				<div
-					class="relative aspect-[4/3] overflow-hidden rounded-panel bg-fog shadow-lift ring-1 ring-ink/5 sm:aspect-[5/4]"
-				>
-					{
-						items.map((item, i) => (
-							<div
-								class="svc-layer absolute inset-0"
-								data-svc-layer
-								data-active={i === 0 ? '' : undefined}>
-								{item.imageUrl ? (
-									<img
-										src={item.imageUrl}
-										alt={item.title}
-										loading={i === 0 ? 'eager' : 'lazy'}
-										class="h-full w-full object-cover"
-									/>
-								) : (
-									<Image
-										src={item.image}
-										alt={item.title}
-										width={1280}
-										class="h-full w-full object-cover"
-									/>
-								)}
-								<div
-									class={`absolute inset-0 bg-gradient-to-tr ${item.accent === 'red' ? 'from-brand-red/15' : 'from-water/15'} via-transparent to-transparent`}
-									aria-hidden="true"
-								/>
-							</div>
-						))
-					}
-					<p
-						class="absolute right-4 top-4 rounded-full bg-ink-deep/70 px-3 py-1 font-mono text-xs tracking-widest text-white backdrop-blur"
-					>
-						<span data-svc-counter>01</span> / {total}
-					</p>
-				</div>
-				<!-- Floating badge that swaps with the active service -->
-			</div>
-
-			<!-- Expanding service list -->
-			<ol class="space-y-3">
-				{
-					items.map((item, i) => (
-						<li
-							class="svc-item svc-reveal group relative overflow-hidden rounded-panel border border-line bg-white/5 transition-all duration-300 hover:bg-white/10 data-[active]:border-water/40 data-[active]:bg-fog data-[active]:shadow-card"
-							data-svc-item
-							data-active={i === 0 ? '' : undefined}
-							style={`--d: ${i * 90}ms`}>
-							<button
-								type="button"
-								class="flex min-h-[44px] w-full items-center gap-4 px-6 py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-water sm:gap-5 sm:px-8"
-								data-svc-btn
-								aria-expanded={i === 0 ? 'true' : 'false'}
-								aria-controls={`svc-panel-${item.id}`}>
-								<span class="font-heading text-2xl font-extrabold tracking-tight text-ink/10 transition-colors duration-300 group-data-[active]:text-water/60">
-									{item.index}
-								</span>
-								<Drop color={item.accent} />
-								<span class="flex-1 font-heading text-lg font-extrabold text-ink sm:text-xl">
-									{item.title}
-								</span>
-								<svg
-									class="h-5 w-5 shrink-0 text-ink/30 transition-transform duration-300 group-data-[active]:rotate-180 group-data-[active]:text-water"
-									viewBox="0 0 20 20"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									aria-hidden="true">
-									<path d="m5 8 5 5 5-5" />
-								</svg>
-							</button>
-							<div id={`svc-panel-${item.id}`} class="svc-panel">
-								<div class="svc-panel-inner">
-									<div class="px-6 pb-7 sm:px-8">
-										<p class="leading-relaxed text-ink/60">{item.blurb}</p>
-										<ul class="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
-											{item.bullets.map((bullet) => (
-												<li class="flex items-start gap-2.5 text-sm text-ink/70">
-													<Drop size="sm" color={item.accent} class="mt-1" />
-													{bullet}
-												</li>
-											))}
-										</ul>
-										<a
-											href={`/our-services#${item.id}`}
-											class="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-btn font-heading font-bold text-brand-red transition-all hover:gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-water">
-											Learn more
-											<span aria-hidden="true">→</span>
-										</a>
-									</div>
-								</div>
-							</div>
-							<span class="svc-progress" data-svc-progress aria-hidden="true" />
-						</li>
-					))
-				}
-			</ol>
-		</div>
-
-		<ul class="mt-16 flex flex-wrap justify-center gap-3">
+	<div class="relative grid lg:min-h-[44rem] lg:grid-cols-[45fr_55fr]">
+		<!-- Photo side -->
+		<div
+			class="relative aspect-[4/3] overflow-hidden bg-ink-deep sm:aspect-[16/9] lg:aspect-auto"
+		>
 			{
-				serviceCategories.map((cat, i) => (
-					<li class="svc-reveal" style={`--d: ${350 + i * 60}ms`}>
-						<a
-							href={`/our-services#${cat.id}`}
-							class="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-line bg-fog px-5 py-2 font-semibold text-ink/70 transition hover:-translate-y-0.5 hover:border-water hover:text-water hover:shadow-card focus:outline-none focus-visible:ring-2 focus-visible:ring-water">
-							<Drop size="sm" />
-							{cat.label}
-						</a>
-					</li>
+				items.map((item, i) => (
+					<div
+						class="svc-fade absolute inset-0"
+						data-svc-layer
+						data-active={i === 0 ? '' : undefined}
+						aria-hidden="true">
+						{item.imageUrl ? (
+							<img
+								src={item.imageUrl}
+								alt=""
+								loading={i === 0 ? 'eager' : 'lazy'}
+								class="h-full w-full object-cover"
+							/>
+						) : (
+							<Image
+								src={item.image}
+								alt=""
+								width={1280}
+								class="h-full w-full object-cover"
+							/>
+						)}
+						<div
+							class="absolute inset-0 bg-gradient-to-t from-ink-deep/80 via-ink-deep/10 to-ink-deep/40"
+							aria-hidden="true"
+						/>
+					</div>
 				))
 			}
-		</ul>
+
+			<!-- Mobile title (desktop uses the split title below) -->
+			<div
+				class="absolute inset-x-0 bottom-0 grid p-6 sm:p-10 lg:hidden"
+				aria-hidden="true"
+			>
+				{
+					items.map((item, i) => (
+						<p
+							class="svc-fade col-start-1 row-start-1 font-heading text-4xl font-extrabold uppercase leading-none tracking-tight text-ink sm:text-5xl"
+							data-svc-title-m
+							data-active={i === 0 ? '' : undefined}>
+							{item.displayName}
+						</p>
+					))
+				}
+			</div>
+		</div>
+
+		<!-- Spec-sheet panel -->
+		<div class="relative px-6 pb-16 pt-12 sm:px-10 lg:px-16 lg:pb-20 lg:pt-72">
+			<Image
+				src={cardBackground}
+				alt=""
+				aria-hidden="true"
+				class="absolute inset-x-0 top-0 w-full h-full blur-sm object-cover"
+			/>
+			<div class="grid">
+				{
+					items.map((item, i) => (
+						<div
+							class="svc-fade col-start-1 row-start-1 flex flex-col bg-white/10 backdrop-blur-2xl rounded-panel p-6 sm:p-10 lg:p-16 z-10"
+							role="tabpanel"
+							id={`svc-panel-${item.id}`}
+							aria-labelledby={`svc-tab-${item.id}`}
+							data-svc-panel
+							data-active={i === 0 ? '' : undefined}>
+							<h3 class="sr-only">{item.title}</h3>
+
+							<div class="grid gap-3 border-t border-line pt-6 sm:grid-cols-[8rem_1fr] sm:gap-8">
+								<p class="font-mono text-[0.65rem] font-bold uppercase tracking-[0.25em] text-ink/45">
+									Your Friendly Neighborhood Solution:
+								</p>
+								<p class="max-w-xl leading-relaxed text-ink/75">{item.blurb}</p>
+							</div>
+
+							<div class="mt-10 grid gap-3 border-t border-line pt-6 sm:grid-cols-[8rem_1fr] sm:gap-8">
+								<p class="font-mono text-[0.65rem] font-bold uppercase tracking-[0.25em] text-ink/45">
+									Services Include:
+								</p>
+								<ul class="flex max-w-xl flex-wrap gap-x-2 gap-y-2.5 font-heading text-xs font-bold uppercase tracking-wide text-ink/85">
+									{item.bullets.map((bullet) => (
+										<li class="after:pl-0.5 after:text-ink/30 after:content-[','] last:after:content-none">
+											{bullet}
+										</li>
+									))}
+								</ul>
+							</div>
+
+							{item.badge && (
+								<p class="mt-10 font-heading text-sm font-extrabold uppercase tracking-wide text-water-light">
+									→ {item.badge}
+								</p>
+							)}
+
+							<div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
+								<BookOnlineButton>Book Online</BookOnlineButton>
+								<a
+									href={`/our-services#${item.id}`}
+									class="inline-flex min-h-[44px] items-center gap-2 rounded-btn font-heading font-bold text-ink/80 transition-all hover:gap-3 hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-water">
+									Full details
+									<span aria-hidden="true">→</span>
+								</a>
+							</div>
+						</div>
+					))
+				}
+			</div>
+
+			<p
+				class="mt-14 text-right font-mono text-xs tracking-[0.25em] text-ink/40"
+				aria-hidden="true"
+			>
+				<span data-svc-counter>01</span>
+				<span class="px-1">//</span>
+				{total}
+			</p>
+		</div>
+
+		<!-- Split title straddling the seam (desktop only) -->
+		<div
+			class="pointer-events-none absolute inset-x-0 top-24 z-10 hidden lg:block"
+			aria-hidden="true"
+		>
+			<div class="grid">
+				{
+					items.map((item, i) => (
+						<div
+							class="svc-fade col-start-1 row-start-1"
+							data-svc-title
+							data-active={i === 0 ? '' : undefined}>
+							<div class="relative">
+								<p class="svc-title-half svc-title-solid whitespace-nowrap pl-[14%] font-heading text-[clamp(3.5rem,7vw,7rem)] font-extrabold uppercase leading-none tracking-tight">
+									{item.displayName}
+								</p>
+								<p class="svc-title-half svc-title-hollow absolute inset-0 whitespace-nowrap pl-[14%] font-heading text-[clamp(3.5rem,7vw,7rem)] font-extrabold uppercase leading-none tracking-tight">
+									{item.displayName}
+								</p>
+							</div>
+						</div>
+					))
+				}
+			</div>
+		</div>
+	</div>
+
+	<!-- Horizontal service selector -->
+	<div class="border-t border-line bg-ink-deep">
+		<div
+			class="flex overflow-x-auto"
+			role="tablist"
+			aria-label="Featured services"
+		>
+			{
+				items.map((item, i) => (
+					<button
+						type="button"
+						role="tab"
+						id={`svc-tab-${item.id}`}
+						aria-selected={i === 0 ? 'true' : 'false'}
+						aria-controls={`svc-panel-${item.id}`}
+						tabindex={i === 0 ? 0 : -1}
+						class="group relative min-w-[11rem] flex-1 border-r border-line px-6 py-5 text-left transition last:border-r-0 hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-water"
+						data-svc-btn
+						data-active={i === 0 ? '' : undefined}>
+						<span class="block font-mono text-[0.65rem] tracking-[0.25em] text-ink/35 transition group-data-[active]:text-water-light">
+							{item.index}
+						</span>
+						<span class="mt-1.5 block font-heading text-sm font-extrabold uppercase tracking-wide text-ink/45 transition group-hover:text-ink/75 group-data-[active]:text-ink">
+							{item.displayName}
+						</span>
+						<span class="svc-progress" data-svc-progress aria-hidden="true" />
+					</button>
+				))
+			}
+		</div>
 	</div>
 </section>
 
 <style>
-	/* Smooth expand/collapse without fixed heights */
-	.svc-panel {
-		display: grid;
-		grid-template-rows: 0fr;
-		transition: grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-	}
-	.svc-item[data-active] .svc-panel {
-		grid-template-rows: 1fr;
-	}
-	.svc-panel-inner {
-		min-height: 0;
-		overflow: hidden;
+	/* Crossfading layers: images, titles, and spec panels all share this.
+	   visibility keeps links/buttons in hidden panels out of the tab order. */
+	.svc-fade {
+		opacity: 0;
 		visibility: hidden;
-		transition: visibility 0.5s;
+		transition:
+			opacity 0.55s ease,
+			visibility 0.55s;
 	}
-	.svc-item[data-active] .svc-panel-inner {
+	.svc-fade[data-active] {
+		opacity: 1;
 		visibility: visible;
+	}
+
+	/* Two-tone straddling title: the solid copy shows over the photo (left
+	   45% of the section), the hollow copy over the panel. Negative vertical
+	   insets keep ascenders/descenders from being clipped. */
+	.svc-title-solid {
+		color: #e9eef5;
+		clip-path: inset(-25% 55% -25% -5%);
+	}
+	.svc-title-hollow {
+		color: transparent;
+		-webkit-text-stroke: 2px rgba(233, 238, 245, 0.55);
+		clip-path: inset(-25% -5% -25% 45%);
 	}
 
 	/* Auto-rotate progress bar (only while [data-autoplay] is set by JS) */
@@ -228,7 +269,7 @@ const total = String(items.length).padStart(2, '0');
 		width: 0%;
 		background: linear-gradient(90deg, #3d7bee, #8fb5fa, #e8232f);
 	}
-	[data-svc-root][data-autoplay] .svc-item[data-active] .svc-progress {
+	[data-svc-root][data-autoplay] [data-svc-btn][data-active] .svc-progress {
 		animation: svc-fill 7s linear forwards;
 	}
 	[data-svc-root][data-autoplay]:hover .svc-progress,
@@ -244,54 +285,9 @@ const total = String(items.length).padStart(2, '0');
 		}
 	}
 
-	/* Crossfading image layers + floating badge */
-	.svc-layer {
-		opacity: 0;
-		transform: scale(1.06);
-		transition:
-			opacity 0.6s ease,
-			transform 0.9s ease;
-	}
-	.svc-layer[data-active] {
-		opacity: 1;
-		transform: scale(1);
-	}
-	.svc-badge {
-		opacity: 0;
-		transform: translateY(10px);
-		transition:
-			opacity 0.45s ease,
-			transform 0.45s ease;
-	}
-	.svc-badge[data-active] {
-		opacity: 1;
-		transform: translateY(0);
-	}
-
-	/* Staggered scroll-reveal (elements set --d for their delay) */
-	.svc-reveal {
-		opacity: 0;
-		transform: translateY(24px);
-		transition:
-			opacity 0.7s ease var(--d, 0ms),
-			transform 0.7s ease var(--d, 0ms);
-	}
-	.svc-in .svc-reveal {
-		opacity: 1;
-		transform: none;
-	}
-
 	@media (prefers-reduced-motion: reduce) {
-		.svc-reveal,
-		.svc-layer,
-		.svc-badge,
-		.svc-panel,
-		.svc-panel-inner {
+		.svc-fade {
 			transition: none;
-		}
-		.svc-reveal {
-			opacity: 1;
-			transform: none;
 		}
 		.svc-progress {
 			animation: none !important;
@@ -302,39 +298,55 @@ const total = String(items.length).padStart(2, '0');
 <script>
 	const root = document.querySelector('[data-svc-root]');
 	if (root) {
-		const items = Array.from(root.querySelectorAll('[data-svc-item]'));
-		const buttons = Array.from(root.querySelectorAll('[data-svc-btn]'));
-		const layers = Array.from(root.querySelectorAll('[data-svc-layer]'));
-		const badges = Array.from(root.querySelectorAll('[data-svc-badge]'));
-		const counter = root.querySelector('[data-svc-counter]');
+		const buttons = Array.from(
+			root.querySelectorAll<HTMLButtonElement>('[data-svc-btn]'),
+		);
+		const fadeGroups = [
+			Array.from(root.querySelectorAll('[data-svc-layer]')),
+			Array.from(root.querySelectorAll('[data-svc-title]')),
+			Array.from(root.querySelectorAll('[data-svc-title-m]')),
+			Array.from(root.querySelectorAll('[data-svc-panel]')),
+		];
+		const counters = Array.from(root.querySelectorAll('[data-svc-counter]'));
 		const reducedMotion = window.matchMedia(
 			'(prefers-reduced-motion: reduce)',
 		).matches;
 		let current = 0;
 
-		const setActive = (list: Element[], index: number) =>
-			list.forEach((el, i) =>
-				i === index
-					? el.setAttribute('data-active', '')
-					: el.removeAttribute('data-active'),
-			);
-
 		const activate = (index: number, fromUser: boolean) => {
 			current = index;
-			setActive(items, index);
-			setActive(layers, index);
-			setActive(badges, index);
-			buttons.forEach((btn, i) =>
-				btn.setAttribute('aria-expanded', String(i === index)),
+			fadeGroups.forEach((group) =>
+				group.forEach((el, i) =>
+					i === index
+						? el.setAttribute('data-active', '')
+						: el.removeAttribute('data-active'),
+				),
 			);
-			if (counter) counter.textContent = String(index + 1).padStart(2, '0');
+			buttons.forEach((btn, i) => {
+				const active = i === index;
+				btn.setAttribute('aria-selected', String(active));
+				btn.tabIndex = active ? 0 : -1;
+				if (active) btn.setAttribute('data-active', '');
+				else btn.removeAttribute('data-active');
+			});
+			counters.forEach((el) => {
+				el.textContent = String(index + 1).padStart(2, '0');
+			});
 			// First interaction hands control to the visitor for good.
 			if (fromUser) root.removeAttribute('data-autoplay');
 		};
 
-		buttons.forEach((btn, i) =>
-			btn.addEventListener('click', () => activate(i, true)),
-		);
+		buttons.forEach((btn, i) => {
+			btn.addEventListener('click', () => activate(i, true));
+			btn.addEventListener('keydown', (e) => {
+				if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+				e.preventDefault();
+				const dir = e.key === 'ArrowRight' ? 1 : -1;
+				const next = (i + dir + buttons.length) % buttons.length;
+				activate(next, true);
+				buttons[next].focus();
+			});
+		});
 
 		// The CSS progress bar finishing is the auto-advance signal.
 		root.addEventListener('animationend', (e) => {
@@ -342,14 +354,13 @@ const total = String(items.length).padStart(2, '0');
 				e.target instanceof Element &&
 				e.target.hasAttribute('data-svc-progress')
 			) {
-				activate((current + 1) % items.length, false);
+				activate((current + 1) % buttons.length, false);
 			}
 		});
 
 		const observer = new IntersectionObserver(
 			([entry]) => {
 				if (!entry.isIntersecting) return;
-				root.classList.add('svc-in');
 				if (!reducedMotion) root.setAttribute('data-autoplay', '');
 				observer.disconnect();
 			},

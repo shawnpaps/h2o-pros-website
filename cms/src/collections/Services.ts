@@ -67,6 +67,15 @@ export const Services: CollectionConfig = {
       },
     },
     {
+      name: 'showcaseTitle',
+      type: 'text',
+      label: 'Showcase display name',
+      admin: {
+        description:
+          'Short punchy name shown as the giant title in the home-page showcase, for example "Drains & Sewer". Falls back to the service title.',
+      },
+    },
+    {
       name: 'showcaseBadge',
       type: 'text',
       label: 'Showcase badge',

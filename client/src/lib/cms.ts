@@ -109,6 +109,7 @@ export const getServices = async (): Promise<Service[]> => {
       bullets?: Array<{ text?: string }>;
       accent?: 'red' | 'blue';
       featured?: boolean;
+      showcaseTitle?: string;
       showcaseBadge?: string;
       showcaseImage?: unknown;
       detailImage?: unknown;
@@ -124,6 +125,7 @@ export const getServices = async (): Promise<Service[]> => {
     bullets: service.bullets?.map((bullet) => bullet.text || '').filter(Boolean) ?? [],
     accent: service.accent || 'blue',
     featured: service.featured,
+    showcaseTitle: service.showcaseTitle,
     showcaseBadge: service.showcaseBadge,
     showcaseImageUrl: mediaUrl(service.showcaseImage, 'card'),
     detailImageUrl: mediaUrl(service.detailImage, 'card'),
