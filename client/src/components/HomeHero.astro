@@ -1,12 +1,10 @@
 ---
 const { site, ratingSummary } = Astro.props;
+import { Image } from 'astro:assets';
 import Button from './Button.astro';
 import Stars from './Stars.astro';
 import Drop from './Drop.astro';
-import heroVideo from '../assets/videos/hero.mp4';
-import { getSiteSettings } from '../lib/cms';
-
-const settings = await getSiteSettings();
+import heroImage from '../assets/team-photo.jpg';
 
 const heroServices = [
 	{
@@ -42,15 +40,15 @@ const heroServices = [
 */}
 <section class="relative bg-ink-deep text-white" data-hero>
 	<div
-		class="sticky top-0 flex h-screen flex-col justify-center overflow-hidden"
+		class="sticky top-0 flex h-screen flex-col justify-end overflow-hidden"
 	>
-		<video
-			src={settings.homeHeroVideoUrl ?? heroVideo}
+		<Image
+			src={heroImage}
+			alt=""
+			width={1920}
+			loading="eager"
 			class="absolute inset-0 h-full w-full object-cover"
-			autoplay
-			muted
-			loop
-			playsinline></video>
+		/>
 		<div
 			class="absolute inset-0 bg-gradient-to-b from-ink-deep/60 via-ink-deep/20 to-ink-deep/60"
 			aria-hidden="true"

@@ -1,0 +1,28 @@
+---
+/**
+ * "Book Online" CTA wired to the Housecall Pro booking widget. The widget
+ * script is loaded once in BaseLayout; if it hasn't loaded (blocked or slow),
+ * the button falls back to the contact page so the click never dead-ends.
+ */
+import Button from './Button.astro';
+import { booking } from '../data/site';
+
+interface Props {
+	variant?: 'primary' | 'outline' | 'ghost';
+	size?: 'md' | 'lg';
+	class?: string;
+}
+
+const { variant = 'primary', size = 'md', class: className = '' } = Astro.props;
+---
+
+<Button
+	variant={variant}
+	size={size}
+	class={`hcp-button ${className}`}
+	data-token={booking.token}
+	data-orgname={booking.orgName}
+	onclick="typeof HCPWidget !== 'undefined' ? HCPWidget.openModal() : (window.location.href = '/contact')"
+>
+	<slot />
+</Button>

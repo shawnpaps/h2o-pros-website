@@ -24,6 +24,23 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      graphics: {
+        Logo: '/components/Logo#Logo',
+        Icon: '/components/Icon#Icon',
+      },
+      beforeDashboard: ['/components/WelcomeBanner#WelcomeBanner'],
+    },
+    meta: {
+      titleSuffix: ' · H2O Pros CMS',
+      icons: [
+        {
+          rel: 'icon',
+          type: 'image/webp',
+          url: '/h2o-logo.webp',
+        },
+      ],
+    },
   },
   collections: [Users, Media, Services, Locations, Reviews, Faqs, GalleryItems],
   globals: [SiteSettings],

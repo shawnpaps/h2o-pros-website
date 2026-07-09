@@ -12,6 +12,12 @@ export const site = {
     'Licensed, insured & bonded plumbing and water filtration pros serving the greater Tampa Bay area. Upfront pricing, tidy workmanship, and water you can trust.',
 } as const;
 
+/** Housecall Pro online booking widget credentials. */
+export const booking = {
+  token: '961c3db58034464aab709dba3edd7cd2',
+  orgName: 'Your-Friendly-H2O-Pros-Plumbing-and-Filtration',
+} as const;
+
 export const hours = [
   { label: 'Monday – Friday', value: '8:00am – 5:00pm' },
   { label: 'Saturday – Sunday', value: 'Closed' },

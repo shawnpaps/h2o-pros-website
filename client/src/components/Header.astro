@@ -1,6 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import Button from './Button.astro';
+import BookOnlineButton from './BookOnlineButton.astro';
 import { getSiteContent } from '../lib/cms';
 
 interface Props {
@@ -58,7 +59,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 					{site.phone}
 				</span>
 			</a>
-			<Button href="/contact">Book Online</Button>
+			<BookOnlineButton>Book Online</BookOnlineButton>
 		</div>
 
 		<button
@@ -119,7 +120,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 				))
 			}
 			<div class="flex flex-col gap-3 pt-4">
-				<Button href="/contact" class="w-full">Book Online</Button>
+				<BookOnlineButton class="w-full">Book Online</BookOnlineButton>
 				<Button
 					href={site.phoneHref}
 					variant="outline"

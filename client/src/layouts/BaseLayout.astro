@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { getSiteContent } from '../lib/cms';
+import { booking } from '../data/site';
 
 interface Props {
 	title: string;
@@ -31,6 +32,12 @@ const {
 			rel="stylesheet"
 		/>
 		<title>{title} | {site.name}</title>
+		{/* Housecall Pro online booking widget (opened via .hcp-button CTAs) */}
+		<script
+			is:inline
+			async
+			src={`https://online-booking.housecallpro.com/script.js?token=${booking.token}&orgName=${booking.orgName}`}
+		></script>
 	</head>
 	<body class="bg-white text-ink">
 		<a

@@ -110,4 +110,124 @@ export const locations: Location[] = [
 		metaDescription:
 			'Licensed Plant City plumber for drain cleaning, water heaters, leak detection & water filtration. Upfront pricing and tidy service in Plant City, FL.',
 	},
+	{
+		slug: 'lutz',
+		city: 'Lutz',
+		county: 'Hillsborough',
+		intro:
+			'Lutz mixes lakefront homes on wells with newer neighborhoods on city water — and both come with their own plumbing headaches. From softeners and well systems to water heaters and stubborn drains, we cover all of it with upfront pricing.',
+		nearby: ["Land O' Lakes", 'Wesley Chapel', 'Carrollwood', 'Odessa', 'Cheval'],
+		metaDescription:
+			'Licensed Lutz plumber for drain cleaning, water heaters, leak detection & water filtration. Upfront pricing and tidy service in Lutz, FL.',
+	},
+	{
+		slug: 'land-o-lakes',
+		city: "Land O' Lakes",
+		county: 'Pasco',
+		intro:
+			"Land O' Lakes is booming, and Pasco County's hard water doesn't spare the new builds. We handle builder-grade fixture swaps, tankless heater service, whole-home filtration, and every drain and leak call in between.",
+		nearby: ['Lutz', 'Wesley Chapel', 'Odessa', 'Connerton', 'Trinity'],
+		metaDescription:
+			"Licensed Land O' Lakes plumber for drain cleaning, water heaters, leak detection & water filtration. Upfront pricing and tidy service in Land O' Lakes, FL.",
+	},
+	{
+		slug: 'brooksville',
+		city: 'Brooksville',
+		county: 'Hernando',
+		intro:
+			'From historic homes near the courthouse to acreage properties on wells, Brooksville plumbing runs the gamut. We service well systems, softeners, water heaters, and drains across Hernando County — with honest diagnostics every time.',
+		nearby: ['Spring Hill', 'Weeki Wachee', 'Masaryktown', 'Ridge Manor', 'Brookridge'],
+		metaDescription:
+			'Licensed Brooksville plumber for drain cleaning, water heaters, well systems, leak detection & water filtration. Upfront pricing and tidy service in Brooksville, FL.',
+	},
+	{
+		slug: 'spring-hill',
+		city: 'Spring Hill',
+		county: 'Hernando',
+		intro:
+			'Spring Hill homes from the ’80s and ’90s are hitting the age where water heaters, valves, and drain lines start acting up — and Hernando County’s mineral-heavy water speeds it all along. We fix it right, with pricing you approve first.',
+		nearby: ['Brooksville', 'Weeki Wachee', 'Hernando Beach', 'Timber Pines', 'Hudson'],
+		metaDescription:
+			'Licensed Spring Hill plumber for drain cleaning, water heaters, leak detection & water filtration. Upfront pricing and tidy service in Spring Hill, FL.',
+	},
+	{
+		slug: 'crystal-river',
+		city: 'Crystal River',
+		county: 'Citrus',
+		intro:
+			'Life on the Nature Coast means wells, softeners, and plumbing that has to stand up to the elements. From downtown Crystal River to waterfront homes along the bay, we handle filtration, water heaters, and every repair in between.',
+		nearby: ['Homosassa', 'Lecanto', 'Beverly Hills', 'Dunnellon', 'Inverness'],
+		metaDescription:
+			'Licensed Crystal River plumber for drain cleaning, water heaters, well systems, leak detection & water filtration. Upfront pricing and tidy service in Crystal River, FL.',
+	},
+	{
+		slug: 'inverness',
+		city: 'Inverness',
+		county: 'Citrus',
+		intro:
+			'From lakefront homes on the Tsala Apopka chain to quiet streets downtown, Inverness counts on wells and aging pipes that need a plumber who knows both. We cover well systems, filtration, water heaters, drains, and leaks across Citrus County.',
+		nearby: ['Hernando', 'Lecanto', 'Floral City', 'Citrus Hills', 'Crystal River'],
+		metaDescription:
+			'Licensed Inverness plumber for drain cleaning, water heaters, well systems, leak detection & water filtration. Upfront pricing and tidy service in Inverness, FL.',
+	},
+	{
+		slug: 'the-villages',
+		city: 'The Villages',
+		county: 'Sumter',
+		intro:
+			'The Villages runs on schedules — golf, pickleball, and plumbing that just works. We show up on time, explain the fix in plain English, and leave the work area cleaner than we found it. Softeners, water heaters, drains, and leaks handled.',
+		nearby: ['Lady Lake', 'Fruitland Park', 'Wildwood', 'Summerfield', 'Oxford'],
+		metaDescription:
+			'Licensed plumber serving The Villages for drain cleaning, water heaters, leak detection & water filtration. Upfront pricing and tidy service in The Villages, FL.',
+	},
+	{
+		slug: 'clermont',
+		city: 'Clermont',
+		county: 'Lake',
+		intro:
+			'Clermont’s hills are full of newer homes with builder-grade plumbing that’s ready for an upgrade — and Lake County water that scales up fixtures fast. From Four Corners to downtown, we handle filtration, water heaters, drains, and leaks.',
+		nearby: ['Minneola', 'Groveland', 'Montverde', 'Four Corners', 'Winter Garden'],
+		metaDescription:
+			'Licensed Clermont plumber for drain cleaning, water heaters, leak detection & water filtration. Upfront pricing and tidy service in Clermont, FL.',
+	},
+	{
+		slug: 'winter-haven',
+		city: 'Winter Haven',
+		county: 'Polk',
+		intro:
+			'Between the Chain of Lakes and Polk County’s famously hard water, Winter Haven plumbing takes a beating. We keep drains clear, water heaters humming, and filtration systems doing their job — from historic districts to brand-new builds.',
+		nearby: ['Auburndale', 'Lake Alfred', 'Eagle Lake', 'Cypress Gardens', 'Dundee'],
+		metaDescription:
+			'Licensed Winter Haven plumber for drain cleaning, water heaters, leak detection & water filtration. Upfront pricing and tidy service in Winter Haven, FL.',
+	},
+	{
+		slug: 'davenport',
+		city: 'Davenport',
+		county: 'Polk',
+		intro:
+			'Davenport’s explosion of new homes and vacation rentals means plumbing that has to work every day, no excuses. We serve homeowners and rental managers alike with fast turnarounds on water heaters, drains, leaks, and filtration.',
+		nearby: ['ChampionsGate', 'Four Corners', 'Haines City', 'Loughman', 'Poinciana'],
+		metaDescription:
+			'Licensed Davenport plumber for drain cleaning, water heaters, leak detection & water filtration. Upfront pricing and tidy service in Davenport, FL.',
+	},
+	{
+		slug: 'sebring',
+		city: 'Sebring',
+		county: 'Highlands',
+		intro:
+			'From homes on the circle downtown to lakefront properties around Lake Jackson, Sebring plumbing means hard water, aging pipes, and the occasional well system. We handle all of it with honest pricing and work that holds up.',
+		nearby: ['Avon Park', 'Lake Placid', 'Lorida', 'Spring Lake', 'DeSoto City'],
+		metaDescription:
+			'Licensed Sebring plumber for drain cleaning, water heaters, leak detection & water filtration. Upfront pricing and tidy service in Sebring, FL.',
+	},
+	{
+		slug: 'sarasota',
+		city: 'Sarasota',
+		county: 'Sarasota',
+		intro:
+			'Sarasota homes — from mid-century ranches near downtown to newer builds east of I-75 — deal with coastal corrosion, slab leaks, and water worth filtering. We bring upfront pricing and tidy workmanship to every call.',
+		nearby: ['Lakewood Ranch', 'Bradenton', 'Siesta Key', 'Osprey', 'Fruitville'],
+		metaDescription:
+			'Licensed Sarasota plumber for drain cleaning, water heaters, leak detection & water filtration. Upfront pricing and tidy service in Sarasota, FL.',
+	},
 ];

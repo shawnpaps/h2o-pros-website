@@ -1,0 +1,69 @@
+// H2O Pros admin branding
+// Brand palette (mirrors client/tailwind.config.mjs):
+//   brand-red #E11D2A · water #1E7FC2 · water-light #5CB4E6 · ink #12161A
+
+// Login screen logo
+.h2o-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  img {
+    border-radius: 50%;
+    box-shadow: 0 8px 30px rgb(13 16 19 / 0.25);
+  }
+
+  &__wordmark {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+
+    em {
+      font-style: normal;
+      font-weight: 500;
+      color: var(--theme-elevation-500);
+    }
+  }
+}
+
+// Dashboard welcome banner
+.h2o-welcome {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem 1.75rem;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(120deg, #12161a 0%, #1e7fc2 70%, #5cb4e6 100%);
+  border-bottom: 4px solid #e11d2a;
+
+  &__logo {
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  h1 {
+    margin: 0 0 0.35rem;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    color: #fff;
+  }
+
+  p {
+    margin: 0;
+    max-width: 60ch;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: rgb(255 255 255 / 0.85);
+  }
+}
+
+@media (max-width: 600px) {
+  .h2o-welcome {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

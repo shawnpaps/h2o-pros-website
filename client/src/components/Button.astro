@@ -5,6 +5,7 @@ interface Props {
   size?: 'md' | 'lg';
   class?: string;
   type?: 'button' | 'submit';
+  [key: string]: unknown;
 }
 
 const {
@@ -13,10 +14,11 @@ const {
   size = 'md',
   class: className = '',
   type = 'button',
+  ...rest
 } = Astro.props;
 
 const base =
-  'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-btn font-heading font-bold uppercase tracking-wide transition focus:outline-none focus-visible:ring-2 focus-visible:ring-water focus-visible:ring-offset-2';
+  'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full font-heading font-bold uppercase tracking-wide transition focus:outline-none focus-visible:ring-2 focus-visible:ring-water focus-visible:ring-offset-2';
 
 const variants: Record<string, string> = {
   primary:
@@ -35,11 +37,11 @@ const classes = `${base} ${variants[variant]} ${sizes[size]} ${className}`;
 
 {
   href ? (
-    <a href={href} class={classes}>
+    <a href={href} class={classes} {...rest}>
       <slot />
     </a>
   ) : (
-    <button type={type} class={classes}>
+    <button type={type} class={classes} {...rest}>
       <slot />
     </button>
   )
