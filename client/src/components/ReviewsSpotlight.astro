@@ -29,7 +29,10 @@ if (spotlight.length < 3) spotlight = reviews.slice(0, 5);
 
 const slides = spotlight.map((review) => ({
 	...review,
-	meta: [review.location, [review.source, review.date].filter(Boolean).join(', ')]
+	meta: [
+		review.location,
+		[review.source, review.date].filter(Boolean).join(', '),
+	]
 		.filter(Boolean)
 		.join(' · '),
 }));
@@ -41,7 +44,9 @@ const slides = spotlight.map((review) => ({
 			id="reviews-title"
 			eyebrow="Reviews"
 			title="Your neighbors said it best."
-			description={`A ${ratingSummary.average} average across ${ratingSummary.count} ${ratingSummary.source} — here's why.`}
+			description={`Don't just take our word for it! Read what our valued customers have to say about their experience with Your Friendly Neighborhood H20 Pros. We're proud of our 5-star reputation for professional, reliable, and friendly service.
+
+`}
 		/>
 
 		<div
@@ -55,7 +60,11 @@ const slides = spotlight.map((review) => ({
 				<!-- Quote panel -->
 				<div class="flex flex-col p-7 sm:p-10 lg:p-14">
 					<div class="flex items-center justify-between gap-6">
-						<div class="flex items-center gap-2" role="tablist" aria-label="Choose a review">
+						<div
+							class="flex items-center gap-2"
+							role="tablist"
+							aria-label="Choose a review"
+						>
 							{
 								slides.map((slide, i) => (
 									<button
@@ -80,8 +89,19 @@ const slides = spotlight.map((review) => ({
 								data-rev-prev
 								aria-label="Previous review"
 							>
-								<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-									<path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+								<svg
+									width="16"
+									height="16"
+									viewBox="0 0 16 16"
+									fill="none"
+									aria-hidden="true"
+								>
+									<path
+										d="M10 3 5 8l5 5"
+										stroke="currentColor"
+										stroke-width="1.75"
+										stroke-linecap="round"
+										stroke-linejoin="round"></path>
 								</svg>
 							</button>
 							<button
@@ -90,8 +110,19 @@ const slides = spotlight.map((review) => ({
 								data-rev-next
 								aria-label="Next review"
 							>
-								<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-									<path d="m6 3 5 5-5 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+								<svg
+									width="16"
+									height="16"
+									viewBox="0 0 16 16"
+									fill="none"
+									aria-hidden="true"
+								>
+									<path
+										d="m6 3 5 5-5 5"
+										stroke="currentColor"
+										stroke-width="1.75"
+										stroke-linecap="round"
+										stroke-linejoin="round"></path>
 								</svg>
 							</button>
 						</div>
@@ -115,7 +146,9 @@ const slides = spotlight.map((review) => ({
 										<span class="mt-1 font-heading text-lg font-extrabold text-ink">
 											{slide.name}
 										</span>
-										{slide.meta && <span class="text-sm text-ink/50">{slide.meta}</span>}
+										{slide.meta && (
+											<span class="text-sm text-ink/50">{slide.meta}</span>
+										)}
 									</figcaption>
 								</figure>
 							))
@@ -124,7 +157,9 @@ const slides = spotlight.map((review) => ({
 				</div>
 
 				<!-- Photo side -->
-				<div class="relative order-first aspect-[16/9] lg:order-none lg:aspect-auto">
+				<div
+					class="relative order-first aspect-[16/9] lg:order-none lg:aspect-auto"
+				>
 					{
 						settings.teamPhotoUrl ? (
 							<img

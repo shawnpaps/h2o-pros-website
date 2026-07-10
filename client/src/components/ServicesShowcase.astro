@@ -108,7 +108,7 @@ const total = String(items.length).padStart(2, '0');
 				src={cardBackground}
 				alt=""
 				aria-hidden="true"
-				class="absolute inset-x-0 top-0 w-full h-full blur-sm object-cover"
+				class="absolute inset-x-0 top-0 w-full h-full blur-lg object-cover"
 			/>
 			<div class="grid">
 				{
@@ -151,7 +151,7 @@ const total = String(items.length).padStart(2, '0');
 							<div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
 								<BookOnlineButton>Book Online</BookOnlineButton>
 								<a
-									href={`/our-services#${item.id}`}
+									href={`/services/${item.slug}`}
 									class="inline-flex min-h-[44px] items-center gap-2 rounded-btn font-heading font-bold text-ink/80 transition-all hover:gap-3 hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-water">
 									Full details
 									<span aria-hidden="true">→</span>
@@ -177,18 +177,18 @@ const total = String(items.length).padStart(2, '0');
 			class="pointer-events-none absolute inset-x-0 top-24 z-10 hidden lg:block"
 			aria-hidden="true"
 		>
-			<div class="grid">
+			<div class="grid grid-cols-[minmax(0,1fr)]">
 				{
 					items.map((item, i) => (
 						<div
-							class="svc-fade col-start-1 row-start-1"
+							class="svc-fade col-start-1 row-start-1 min-w-0"
 							data-svc-title
 							data-active={i === 0 ? '' : undefined}>
-							<div class="relative">
-								<p class="svc-title-half svc-title-solid whitespace-nowrap pl-[14%] font-heading text-[clamp(3.5rem,7vw,7rem)] font-extrabold uppercase leading-none tracking-tight">
+							<div class="relative" data-svc-title-box>
+								<p class="svc-title-half svc-title-solid whitespace-nowrap pl-[14%] pr-[4%] font-heading text-[clamp(3.5rem,7vw,7rem)] font-extrabold uppercase leading-none tracking-tight">
 									{item.displayName}
 								</p>
-								<p class="svc-title-half svc-title-hollow absolute inset-0 whitespace-nowrap pl-[14%] font-heading text-[clamp(3.5rem,7vw,7rem)] font-extrabold uppercase leading-none tracking-tight">
+								<p class="svc-title-half svc-title-hollow absolute inset-0 whitespace-nowrap pl-[14%] pr-[4%] font-heading text-[clamp(3.5rem,7vw,7rem)] font-extrabold uppercase leading-none tracking-tight">
 									{item.displayName}
 								</p>
 							</div>
@@ -308,6 +308,38 @@ const total = String(items.length).padStart(2, '0');
 			Array.from(root.querySelectorAll('[data-svc-panel]')),
 		];
 		const counters = Array.from(root.querySelectorAll('[data-svc-counter]'));
+		const titleBoxes = Array.from(
+			root.querySelectorAll<HTMLElement>('[data-svc-title-box]'),
+		);
+
+		// Titles come from the CMS, so any of them can be too long for the
+		// nowrap split title. Shrink the font just enough to fit the seam width.
+		const fitTitles = () => {
+			titleBoxes.forEach((box) => {
+				const halves = Array.from(
+					box.querySelectorAll<HTMLElement>('.svc-title-half'),
+				);
+				const solid = halves[0];
+				if (!solid) return;
+				halves.forEach((el) => (el.style.fontSize = ''));
+				if (!box.clientWidth) return; // hidden below lg
+				const overflow = solid.scrollWidth - solid.clientWidth;
+				if (overflow <= 0) return;
+				const style = getComputedStyle(solid);
+				const padding =
+					parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+				const textWidth = solid.scrollWidth - padding;
+				const available = solid.clientWidth - padding;
+				const size = Math.floor(
+					parseFloat(style.fontSize) * (available / textWidth),
+				);
+				halves.forEach((el) => (el.style.fontSize = `${size}px`));
+			});
+		};
+
+		fitTitles();
+		window.addEventListener('resize', fitTitles);
+		document.fonts?.ready.then(fitTitles);
 		const reducedMotion = window.matchMedia(
 			'(prefers-reduced-motion: reduce)',
 		).matches;

@@ -13,23 +13,31 @@ import { getSiteContent, getSiteSettings } from '../lib/cms';
 const { site, counties } = await getSiteContent();
 const settings = await getSiteSettings();
 
-const values = [
+const differencePoints = [
   {
-    title: 'Honest, upfront pricing',
-    text: 'You approve the exact price before we touch a wrench. The quote never changes mid-job.',
+    title: 'Expertly Certified Technicians',
+    text: 'Our team is highly trained and licensed.',
   },
   {
-    title: 'Treat every home like ours',
-    text: 'Shoe covers on, drop cloths down, and the work area cleaner than we found it.',
+    title: 'Transparent Upfront Pricing',
+    text: 'We provide clear, honest quotes before work begins.',
   },
   {
-    title: 'Fix it right, once',
-    text: 'We diagnose the root cause instead of patching symptoms — and guarantee the workmanship.',
+    title: '100% Customer Satisfaction',
+    text: 'We don’t consider the job done until you’re happy.',
   },
-  {
-    title: 'Actually friendly',
-    text: 'It’s in the name. A real person answers the phone and a real neighbor shows up.',
-  },
+];
+
+const communities = [
+  'Ocala',
+  'The Villages',
+  'Davenport',
+  'Wesley Chapel',
+  'Land O Lakes',
+  'Lakeland',
+  'Sebring',
+  'Tampa',
+  'St Petersburg',
 ];
 
 const offers = [
@@ -53,12 +61,12 @@ const offers = [
 
 <BaseLayout
   title="About Us"
-  description="Meet Your Friendly Neighborhood H2O Pros — licensed, insured, and proudly serving five counties across Tampa Bay."
+  description="A family owned plumbing company that cares — built on trust, quality, and 20+ years of experience serving all of Central Florida."
 >
   <PageHero
     eyebrow="About us"
-    title="Your friendly neighborhood pros."
-    description="Locally owned, fully licensed, and built on the belief that calling a plumber shouldn't ruin your day."
+    title="A family owned plumbing company that cares."
+    description="Built on trust, quality, and 20+ years of experience in the area."
   />
 
   <!-- Story -->
@@ -68,19 +76,30 @@ const offers = [
         <SectionHeading
           id="story-title"
           eyebrow="Our story"
-          title="Plumbing with a handshake."
+          title="Built on trust and expertise."
           align="left"
         />
         <div class="mt-6 space-y-4 text-lg leading-relaxed text-ink/65">
           <p>
-            Your Friendly Neighborhood H2O Pros started with a simple frustration: too many
-            homeowners getting vague quotes, muddy boot prints, and repairs that didn't stick. We
-            decided Tampa Bay deserved better.
+            With over 20 years of hands-on experience in plumbing and home filtration systems in
+            the Tampa Bay area, Riccardo is proud to bring expertise, honesty, and dependable
+            service to every home he visits.
           </p>
           <p>
-            Today we're a fully licensed and insured team (License {site.license}) handling
-            everything from stubborn drain clogs to whole-home filtration systems — always with
-            upfront pricing, tidy workmanship, and a genuine smile.
+            After decades of working in the industry, he saw firsthand how large companies often
+            overcharge customers without providing genuine solutions. That's why he and his family
+            started this business — to deliver fair, reasonable, and effective plumbing services
+            that homeowners can trust.
+          </p>
+          <p>
+            Riccardo's dedication to quality work and customer satisfaction is matched by his
+            passion for passing on his skills. His son, Valentino, is joining him as an
+            apprentice, learning the trade and building a strong foundation to carry on his
+            father's legacy.
+          </p>
+          <p>
+            Together, they are building more than a business — they are creating a family
+            tradition of integrity, craftsmanship, and care for their community.
           </p>
         </div>
         <div class="mt-8">
@@ -108,17 +127,79 @@ const offers = [
     </div>
   </section>
 
-  <!-- Values -->
-  <section class="bg-mist" aria-labelledby="values-title">
+  <!-- Commitment to community -->
+  <section class="bg-mist" aria-labelledby="community-title">
     <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-      <SectionHeading id="values-title" eyebrow="What we stand for" title="Four promises, every visit." />
-      <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <SectionHeading
+        id="community-title"
+        eyebrow="Our commitment"
+        title="A commitment to our community."
+      />
+      <div class="mx-auto mt-10 max-w-3xl space-y-4 text-lg leading-relaxed text-ink/65">
+        <p>
+          Your Friendly Neighborhood H2O Pros Plumbing and Filtration is a Florida based plumbing
+          and water purification company dedicated to delivering clean, safe, and reliable water
+          and plumbing solutions.
+        </p>
+        <p>
+          Our services include residential plumbing services, water purification system
+          installations and maintenance throughout Central Florida at a competitive price!
+        </p>
+        <p>
+          We strive to ensure every Florida household has access to affordable, high-quality
+          plumbing solutions and purified water. No mission is too big or small for us! We have
+          over 20 years' experience! Call us today.
+        </p>
+        <p>
+          Experience the difference with Your Friendly Neighborhood H2O Pros! We offer entire home
+          filtration systems for healthier skin, stronger hair, and fresher-tasting water. Say
+          goodbye to odors and limescale!
+        </p>
+        <p>
+          Plus, our expert plumbing services handle everything from repairs to drain cleaning.
+          Family-owned, operated, licensed, and insured with over 20 years of experience. We
+          service all of Central Florida.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- The H2O Pros difference -->
+  <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8" aria-labelledby="difference-title">
+    <SectionHeading
+      id="difference-title"
+      eyebrow="Why choose us"
+      title="The H2O Pros difference."
+    />
+    <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        differencePoints.map((point) => (
+          <div class="rounded-panel border border-line bg-fog p-7 shadow-card">
+            <Drop size="md" />
+            <h3 class="mt-4 font-heading text-lg font-extrabold text-ink">{point.title}</h3>
+            <p class="mt-2 leading-relaxed text-ink/60">{point.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Current offers -->
+  <section id="CurrentOffersandSavings" class="scroll-mt-28 bg-mist" aria-labelledby="offers-title">
+    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <SectionHeading
+        id="offers-title"
+        eyebrow="Current offers & savings"
+        title="A little something for your wallet."
+        description="Mention any of these when you book — no coupon clipping required."
+      />
+      <div class="mt-14 grid gap-6 md:grid-cols-3">
         {
-          values.map((value) => (
-            <div class="rounded-panel border border-line bg-fog p-7 shadow-card">
-              <Drop size="md" />
-              <h3 class="mt-4 font-heading text-lg font-extrabold text-ink">{value.title}</h3>
-              <p class="mt-2 leading-relaxed text-ink/60">{value.text}</p>
+          offers.map((offer) => (
+            <div class="flex flex-col rounded-panel border-2 border-dashed border-brand-red/30 bg-fog p-7">
+              <p class="font-heading text-xl font-extrabold text-brand-red">{offer.title}</p>
+              <p class="mt-3 flex-1 leading-relaxed text-ink/65">{offer.detail}</p>
+              <p class="mt-4 border-t border-line pt-4 text-sm text-ink/45">{offer.fine}</p>
             </div>
           ))
         }
@@ -126,73 +207,97 @@ const offers = [
     </div>
   </section>
 
-  <!-- Current offers -->
+  <!-- Service area -->
   <section
-    id="CurrentOffersandSavings"
+    id="OurServiceArea"
     class="mx-auto max-w-7xl scroll-mt-28 px-4 py-20 sm:px-6 lg:px-8"
-    aria-labelledby="offers-title"
+    aria-labelledby="area-title"
   >
-    <SectionHeading
-      id="offers-title"
-      eyebrow="Current offers & savings"
-      title="A little something for your wallet."
-      description="Mention any of these when you book — no coupon clipping required."
-    />
-    <div class="mt-14 grid gap-6 md:grid-cols-3">
+    <div class="grid items-center gap-12 lg:grid-cols-2">
       {
-        offers.map((offer) => (
-          <div class="flex flex-col rounded-panel border-2 border-dashed border-brand-red/30 bg-fog p-7">
-            <p class="font-heading text-xl font-extrabold text-brand-red">{offer.title}</p>
-            <p class="mt-3 flex-1 leading-relaxed text-ink/65">{offer.detail}</p>
-            <p class="mt-4 border-t border-line pt-4 text-sm text-ink/45">{offer.fine}</p>
-          </div>
-        ))
+        settings.serviceAreaMapUrl ? (
+          <img
+            src={settings.serviceAreaMapUrl}
+            alt="Service area map"
+            loading="lazy"
+            class="aspect-[4/3] w-full rounded-panel object-cover shadow-card"
+          />
+        ) : (
+          <Image
+            src={tampaServiceAreaImage}
+            alt="Downtown Tampa skyline reflected on the waterfront at dusk"
+            width={1280}
+            loading="lazy"
+            class="aspect-[4/3] w-full rounded-panel object-cover shadow-card"
+          />
+        )
       }
+      <div>
+        <SectionHeading
+          id="area-title"
+          eyebrow="Our service area"
+          title="Serving all of Central Florida."
+          description="At Your Friendly Neighborhood H2O Pros Plumbing & Filtration, we take pride in protecting homes and businesses across all of Central Florida with skill, integrity, and a touch of heroism."
+          align="left"
+        />
+        <div class="mt-6 space-y-4 leading-relaxed text-ink/65">
+          <p>
+            Our team serves Marion, Hillsborough, Pasco, Hernando, Polk, Citrus, Sumter, Pinellas,
+            and Highlands Counties, including Ocala, The Villages, Davenport, Sebring, Wesley
+            Chapel, Tampa, and Lutz.
+          </p>
+          <p>
+            Every call is a mission to restore comfort, quality, and clean water. Whether it's a
+            leak, clog, or full system install, we arrive ready to get the job done right!
+          </p>
+          <p class="font-semibold text-ink/80">
+            Because your home deserves nothing less than superhero-level service. Call us today!
+            Same Day Service Available.
+          </p>
+        </div>
+        <ul class="mt-8 flex flex-wrap gap-3">
+          {
+            counties.map((county) => (
+              <li class="inline-flex items-center gap-2 rounded-full border border-line bg-fog px-5 py-2.5 font-semibold text-ink/70 shadow-card">
+                <Drop size="sm" />
+                {county} County
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-6 text-sm font-semibold uppercase tracking-wide text-ink/45">
+          Key communities
+        </p>
+        <ul class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-ink/60">
+          {communities.map((community) => <li>{community}</li>)}
+        </ul>
+      </div>
     </div>
   </section>
 
-  <!-- Service area -->
-  <section id="OurServiceArea" class="scroll-mt-28 bg-mist" aria-labelledby="area-title">
-    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-      <div class="grid items-center gap-12 lg:grid-cols-2">
-        {
-          settings.serviceAreaMapUrl ? (
-            <img
-              src={settings.serviceAreaMapUrl}
-              alt="Service area map"
-              loading="lazy"
-              class="aspect-[4/3] w-full rounded-panel object-cover shadow-card"
-            />
-          ) : (
-            <Image
-              src={tampaServiceAreaImage}
-              alt="Downtown Tampa skyline reflected on the waterfront at dusk"
-              width={1280}
-              loading="lazy"
-              class="aspect-[4/3] w-full rounded-panel object-cover shadow-card"
-            />
-          )
-        }
-        <div>
-          <SectionHeading
-            id="area-title"
-            eyebrow="Our service area"
-            title="Five counties. One phone number."
-            description="From downtown Tampa to Ocala horse country, we cover the whole neighborhood."
-            align="left"
-          />
-          <ul class="mt-8 flex flex-wrap gap-3">
-            {
-              counties.map((county) => (
-                <li class="inline-flex items-center gap-2 rounded-full border border-line bg-fog px-5 py-2.5 font-semibold text-ink/70 shadow-card">
-                  <Drop size="sm" />
-                  {county} County
-                </li>
-              ))
-            }
-          </ul>
-        </div>
+  <!-- Get in touch -->
+  <section class="bg-mist" aria-labelledby="touch-title">
+    <div class="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8">
+      <SectionHeading
+        id="touch-title"
+        eyebrow="Get in touch"
+        title="Our team is here to help."
+        description="Have a plumbing emergency, a question about water filtration, or need to schedule an appointment?"
+      />
+      <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-ink/65">
+        Reach out to Your Friendly Neighborhood H2O Pros by phone or email, or fill out our online
+        form. We look forward to providing you with fast, reliable, and friendly service.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <Button href={site.phoneHref}>Call {site.phone}</Button>
+        <Button href={site.emailHref} variant="outline">{site.email}</Button>
       </div>
+      <p class="mt-8 text-sm text-ink/50">
+        Mon – Fri: 8:00 am – 5:00 pm &middot; Sat – Sun: Closed
+      </p>
+      <p class="mt-2 text-sm text-ink/50">
+        Insured and bonded &middot; License {site.license}
+      </p>
     </div>
   </section>
 

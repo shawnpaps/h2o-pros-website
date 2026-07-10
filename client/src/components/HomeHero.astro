@@ -1,7 +1,11 @@
 ---
 const { site, ratingSummary } = Astro.props;
 import { Image } from 'astro:assets';
+import { getSiteContent } from '../lib/cms';
+import logo from '../assets/logos/h2o-logo.webp';
 import heroVideo from '../assets/videos/hero-2.mp4';
+
+const { logoUrl } = await getSiteContent();
 import cardPipes from '../assets/services/waterheater.jpg';
 import cardPlumber from '../assets/services/timur-shakerzianov-c314Gh8dXAo-unsplash.jpg';
 import cardValves from '../assets/services/samuel-sianipar-scUBcasSvbE-unsplash.jpg';
@@ -41,8 +45,18 @@ const tickerItems = [
 
 	<h1 class="sr-only">We are your friendly, neighborhood plumbing experts</h1>
 
+	<div class="relative z-10 flex justify-center px-4 pt-36 sm:px-6">
+		<img
+			src={logoUrl ?? logo.src}
+			width={logo.width}
+			height={logo.height}
+			alt=""
+			class="h-auto w-40 drop-shadow-[0_25px_50px_rgb(13_16_19/0.7)] sm:w-48 lg:w-56"
+		/>
+	</div>
+
 	<div
-		class="relative z-10 mx-auto w-full max-w-7xl flex-1 grid grid-cols-1 items-center gap-12 px-4 pt-40 pb-16 sm:px-6 md:grid-cols-[1fr_auto_1fr] md:gap-6 lg:px-8"
+		class="relative z-10 mx-auto w-full max-w-7xl flex-1 grid grid-cols-1 items-center gap-12 px-4 pt-10 pb-16 sm:px-6 md:grid-cols-[1fr_auto_1fr] md:gap-6 lg:px-8"
 	>
 		<p
 			class="order-1 text-center font-heading text-xl leading-snug uppercase tracking-tight drop-shadow-md md:text-left lg:text-2xl"

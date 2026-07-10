@@ -11,16 +11,43 @@ import CtaBand from './CtaBand.astro';
 import ServicesShowcase from './ServicesShowcase.astro';
 import { Image } from 'astro:assets';
 import tampaServiceAreaImage from '../assets/tampa-service-area.jpg';
-import { getFaqs, getSiteContent, getSiteSettings } from '../lib/cms';
+import {
+	getFaqs,
+	getLocations,
+	getSiteContent,
+	getSiteSettings,
+} from '../lib/cms';
 
-const { site, counties } = await getSiteContent();
+const { site } = await getSiteContent();
 const settings = await getSiteSettings();
 const faqs = await getFaqs();
+const locations = await getLocations();
+
+// Derive the county list from the cities we actually serve.
+const counties = [
+	...new Set(locations.map((location) => location.county)),
+].sort();
+const countWords = [
+	'zero',
+	'one',
+	'two',
+	'three',
+	'four',
+	'five',
+	'six',
+	'seven',
+	'eight',
+	'nine',
+	'ten',
+	'eleven',
+	'twelve',
+];
+const countyCountWord = countWords[counties.length] ?? String(counties.length);
 
 const trustStats = [
 	{ value: site.license, label: 'Licensed, insured & bonded' },
 	{ value: '8-5', label: 'Monday-Friday service' },
-	{ value: '5 counties', label: 'Across Tampa Bay' },
+	{ value: `${counties.length} counties`, label: 'Across Tampa Bay' },
 	{ value: 'Upfront', label: 'Flat-rate pricing' },
 ];
 
@@ -42,7 +69,7 @@ const whyStats = [
 			id="why-title"
 			eyebrow="Why choose us"
 			title="Neighbors first, plumbers second."
-			description="We built this company on the radical idea that plumbing should be honest, tidy, and pleasant."
+			description="We're more than just plumbers. We're your trusted partners for a safer, healthier home. Founded on the principles of integrity, expertise, and a genuine commitment to our community, we've built a reputation for delivering reliable, high-quality plumbing and water filtration services. We understand that your home's plumbing is the heart of its comfort and safety, and we treat every job, big or small, with the attention and care it deserves."
 			tone="dark"
 		/>
 		<div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -73,7 +100,7 @@ const whyStats = [
 			<SectionHeading
 				id="area-title"
 				eyebrow="Service area"
-				title="Proudly serving five counties."
+				title={`Proudly serving Tampa Bay and beyond.`}
 				description="If you're in the greater Tampa Bay area, chances are we're already in your neighborhood."
 				align="left"
 			/>

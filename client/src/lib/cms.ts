@@ -105,6 +105,7 @@ export const getServices = async (): Promise<Service[]> => {
     docs: Array<{
       title: string;
       anchorId: string;
+      slug?: string;
       blurb: string;
       bullets?: Array<{ text?: string }>;
       accent?: 'red' | 'blue';
@@ -113,13 +114,42 @@ export const getServices = async (): Promise<Service[]> => {
       showcaseBadge?: string;
       showcaseImage?: unknown;
       detailImage?: unknown;
+      heroHeadline?: string;
+      signs?: Array<{ text?: string }>;
+      steps?: Array<{ title?: string; description?: string }>;
+      stats?: Array<{ value?: string; label?: string }>;
+      faqs?: Array<{ question?: string; answer?: string }>;
     }>;
   }>('/api/services?sort=sortOrder&limit=100&depth=1');
 
   if (!payload?.docs?.length) return fallbackServices;
 
-  return payload.docs.map((service) => ({
+  // Detail-page content falls back per service to the local copy until the
+  // CMS entry has its own.
+  const fallbackById = new Map(fallbackServices.map((s) => [s.id, s]));
+
+  return payload.docs.map((service) => {
+    const fallback = fallbackById.get(service.anchorId);
+    const steps =
+      service.steps
+        ?.map((step) => ({ title: step.title || '', description: step.description || '' }))
+        .filter((step) => step.title) ?? [];
+    const stats =
+      service.stats
+        ?.map((stat) => ({ value: stat.value || '', label: stat.label || '' }))
+        .filter((stat) => stat.value && stat.label) ?? [];
+    const faqs =
+      service.faqs
+        ?.map((faq) => ({ question: faq.question || '', answer: faq.answer || '' }))
+        .filter((faq) => faq.question && faq.answer) ?? [];
+    const signs = service.signs?.map((sign) => sign.text || '').filter(Boolean) ?? [];
+
+    return {
     id: service.anchorId,
+    slug:
+      service.slug ||
+      fallback?.slug ||
+      service.anchorId.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase(),
     title: service.title,
     blurb: service.blurb,
     bullets: service.bullets?.map((bullet) => bullet.text || '').filter(Boolean) ?? [],
@@ -127,9 +157,15 @@ export const getServices = async (): Promise<Service[]> => {
     featured: service.featured,
     showcaseTitle: service.showcaseTitle,
     showcaseBadge: service.showcaseBadge,
+    heroHeadline: service.heroHeadline || fallback?.heroHeadline,
+    signs: signs.length ? signs : fallback?.signs ?? [],
+    steps: steps.length ? steps : fallback?.steps ?? [],
+    stats: stats.length ? stats : fallback?.stats ?? [],
+    faqs: faqs.length ? faqs : fallback?.faqs ?? [],
     showcaseImageUrl: mediaUrl(service.showcaseImage, 'card'),
     detailImageUrl: mediaUrl(service.detailImage, 'card'),
-  }));
+    };
+  });
 };
 
 export const getLocations = async (): Promise<Location[]> => {

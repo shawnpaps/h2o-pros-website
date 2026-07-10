@@ -1,0 +1,668 @@
+---
+/**
+ * Immersive service detail page, templated from the CMS services collection
+ * (falls back to the local data in src/data/services.ts). One page per
+ * service at /services/<slug>, sharing the landing page's design language:
+ * split solid/hollow display type, mono spec-sheet labels, the ticker, and
+ * scroll-driven interactions. Respects prefers-reduced-motion throughout.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Button from '../../components/Button.astro';
+import BookOnlineButton from '../../components/BookOnlineButton.astro';
+import Drop from '../../components/Drop.astro';
+import Stars from '../../components/Stars.astro';
+import FaqItem from '../../components/FaqItem.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import ReviewsSpotlight from '../../components/ReviewsSpotlight.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getServices, getSiteContent } from '../../lib/cms';
+import { getRatingSummary } from '../../lib/reviews';
+import drainImage from '../../assets/services/samuel-sianipar-scUBcasSvbE-unsplash.jpg';
+import heaterImage from '../../assets/services/waterheater.jpg';
+import filtrationImage from '../../assets/services/timur-shakerzianov-c314Gh8dXAo-unsplash.jpg';
+import leakImage from '../../assets/services/pan-xiaozhen-IYE0ImQlY90-unsplash.jpg';
+
+/** Fallback hero image per service, used when the CMS has none. */
+const fallbackImages: Record<string, ImageMetadata> = {
+	DrainandSewer: drainImage,
+	WaterHeater: heaterImage,
+	Filtration: filtrationImage,
+	LeakDetection: leakImage,
+};
+
+const { slug } = Astro.params;
+const [services, { site }, ratingSummary] = await Promise.all([
+	getServices(),
+	getSiteContent(),
+	getRatingSummary(),
+]);
+
+const index = services.findIndex((item) => item.slug === slug);
+const service = services[index];
+
+if (!service) {
+	return new Response(null, { status: 404 });
+}
+
+const displayName = service.showcaseTitle || service.title;
+const heroImageUrl = service.detailImageUrl || service.showcaseImageUrl;
+const heroImage = fallbackImages[service.id] ?? filtrationImage;
+const counter = `${String(index + 1).padStart(2, '0')} / ${String(services.length).padStart(2, '0')}`;
+
+const prev = services[(index - 1 + services.length) % services.length];
+const next = services[(index + 1) % services.length];
+---
+
+<BaseLayout
+	title={`${service.title} in Tampa Bay`}
+	description={service.blurb}
+	headerVariant="dark"
+>
+	<!-- Hero -->
+	<section
+		class="relative flex min-h-[92vh] flex-col justify-end overflow-hidden bg-ink-deep text-white"
+		data-hero
+	>
+		<div class="absolute inset-0" data-parallax aria-hidden="true">
+			{
+				heroImageUrl ? (
+					<img
+						src={heroImageUrl}
+						alt=""
+						loading="eager"
+						class="h-[120%] w-full object-cover opacity-45"
+					/>
+				) : (
+					<Image
+						src={heroImage}
+						alt=""
+						width={1920}
+						loading="eager"
+						class="h-[120%] w-full object-cover opacity-45"
+					/>
+				)
+			}
+		</div>
+		<div
+			class="absolute inset-0 bg-gradient-to-b from-ink-deep/85 via-ink-deep/35 to-ink-deep"
+			aria-hidden="true"
+		>
+		</div>
+		<div
+			class="pointer-events-none absolute -right-40 top-24 h-[28rem] w-[28rem] rounded-full bg-water/20 blur-3xl"
+			aria-hidden="true"
+		>
+		</div>
+
+		<h1 class="sr-only">{service.title} in Tampa Bay</h1>
+
+		<div
+			class="relative z-10 mx-auto w-full max-w-7xl px-4 pb-20 pt-44 sm:px-6 lg:px-8"
+		>
+			<!-- Giant display title: hollow echo behind, solid in front -->
+			<div class="relative mt-8" aria-hidden="true">
+				<p
+					class="svc-hollow pointer-events-none absolute left-1.5 top-1.5 select-none font-heading text-[clamp(3rem,10vw,8.5rem)] font-extrabold uppercase leading-[0.95] tracking-tight"
+					data-hero-echo
+				>
+					{displayName}
+				</p>
+				<p
+					class="relative select-none font-heading text-[clamp(3rem,10vw,8.5rem)] font-extrabold uppercase leading-[0.95] tracking-tight text-ink"
+				>
+					{displayName}
+				</p>
+			</div>
+
+			<div class="mt-10 grid items-end gap-10 lg:grid-cols-[3fr_2fr]">
+				<div>
+					{
+						service.heroHeadline && (
+							<p class="font-heading text-2xl font-extrabold tracking-tight text-water-light sm:text-3xl">
+								{service.heroHeadline}
+							</p>
+						)
+					}
+					<p class="mt-4 max-w-2xl text-lg leading-relaxed text-white/75">
+						{service.blurb}
+					</p>
+					<div class="mt-8 flex flex-wrap gap-4">
+						<BookOnlineButton size="lg">Book Online</BookOnlineButton>
+						<Button
+							href={site.phoneHref}
+							variant="outline"
+							size="lg"
+							class="text-white"
+						>
+							Call {site.phone}
+						</Button>
+					</div>
+				</div>
+				<div class="flex items-center gap-3 lg:justify-end">
+					<Stars rating={Number(ratingSummary.average)} />
+					<p class="text-sm font-medium text-white/80">
+						{ratingSummary.average} on {ratingSummary.source} ·
+						{ratingSummary.count}+ reviews
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Included-work ticker (decorative; full list appears in the spec sheet) -->
+	<div class="border-y border-line bg-mist py-5" aria-hidden="true">
+		<div class="svc-ticker">
+			<div class="svc-ticker-track">
+				{
+					[0, 1].map(() =>
+						service.bullets.map((bullet) => (
+							<span class="svc-ticker-item">
+								<Drop size="sm" color={service.accent} class="mr-4" />
+								{bullet}
+							</span>
+						)),
+					)
+				}
+			</div>
+		</div>
+	</div>
+
+	<!-- "Sound familiar?" interactive symptom checklist -->
+	{
+		service.signs.length > 0 && (
+			<section
+				class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8"
+				aria-labelledby="signs-title">
+				<SectionHeading
+					id="signs-title"
+					eyebrow="Sound familiar?"
+					title="Check what you're seeing at home."
+					description="Tap anything you recognize. One is enough to be worth a phone call — and none of them get better on their own."
+				/>
+				<div class="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-2">
+					{service.signs.map((sign, i) => (
+						<button
+							type="button"
+							class="svc-sign group flex min-h-[64px] items-center gap-4 rounded-card border border-line bg-fog px-5 py-4 text-left font-semibold text-ink/75 shadow-card transition hover:border-water/50 hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-water"
+							aria-pressed="false"
+							data-sign
+							data-reveal
+							style={`--reveal-delay: ${i * 70}ms`}>
+							<span
+								class="svc-sign-check grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-line text-transparent transition"
+								aria-hidden="true">
+								<svg
+									width="13"
+									height="13"
+									viewBox="0 0 13 13"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2.5"
+									stroke-linecap="round"
+									stroke-linejoin="round">
+									<path d="M2 7l3 3 6-8" />
+								</svg>
+							</span>
+							{sign}
+						</button>
+					))}
+				</div>
+				<div
+					class="mx-auto mt-10 flex max-w-4xl flex-col items-center gap-5 text-center"
+					data-sign-result
+					hidden>
+					<p
+						class="font-heading text-lg font-extrabold text-ink"
+						aria-live="polite"
+						data-sign-message
+					/>
+					<div class="flex flex-wrap justify-center gap-4">
+						<BookOnlineButton>Book Online</BookOnlineButton>
+						<Button
+							href={site.phoneHref}
+							variant="outline"
+							class="text-brand-red">
+							Call {site.phone}
+						</Button>
+					</div>
+				</div>
+			</section>
+		)
+	}
+
+	<!-- Spec sheet: what's included -->
+	<section class="bg-mist" aria-labelledby="included-title">
+		<div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+			<div class="grid gap-12 lg:grid-cols-[2fr_3fr]">
+				<div>
+					<p
+						class="font-mono text-[0.65rem] font-bold uppercase tracking-[0.25em] text-ink/45"
+					>
+						The spec sheet
+					</p>
+					<h2
+						id="included-title"
+						class="mt-4 font-heading text-3xl font-extrabold tracking-tight text-ink sm:text-4xl"
+					>
+						What's included.
+					</h2>
+					<p class="mt-4 max-w-md text-lg leading-relaxed text-ink/60">
+						Every visit backed by upfront flat-rate pricing and our workmanship
+						guarantee.
+					</p>
+					{
+						service.showcaseBadge && (
+							<p class="mt-8 font-heading text-sm font-extrabold uppercase tracking-wide text-water-light">
+								→ {service.showcaseBadge}
+							</p>
+						)
+					}
+				</div>
+				<ul>
+					{
+						service.bullets.map((bullet, i) => (
+							<li
+								class="group flex items-baseline gap-6 border-t border-line py-6 transition-all last:border-b hover:pl-3"
+								data-reveal
+								style={`--reveal-delay: ${i * 90}ms`}>
+								<span
+									class="font-mono text-xs tracking-[0.25em] text-ink/35 transition group-hover:text-water-light"
+									aria-hidden="true">
+									{String(i + 1).padStart(2, '0')}
+								</span>
+								<span class="font-heading text-xl font-extrabold uppercase tracking-wide text-ink/85 transition group-hover:text-ink sm:text-2xl">
+									{bullet}
+								</span>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<!-- How it works: scroll-driven timeline -->
+	{
+		service.steps.length > 0 && (
+			<section
+				class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8"
+				aria-labelledby="process-title">
+				<SectionHeading
+					id="process-title"
+					eyebrow="How it works"
+					title="No surprises, start to finish."
+				/>
+				<div class="relative mx-auto mt-16 max-w-3xl">
+					<div
+						class="absolute bottom-5 left-[1.4rem] top-5 w-px bg-line"
+						aria-hidden="true">
+						<div class="svc-timeline-fill" data-timeline-fill />
+					</div>
+					<ol class="space-y-14">
+						{service.steps.map((step, i) => (
+							<li class="svc-step relative flex gap-8" data-step>
+								<span
+									class="svc-step-dot z-10 grid h-12 w-12 shrink-0 place-items-center rounded-full border-2 border-line bg-ink-deep font-mono text-xs font-bold tracking-widest text-ink/45 transition"
+									aria-hidden="true">
+									{String(i + 1).padStart(2, '0')}
+								</span>
+								<div class="pt-1.5">
+									<h3 class="font-heading text-xl font-extrabold tracking-tight text-ink sm:text-2xl">
+										{step.title}
+									</h3>
+									<p class="mt-3 max-w-xl leading-relaxed text-ink/60">
+										{step.description}
+									</p>
+								</div>
+							</li>
+						))}
+					</ol>
+				</div>
+			</section>
+		)
+	}
+
+	<!-- Proof stats -->
+	{
+		service.stats.length > 0 && (
+			<section class="border-y border-line bg-mist" aria-label="By the numbers">
+				<div class="mx-auto grid max-w-7xl gap-6 px-4 py-20 sm:grid-cols-3 sm:px-6 lg:px-8">
+					{service.stats.map((stat, i) => (
+						<div
+							class="rounded-panel border border-line bg-fog p-8 text-center shadow-card"
+							data-reveal
+							style={`--reveal-delay: ${i * 90}ms`}>
+							<p
+								class="font-heading text-4xl font-extrabold tracking-tight text-water-light"
+								data-stat>
+								{stat.value}
+							</p>
+							<p class="mt-2 leading-relaxed text-ink/65">{stat.label}</p>
+						</div>
+					))}
+				</div>
+			</section>
+		)
+	}
+
+	<!-- Service FAQs -->
+	{
+		service.faqs.length > 0 && (
+			<section
+				class="mx-auto max-w-3xl px-4 py-24 sm:px-6"
+				aria-labelledby="svc-faq-title">
+				<SectionHeading
+					id="svc-faq-title"
+					eyebrow="Straight answers"
+					title={`${displayName} questions, answered.`}
+				/>
+				<div class="mt-12 space-y-4">
+					{service.faqs.map((faq) => (
+						<FaqItem question={faq.question} answer={faq.answer} />
+					))}
+				</div>
+			</section>
+		)
+	}
+
+	<ReviewsSpotlight />
+
+	<!-- Prev / next service -->
+	<nav class="border-b border-line" aria-label="More services">
+		<div class="grid sm:grid-cols-2">
+			<a
+				href={`/services/${prev.slug}`}
+				class="group border-b border-line px-6 py-12 transition hover:bg-mist focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-water sm:border-b-0 sm:border-r sm:px-10 lg:px-16"
+			>
+				<p
+					class="font-mono text-[0.65rem] font-bold uppercase tracking-[0.25em] text-ink/40"
+				>
+					← Previous service
+				</p>
+				<p
+					class="svc-pager mt-3 font-heading text-3xl font-extrabold uppercase leading-none tracking-tight sm:text-4xl"
+				>
+					{prev.showcaseTitle || prev.title}
+				</p>
+			</a>
+			<a
+				href={`/services/${next.slug}`}
+				class="group px-6 py-12 text-right transition hover:bg-mist focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-water sm:px-10 lg:px-16"
+			>
+				<p
+					class="font-mono text-[0.65rem] font-bold uppercase tracking-[0.25em] text-ink/40"
+				>
+					Next service →
+				</p>
+				<p
+					class="svc-pager mt-3 font-heading text-3xl font-extrabold uppercase leading-none tracking-tight sm:text-4xl"
+				>
+					{next.showcaseTitle || next.title}
+				</p>
+			</a>
+		</div>
+	</nav>
+
+	<CtaBand
+		title={`Ready to get your ${displayName.toLowerCase()} handled?`}
+		description="Book online in 60 seconds or call during business hours — a real person answers."
+	/>
+</BaseLayout>
+
+<style>
+	/* Hollow display type — same treatment as the home showcase title. */
+	.svc-hollow {
+		color: transparent;
+		-webkit-text-stroke: 2px rgba(233, 238, 245, 0.35);
+	}
+
+	/* Included-work ticker (smaller sibling of the home hero ticker). */
+	.svc-ticker {
+		overflow: hidden;
+	}
+	.svc-ticker-track {
+		display: flex;
+		gap: 3rem;
+		width: max-content;
+		padding-right: 3rem;
+		animation: svc-ticker-scroll 30s linear infinite;
+	}
+	.svc-ticker-item {
+		display: inline-flex;
+		align-items: center;
+		font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+		font-weight: 800;
+		font-size: 1.05rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		white-space: nowrap;
+		color: rgb(233 238 245 / 0.55);
+	}
+	@keyframes svc-ticker-scroll {
+		to {
+			transform: translateX(-50%);
+		}
+	}
+
+	/* Scroll reveals: elements start shifted + transparent, settle on reveal. */
+	[data-reveal] {
+		opacity: 0;
+		transform: translateY(18px);
+		transition:
+			opacity 0.6s ease var(--reveal-delay, 0ms),
+			transform 0.6s ease var(--reveal-delay, 0ms);
+	}
+	[data-reveal].is-revealed {
+		opacity: 1;
+		transform: none;
+	}
+
+	/* Symptom checklist checked state. */
+	.svc-sign[aria-pressed='true'] {
+		border-color: #3d7bee;
+		color: #e9eef5;
+		background: rgb(61 123 238 / 0.12);
+	}
+	.svc-sign[aria-pressed='true'] .svc-sign-check {
+		border-color: #3d7bee;
+		background: #3d7bee;
+		color: #fff;
+	}
+
+	/* Timeline: gradient line fills as you scroll; reached steps light up. */
+	.svc-timeline-fill {
+		height: 0%;
+		width: 100%;
+		background: linear-gradient(180deg, #3d7bee, #8fb5fa, #e8232f);
+	}
+	.svc-step.is-active .svc-step-dot {
+		border-color: #3d7bee;
+		color: #e9eef5;
+		box-shadow: 0 0 0 6px rgb(61 123 238 / 0.15);
+	}
+
+	/* Prev/next pager: hollow type that fills solid on hover. */
+	.svc-pager {
+		color: transparent;
+		-webkit-text-stroke: 1.5px rgba(233, 238, 245, 0.5);
+		transition: color 0.3s ease;
+	}
+	.group:hover .svc-pager,
+	.group:focus-visible .svc-pager {
+		color: #e9eef5;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.svc-ticker-track {
+			animation: none;
+		}
+		[data-reveal] {
+			opacity: 1;
+			transform: none;
+			transition: none;
+		}
+		.svc-timeline-fill {
+			height: 100% !important;
+		}
+	}
+</style>
+
+<script>
+	const reducedMotion = window.matchMedia(
+		'(prefers-reduced-motion: reduce)',
+	).matches;
+
+	/* Hero parallax: background drifts slower than the page; echo title drifts
+	   slightly the other way. */
+	const hero = document.querySelector<HTMLElement>('[data-hero]');
+	const parallax = hero?.querySelector<HTMLElement>('[data-parallax]');
+	const echo = hero?.querySelector<HTMLElement>('[data-hero-echo]');
+	if (hero && parallax && !reducedMotion) {
+		let ticking = false;
+		const update = () => {
+			ticking = false;
+			const y = Math.min(window.scrollY, hero.offsetHeight);
+			parallax.style.transform = `translateY(${y * 0.25}px)`;
+			if (echo) echo.style.transform = `translateY(${y * -0.06}px)`;
+		};
+		window.addEventListener(
+			'scroll',
+			() => {
+				if (!ticking) {
+					ticking = true;
+					requestAnimationFrame(update);
+				}
+			},
+			{ passive: true },
+		);
+	}
+
+	/* Scroll reveals. */
+	const revealTargets = document.querySelectorAll('[data-reveal]');
+	if (revealTargets.length && !reducedMotion) {
+		const revealObserver = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add('is-revealed');
+						revealObserver.unobserve(entry.target);
+					}
+				});
+			},
+			{ threshold: 0.2 },
+		);
+		revealTargets.forEach((el) => revealObserver.observe(el));
+	} else {
+		revealTargets.forEach((el) => el.classList.add('is-revealed'));
+	}
+
+	/* Symptom checklist: toggle cards, tally, and surface the CTA. */
+	const signs = Array.from(
+		document.querySelectorAll<HTMLButtonElement>('[data-sign]'),
+	);
+	const signResult = document.querySelector<HTMLElement>('[data-sign-result]');
+	const signMessage = document.querySelector<HTMLElement>(
+		'[data-sign-message]',
+	);
+	if (signs.length && signResult && signMessage) {
+		const messages = (checked: number, total: number) => {
+			if (checked === 1)
+				return "That's one sign — worth a quick call before it grows.";
+			if (checked < total)
+				return `${checked} of ${total} signs — let's take a look before it gets worse.`;
+			return `All ${total}? Don't wait on this one — we can help today.`;
+		};
+		signs.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const pressed = btn.getAttribute('aria-pressed') === 'true';
+				btn.setAttribute('aria-pressed', String(!pressed));
+				const checked = signs.filter(
+					(b) => b.getAttribute('aria-pressed') === 'true',
+				).length;
+				signResult.hidden = checked === 0;
+				if (checked > 0)
+					signMessage.textContent = messages(checked, signs.length);
+			});
+		});
+	}
+
+	/* Timeline: fill the line to the last step that has crossed the viewport
+	   midline, and light up reached steps. */
+	const timelineFill = document.querySelector<HTMLElement>(
+		'[data-timeline-fill]',
+	);
+	const steps = Array.from(
+		document.querySelectorAll<HTMLElement>('[data-step]'),
+	);
+	if (timelineFill && steps.length && !reducedMotion) {
+		let ticking = false;
+		const track = timelineFill.parentElement as HTMLElement;
+		const update = () => {
+			ticking = false;
+			const mid = window.innerHeight * 0.6;
+			const trackTop = track.getBoundingClientRect().top;
+			let reached = 0;
+			steps.forEach((step) => {
+				const active = step.getBoundingClientRect().top < mid;
+				step.classList.toggle('is-active', active);
+				if (active) {
+					const dot = step.querySelector('.svc-step-dot');
+					const bottom = (dot ?? step).getBoundingClientRect().bottom;
+					reached = Math.max(reached, bottom - trackTop);
+				}
+			});
+			const pct = Math.min(100, (reached / track.offsetHeight) * 100);
+			timelineFill.style.height = `${pct}%`;
+		};
+		window.addEventListener(
+			'scroll',
+			() => {
+				if (!ticking) {
+					ticking = true;
+					requestAnimationFrame(update);
+				}
+			},
+			{ passive: true },
+		);
+		update();
+	} else {
+		steps.forEach((step) => step.classList.add('is-active'));
+		if (timelineFill) timelineFill.style.height = '100%';
+	}
+
+	/* Stats: count the leading number up when the tile enters the viewport. */
+	const stats = Array.from(
+		document.querySelectorAll<HTMLElement>('[data-stat]'),
+	);
+	if (stats.length && !reducedMotion) {
+		const statObserver = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (!entry.isIntersecting) return;
+					statObserver.unobserve(entry.target);
+					const el = entry.target as HTMLElement;
+					const original = el.textContent ?? '';
+					const match = original.match(/^([^0-9]*)(\d+)(.*)$/);
+					if (!match) return;
+					const [, prefix, digits, suffix] = match;
+					const target = parseInt(digits, 10);
+					if (target <= 1) return;
+					const start = performance.now();
+					const duration = 1200;
+					const tick = (now: number) => {
+						const progress = Math.min(1, (now - start) / duration);
+						const eased = 1 - Math.pow(1 - progress, 3);
+						el.textContent = `${prefix}${Math.round(target * eased)}${suffix}`;
+						if (progress < 1) requestAnimationFrame(tick);
+						else el.textContent = original;
+					};
+					requestAnimationFrame(tick);
+				});
+			},
+			{ threshold: 0.4 },
+		);
+		stats.forEach((el) => statObserver.observe(el));
+	}
+</script>
