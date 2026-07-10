@@ -3,28 +3,51 @@
  * Everything below the hero on the home page — shared verbatim by the
  * city landing pages under /locations/.
  */
-import Button from './Button.astro';
 import Drop from './Drop.astro';
 import SectionHeading from './SectionHeading.astro';
 import FaqItem from './FaqItem.astro';
-import ReviewCard from './ReviewCard.astro';
+import ReviewsSpotlight from './ReviewsSpotlight.astro';
 import CtaBand from './CtaBand.astro';
 import ServicesShowcase from './ServicesShowcase.astro';
 import { Image } from 'astro:assets';
 import tampaServiceAreaImage from '../assets/tampa-service-area.jpg';
-import { getReviews, getRatingSummary } from '../lib/reviews';
-import { getFaqs, getSiteContent, getSiteSettings } from '../lib/cms';
+import {
+	getFaqs,
+	getLocations,
+	getSiteContent,
+	getSiteSettings,
+} from '../lib/cms';
 
-const { site, counties } = await getSiteContent();
+const { site } = await getSiteContent();
 const settings = await getSiteSettings();
-const reviews = await getReviews();
-const ratingSummary = await getRatingSummary();
 const faqs = await getFaqs();
+const locations = await getLocations();
+
+// Derive the county list from the cities we actually serve.
+const counties = [
+	...new Set(locations.map((location) => location.county)),
+].sort();
+const countWords = [
+	'zero',
+	'one',
+	'two',
+	'three',
+	'four',
+	'five',
+	'six',
+	'seven',
+	'eight',
+	'nine',
+	'ten',
+	'eleven',
+	'twelve',
+];
+const countyCountWord = countWords[counties.length] ?? String(counties.length);
 
 const trustStats = [
 	{ value: site.license, label: 'Licensed, insured & bonded' },
 	{ value: '8-5', label: 'Monday-Friday service' },
-	{ value: '5 counties', label: 'Across Tampa Bay' },
+	{ value: `${counties.length} counties`, label: 'Across Tampa Bay' },
 	{ value: 'Upfront', label: 'Flat-rate pricing' },
 ];
 
@@ -36,25 +59,7 @@ const whyStats = [
 ];
 ---
 
-<!-- Trust strip (overlaps hero) -->
-<section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-	<div
-		class="relative -mt-12 grid grid-cols-2 gap-6 rounded-panel bg-white p-6 shadow-card sm:grid-cols-4 sm:p-8"
-	>
-		{
-			trustStats.map((stat) => (
-				<div class="flex flex-col items-center gap-2 text-center">
-					<p class="font-heading text-xl font-extrabold text-brand-red">
-						{stat.value}
-					</p>
-					<p class="text-sm text-ink/60">{stat.label}</p>
-				</div>
-			))
-		}
-	</div>
-</section>
-
-<!-- Services -->
+<!-- Trust strip (overlaps hero) --><!-- Services -->
 <ServicesShowcase />
 
 <!-- Why choose us -->
@@ -64,7 +69,7 @@ const whyStats = [
 			id="why-title"
 			eyebrow="Why choose us"
 			title="Neighbors first, plumbers second."
-			description="We built this company on the radical idea that plumbing should be honest, tidy, and pleasant."
+			description="We're more than just plumbers. We're your trusted partners for a safer, healthier home. Founded on the principles of integrity, expertise, and a genuine commitment to our community, we've built a reputation for delivering reliable, high-quality plumbing and water filtration services. We understand that your home's plumbing is the heart of its comfort and safety, and we treat every job, big or small, with the attention and care it deserves."
 			tone="dark"
 		/>
 		<div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -83,24 +88,7 @@ const whyStats = [
 </section>
 
 <!-- Reviews -->
-<section class="bg-mist" aria-labelledby="reviews-title">
-	<div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
-		<SectionHeading
-			id="reviews-title"
-			eyebrow="Reviews"
-			title="Your neighbors said it best."
-			description={`A ${ratingSummary.average} average across ${ratingSummary.count} ${ratingSummary.source} — here's why.`}
-		/>
-		<div class="mt-14 grid gap-6 md:grid-cols-3">
-			{reviews.slice(0, 3).map((review) => <ReviewCard review={review} />)}
-		</div>
-		<div class="mt-10 text-center">
-			<Button href="/reviews" variant="outline" class="text-brand-red">
-				Read all reviews
-			</Button>
-		</div>
-	</div>
-</section>
+<ReviewsSpotlight />
 
 <!-- Service area -->
 <section
@@ -112,7 +100,7 @@ const whyStats = [
 			<SectionHeading
 				id="area-title"
 				eyebrow="Service area"
-				title="Proudly serving five counties."
+				title={`Proudly serving Tampa Bay and beyond.`}
 				description="If you're in the greater Tampa Bay area, chances are we're already in your neighborhood."
 				align="left"
 			/>

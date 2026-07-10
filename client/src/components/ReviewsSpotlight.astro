@@ -1,0 +1,299 @@
+---
+/**
+ * Testimonial spotlight for the home page: a split card with one large quote
+ * on the left — carousel dots and prev/next arrows above it, reviewer
+ * attribution pinned to the bottom — and a full-bleed photo on the right.
+ * One review shows at a time; slides crossfade and the card keeps the height
+ * of its tallest quote so nothing jumps.
+ */
+import { Image } from 'astro:assets';
+import Stars from './Stars.astro';
+import Button from './Button.astro';
+import teamPhoto from '../assets/team-photo.jpg';
+import { getReviews, getRatingSummary } from '../lib/reviews';
+import { getSiteSettings } from '../lib/cms';
+import SectionHeading from './SectionHeading.astro';
+
+const [reviews, ratingSummary, settings] = await Promise.all([
+	getReviews(),
+	getRatingSummary(),
+	getSiteSettings(),
+]);
+
+// Quotes render large, so favor reviews long enough to feel substantial but
+// short enough not to dwarf the card.
+let spotlight = reviews
+	.filter((review) => review.text.length >= 80 && review.text.length <= 420)
+	.slice(0, 5);
+if (spotlight.length < 3) spotlight = reviews.slice(0, 5);
+
+const slides = spotlight.map((review) => ({
+	...review,
+	meta: [
+		review.location,
+		[review.source, review.date].filter(Boolean).join(', '),
+	]
+		.filter(Boolean)
+		.join(' · '),
+}));
+---
+
+<section class="bg-mist" aria-labelledby="reviews-title">
+	<div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+		<SectionHeading
+			id="reviews-title"
+			eyebrow="Reviews"
+			title="Your neighbors said it best."
+			description={`Don't just take our word for it! Read what our valued customers have to say about their experience with Your Friendly Neighborhood H20 Pros. We're proud of our 5-star reputation for professional, reliable, and friendly service.
+
+`}
+		/>
+
+		<div
+			class="mt-14 overflow-hidden rounded-panel border border-line bg-fog shadow-card"
+			data-rev-root
+			role="group"
+			aria-roledescription="carousel"
+			aria-label="Customer reviews"
+		>
+			<div class="grid lg:grid-cols-[3fr_2fr]">
+				<!-- Quote panel -->
+				<div class="flex flex-col p-7 sm:p-10 lg:p-14">
+					<div class="flex items-center justify-between gap-6">
+						<div
+							class="flex items-center gap-2"
+							role="tablist"
+							aria-label="Choose a review"
+						>
+							{
+								slides.map((slide, i) => (
+									<button
+										type="button"
+										role="tab"
+										id={`rev-dot-${i}`}
+										aria-selected={i === 0 ? 'true' : 'false'}
+										aria-controls={`rev-slide-${i}`}
+										aria-label={`Review ${i + 1} of ${slides.length}: ${slide.name}`}
+										tabindex={i === 0 ? 0 : -1}
+										class="rev-dot"
+										data-rev-dot
+										data-active={i === 0 ? '' : undefined}
+									/>
+								))
+							}
+						</div>
+						<div class="flex items-center gap-2">
+							<button
+								type="button"
+								class="rev-arrow"
+								data-rev-prev
+								aria-label="Previous review"
+							>
+								<svg
+									width="16"
+									height="16"
+									viewBox="0 0 16 16"
+									fill="none"
+									aria-hidden="true"
+								>
+									<path
+										d="M10 3 5 8l5 5"
+										stroke="currentColor"
+										stroke-width="1.75"
+										stroke-linecap="round"
+										stroke-linejoin="round"></path>
+								</svg>
+							</button>
+							<button
+								type="button"
+								class="rev-arrow"
+								data-rev-next
+								aria-label="Next review"
+							>
+								<svg
+									width="16"
+									height="16"
+									viewBox="0 0 16 16"
+									fill="none"
+									aria-hidden="true"
+								>
+									<path
+										d="m6 3 5 5-5 5"
+										stroke="currentColor"
+										stroke-width="1.75"
+										stroke-linecap="round"
+										stroke-linejoin="round"></path>
+								</svg>
+							</button>
+						</div>
+					</div>
+
+					<div class="mt-10 grid flex-1 lg:mt-12">
+						{
+							slides.map((slide, i) => (
+								<figure
+									class="rev-fade col-start-1 row-start-1 flex flex-col"
+									id={`rev-slide-${i}`}
+									role="tabpanel"
+									aria-labelledby={`rev-dot-${i}`}
+									data-rev-slide
+									data-active={i === 0 ? '' : undefined}>
+									<blockquote class="max-w-2xl text-xl leading-relaxed text-ink/90 sm:text-2xl sm:leading-relaxed lg:text-[1.7rem]">
+										“{slide.text}”
+									</blockquote>
+									<figcaption class="mt-10 flex flex-col gap-1.5 pt-6 lg:mt-auto">
+										<Stars rating={slide.rating} />
+										<span class="mt-1 font-heading text-lg font-extrabold text-ink">
+											{slide.name}
+										</span>
+										{slide.meta && (
+											<span class="text-sm text-ink/50">{slide.meta}</span>
+										)}
+									</figcaption>
+								</figure>
+							))
+						}
+					</div>
+				</div>
+
+				<!-- Photo side -->
+				<div
+					class="relative order-first aspect-[16/9] lg:order-none lg:aspect-auto"
+				>
+					{
+						settings.teamPhotoUrl ? (
+							<img
+								src={settings.teamPhotoUrl}
+								alt="The H2O Pros team"
+								loading="lazy"
+								class="absolute inset-0 h-full w-full object-cover"
+							/>
+						) : (
+							<Image
+								src={teamPhoto}
+								alt="The H2O Pros team"
+								width={1280}
+								loading="lazy"
+								class="absolute inset-0 h-full w-full object-cover"
+							/>
+						)
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="mt-10 text-center">
+			<Button href="/reviews" variant="outline" class="text-brand-red">
+				Read all reviews
+			</Button>
+		</div>
+	</div>
+</section>
+
+<style>
+	.rev-fade {
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity 0.45s ease,
+			visibility 0.45s;
+	}
+	.rev-fade[data-active] {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	/* Dots: the active one stretches into a bar, like the reference design. */
+	.rev-dot {
+		height: 8px;
+		width: 8px;
+		border-radius: 9999px;
+		background: rgba(233, 238, 245, 0.25);
+		transition:
+			width 0.3s ease,
+			background-color 0.3s ease;
+	}
+	.rev-dot:hover {
+		background: rgba(233, 238, 245, 0.5);
+	}
+	.rev-dot[data-active] {
+		width: 28px;
+		background: #e9eef5;
+	}
+	.rev-dot:focus-visible {
+		outline: 2px solid #3d7bee;
+		outline-offset: 3px;
+	}
+
+	.rev-arrow {
+		display: grid;
+		place-items: center;
+		height: 40px;
+		width: 40px;
+		border-radius: 10px;
+		border: 1px solid #242b37;
+		background: rgba(255, 255, 255, 0.04);
+		color: rgba(233, 238, 245, 0.75);
+		transition:
+			background-color 0.2s ease,
+			color 0.2s ease;
+	}
+	.rev-arrow:hover {
+		background: rgba(255, 255, 255, 0.1);
+		color: #e9eef5;
+	}
+	.rev-arrow:focus-visible {
+		outline: 2px solid #3d7bee;
+		outline-offset: 2px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.rev-fade {
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	const root = document.querySelector('[data-rev-root]');
+	if (root) {
+		const dots = Array.from(
+			root.querySelectorAll<HTMLButtonElement>('[data-rev-dot]'),
+		);
+		const slides = Array.from(root.querySelectorAll('[data-rev-slide]'));
+		let current = 0;
+
+		const activate = (index: number) => {
+			current = (index + slides.length) % slides.length;
+			slides.forEach((slide, i) =>
+				i === current
+					? slide.setAttribute('data-active', '')
+					: slide.removeAttribute('data-active'),
+			);
+			dots.forEach((dot, i) => {
+				const active = i === current;
+				dot.setAttribute('aria-selected', String(active));
+				dot.tabIndex = active ? 0 : -1;
+				if (active) dot.setAttribute('data-active', '');
+				else dot.removeAttribute('data-active');
+			});
+		};
+
+		dots.forEach((dot, i) => {
+			dot.addEventListener('click', () => activate(i));
+			dot.addEventListener('keydown', (e) => {
+				if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+				e.preventDefault();
+				activate(current + (e.key === 'ArrowRight' ? 1 : -1));
+				dots[current].focus();
+			});
+		});
+
+		root
+			.querySelector('[data-rev-prev]')
+			?.addEventListener('click', () => activate(current - 1));
+		root
+			.querySelector('[data-rev-next]')
+			?.addEventListener('click', () => activate(current + 1));
+	}
+</script>

@@ -6,42 +6,222 @@ import CtaBand from '../components/CtaBand.astro';
 import { getGalleryItems } from '../lib/cms';
 
 const galleryItems = await getGalleryItems();
+
+/**
+ * Deterministic scatter presets so the pile looks hand-strewn but renders
+ * identically on every visit. Values are % of the board; photos cycle
+ * through these if there are more photos than presets.
+ */
+const scatter = [
+	{ left: 24, top: 14, rot: -7 },
+	{ left: 60, top: 11, rot: 4 },
+	{ left: 86, top: 22, rot: 9 },
+	{ left: 13, top: 44, rot: 6 },
+	{ left: 46, top: 40, rot: -4 },
+	{ left: 78, top: 54, rot: -9 },
+	{ left: 25, top: 74, rot: 8 },
+	{ left: 55, top: 83, rot: -6 },
+	{ left: 85, top: 84, rot: 5 },
+	{ left: 38, top: 60, rot: -11 },
+	{ left: 68, top: 30, rot: 7 },
+	{ left: 10, top: 88, rot: -5 },
+];
 ---
 
 <BaseLayout
-  title="Gallery"
-  description="A look at our recent plumbing and water filtration work across Tampa Bay."
+	title="Gallery"
+	description="A look at our recent plumbing and water filtration work across Tampa Bay."
 >
-  <PageHero
-    eyebrow="Gallery"
-    title="Work we're proud of."
-    description="Installs, repairs, and before-and-afters from around the neighborhood."
-  />
+	<PageHero
+		eyebrow="Gallery"
+		title="Work we're proud of."
+		description="Installs, repairs, and before-and-afters from around the neighborhood — spread out on the floor. Grab a photo and dig through the pile."
+	/>
 
-  <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8" aria-label="Project gallery">
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        galleryItems.map((item) => (
-          item.imageUrl ? (
-            <img
-              src={item.imageUrl}
-              alt={item.label}
-              loading="lazy"
-              class={`${item.tall ? 'aspect-[3/4]' : 'aspect-[4/3]'} w-full rounded-panel object-cover shadow-card`}
-            />
-          ) : (
-            <ImagePlaceholder
-              label={item.label}
-              class={item.tall ? 'aspect-[3/4] w-full' : 'aspect-[4/3] w-full'}
-            />
-          )
-        ))
-      }
-    </div>
-  </section>
+	<section aria-label="Project gallery" class="overflow-hidden bg-mist">
+		<p class="px-4 pt-6 text-center text-sm text-ink/50 sm:hidden">
+			Drag the photos around to dig through the pile.
+		</p>
+		<div id="photo-board" class="photo-board">
+			{
+				galleryItems.map((item, i) => {
+					const pos = scatter[i % scatter.length];
+					return (
+						<figure
+							class:list={['floor-photo', item.tall ? 'is-tall' : 'is-wide']}
+							style={`left:${pos.left}%;top:${pos.top}%;--rot:${pos.rot}deg;`}
+						>
+							{item.imageUrl ? (
+								<img src={item.imageUrl} alt={item.label} loading="lazy" draggable="false" />
+							) : (
+								<ImagePlaceholder label={item.label} class="h-full w-full" />
+							)}
+							<figcaption>{item.label}</figcaption>
+						</figure>
+					);
+				})
+			}
+			<div id="drag-hint" class="drag-hint" aria-hidden="true">Drag</div>
+		</div>
+	</section>
 
-  <CtaBand
-    title="Want your project in this gallery?"
-    description="Book online or call — we'll bring the camera."
-  />
+	<CtaBand
+		title="Want your project in this gallery?"
+		description="Book online or call — we'll bring the camera."
+	/>
 </BaseLayout>
+
+<style>
+	.photo-board {
+		position: relative;
+		height: 120vh;
+		min-height: 720px;
+		cursor: grab;
+	}
+
+	.floor-photo {
+		position: absolute;
+		margin: 0;
+		width: 30%;
+		min-width: 220px;
+		max-width: 420px;
+		padding: 8px 8px 10px;
+		background: #fff;
+		box-shadow: 0 12px 32px rgb(13 16 19 / 0.22);
+		transform: translate(-50%, -50%) rotate(var(--rot));
+		cursor: grab;
+		touch-action: none;
+		user-select: none;
+		-webkit-user-select: none;
+		transition: box-shadow 0.2s ease;
+	}
+
+	.floor-photo.is-tall {
+		width: 24%;
+	}
+
+	.floor-photo img {
+		display: block;
+		width: 100%;
+		object-fit: cover;
+		pointer-events: none;
+	}
+
+	.floor-photo.is-wide img {
+		aspect-ratio: 4 / 3;
+	}
+
+	.floor-photo.is-tall img {
+		aspect-ratio: 3 / 4;
+	}
+
+	.floor-photo figcaption {
+		padding: 8px 4px 2px;
+		text-align: center;
+		font-size: 0.75rem;
+		letter-spacing: 0.02em;
+		color: rgb(18 22 26 / 0.55);
+	}
+
+	.floor-photo.dragging {
+		cursor: grabbing;
+		box-shadow: 0 30px 60px -10px rgb(13 16 19 / 0.4);
+		transform: translate(-50%, -50%) rotate(var(--rot)) scale(1.04);
+		transition: none;
+	}
+
+	.drag-hint {
+		position: absolute;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 88px;
+		height: 88px;
+		border-radius: 50%;
+		background: #e11d2a;
+		color: #fff;
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		pointer-events: none;
+		transform: translate(-50%, -50%);
+		opacity: 0;
+		transition: opacity 0.25s ease;
+		z-index: 999;
+	}
+
+	.drag-hint.visible {
+		opacity: 1;
+	}
+
+	@media (hover: none) {
+		.drag-hint {
+			display: none;
+		}
+	}
+</style>
+
+<script>
+	const board = document.getElementById('photo-board');
+	const hint = document.getElementById('drag-hint');
+
+	if (board && hint) {
+		let zTop = 10;
+		let hintDismissed = false;
+
+		// Red "drag" bubble follows the cursor until the first grab.
+		board.addEventListener('pointermove', (e) => {
+			if (hintDismissed || e.pointerType !== 'mouse') return;
+			const rect = board.getBoundingClientRect();
+			hint.style.left = `${e.clientX - rect.left}px`;
+			hint.style.top = `${e.clientY - rect.top}px`;
+			hint.classList.add('visible');
+		});
+		board.addEventListener('pointerleave', () => hint.classList.remove('visible'));
+
+		for (const photo of board.querySelectorAll<HTMLElement>('.floor-photo')) {
+			photo.addEventListener('pointerdown', (e) => {
+				e.preventDefault();
+				hintDismissed = true;
+				hint.classList.remove('visible');
+
+				const boardRect = board.getBoundingClientRect();
+				const photoRect = photo.getBoundingClientRect();
+				const startX = e.clientX;
+				const startY = e.clientY;
+				const startLeft = photoRect.left - boardRect.left + photoRect.width / 2;
+				const startTop = photoRect.top - boardRect.top + photoRect.height / 2;
+
+				photo.setPointerCapture(e.pointerId);
+				photo.classList.add('dragging');
+				photo.style.zIndex = String(++zTop);
+
+				const onMove = (ev: PointerEvent) => {
+					const pad = 40;
+					const x = Math.min(
+						Math.max(startLeft + ev.clientX - startX, pad),
+						boardRect.width - pad,
+					);
+					const y = Math.min(
+						Math.max(startTop + ev.clientY - startY, pad),
+						boardRect.height - pad,
+					);
+					photo.style.left = `${x}px`;
+					photo.style.top = `${y}px`;
+				};
+
+				const onUp = () => {
+					photo.classList.remove('dragging');
+					photo.removeEventListener('pointermove', onMove);
+					photo.removeEventListener('pointerup', onUp);
+					photo.removeEventListener('pointercancel', onUp);
+				};
+
+				photo.addEventListener('pointermove', onMove);
+				photo.addEventListener('pointerup', onUp);
+				photo.addEventListener('pointercancel', onUp);
+			});
+		}
+	}
+</script>

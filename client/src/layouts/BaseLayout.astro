@@ -23,6 +23,7 @@ const {
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="dark" />
 		<meta name="description" content={description} />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -38,8 +39,18 @@ const {
 			async
 			src={`https://online-booking.housecallpro.com/script.js?token=${booking.token}&orgName=${booking.orgName}`}
 		></script>
+
+		{/* Housecall Pro chat bubble */}
+		<script
+			is:inline
+			id="housecall-pro-chat-bubble"
+			src="https://chat.housecallpro.com/prochat.js"
+			type="text/javascript"
+			data-color="#0EBFBE"
+			data-organization="69nb9a5a-d869-4878-8294-75253aecc66a"
+			defer></script>
 	</head>
-	<body class="bg-white text-ink">
+	<body class="bg-ink-deep text-ink">
 		<a
 			href="#main"
 			class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-btn focus:bg-brand-red focus:px-4 focus:py-3 focus:font-bold focus:text-white"

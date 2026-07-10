@@ -215,6 +215,10 @@ export interface Service {
    * Shows this service in the home-page service showcase.
    */
   featured?: boolean | null;
+  /**
+   * Short punchy name shown as the giant title in the home-page showcase, for example "Drains & Sewer". Falls back to the service title.
+   */
+  showcaseTitle?: string | null;
   showcaseBadge?: string | null;
   showcaseImage?: (number | null) | Media;
   detailImage?: (number | null) | Media;
@@ -464,6 +468,7 @@ export interface ServicesSelect<T extends boolean = true> {
       };
   accent?: T;
   featured?: T;
+  showcaseTitle?: T;
   showcaseBadge?: T;
   showcaseImage?: T;
   detailImage?: T;

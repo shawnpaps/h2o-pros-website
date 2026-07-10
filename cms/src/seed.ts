@@ -43,6 +43,13 @@ const serviceMedia: Record<string, keyof typeof mediaSources> = {
   LeakDetection: 'leak',
 }
 
+const showcaseTitles: Record<string, string> = {
+  DrainandSewer: 'Drains & Sewer',
+  WaterHeater: 'Water Heaters',
+  Filtration: 'Filtration',
+  LeakDetection: 'Leak Detection',
+}
+
 const showcaseBadges: Record<string, string> = {
   DrainandSewer: 'Pipes scoured back to like-new',
   WaterHeater: 'Reliable hot water, guaranteed',
@@ -198,6 +205,7 @@ const run = async () => {
         accent: service.accent,
         featured: Boolean(service.featured),
         sortOrder: index + 1,
+        showcaseTitle: showcaseTitles[service.id],
         showcaseBadge: showcaseBadges[service.id],
         showcaseImage: image?.id,
         detailImage: image?.id,
