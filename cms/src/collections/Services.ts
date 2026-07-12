@@ -6,8 +6,12 @@ export const Services: CollectionConfig = {
   slug: 'services',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'anchorId', 'featured', 'sortOrder', 'updatedAt'],
+    defaultColumns: ['title', 'featured', 'sortOrder', 'updatedAt'],
+    group: 'Website Content',
+    description:
+      'The plumbing services shown on the Our Services page, the home page showcase, and each service’s own detail page.',
   },
+  defaultSort: 'sortOrder',
   access: {
     read: anyone,
     create: authenticated,
@@ -19,27 +23,45 @@ export const Services: CollectionConfig = {
       name: 'title',
       type: 'text',
       required: true,
+      label: 'Service name',
+      admin: {
+        description: 'For example "Water Heaters" or "Drain & Sewer".',
+      },
     },
     {
       name: 'anchorId',
       type: 'text',
       required: true,
       unique: true,
-      label: 'Anchor ID',
+      label: 'Technical ID',
       admin: {
-        description: 'Keeps existing URLs stable, for example /our-services#WaterHeater.',
+        position: 'sidebar',
+        description:
+          'Keeps existing links to this service working. Please don’t change this without checking with your web developer.',
       },
     },
     {
       name: 'blurb',
       type: 'textarea',
       required: true,
+      label: 'Short description',
+      admin: {
+        description: 'One or two sentences shown on this service’s card.',
+      },
     },
     {
       name: 'bullets',
       type: 'array',
       required: true,
       minRows: 1,
+      label: 'Bullet points',
+      labels: {
+        singular: 'Bullet point',
+        plural: 'Bullet points',
+      },
+      admin: {
+        description: 'Short selling points listed under the description, for example "Same-day service".',
+      },
       fields: [
         {
           name: 'text',
@@ -53,17 +75,22 @@ export const Services: CollectionConfig = {
       type: 'select',
       required: true,
       defaultValue: 'blue',
+      label: 'Accent color',
       options: [
         { label: 'Blue', value: 'blue' },
         { label: 'Red', value: 'red' },
       ],
+      admin: {
+        description: 'The highlight color used on this service’s card.',
+      },
     },
     {
       name: 'featured',
       type: 'checkbox',
       defaultValue: false,
+      label: 'Show in home page showcase',
       admin: {
-        description: 'Shows this service in the home-page service showcase.',
+        description: 'Check this to feature this service in the big showcase on the home page.',
       },
     },
     {
@@ -72,58 +99,74 @@ export const Services: CollectionConfig = {
       label: 'Showcase display name',
       admin: {
         description:
-          'Short punchy name shown as the giant title in the home-page showcase, for example "Drains & Sewer". Falls back to the service title.',
+          'A short, punchy name for the home page showcase, for example "Drains & Sewer". If left blank, the service name is used.',
       },
     },
     {
       name: 'showcaseBadge',
       type: 'text',
       label: 'Showcase badge',
+      admin: {
+        description: 'A small label shown on the showcase image, for example "Most popular".',
+      },
     },
     {
       name: 'showcaseImage',
       type: 'upload',
       relationTo: 'media',
-      label: 'Home showcase image',
+      label: 'Showcase photo',
+      admin: {
+        description: 'The photo shown for this service in the home page showcase.',
+      },
     },
     {
       name: 'detailImage',
       type: 'upload',
       relationTo: 'media',
-      label: 'Service detail image',
+      label: 'Detail page photo',
+      admin: {
+        description: 'The photo shown on this service’s own page.',
+      },
     },
     {
       type: 'collapsible',
-      label: 'Detail page (/services/…)',
+      label: 'Service detail page',
       admin: {
         initCollapsed: true,
         description:
-          'Content for the immersive service detail page. Anything left empty falls back to the built-in copy for this service.',
+          'The content of this service’s own page on the website. Anything left blank falls back to pre-written copy.',
       },
       fields: [
         {
           name: 'slug',
           type: 'text',
           unique: true,
-          label: 'URL slug',
+          label: 'Web address',
           admin: {
-            description: 'Page lives at /services/<slug>, for example "water-heaters".',
+            description:
+              'The last part of this page’s address, for example "water-heaters" makes the page yoursite.com/services/water-heaters. Use lowercase letters and dashes.',
           },
         },
         {
           name: 'heroHeadline',
           type: 'text',
-          label: 'Hero headline',
+          label: 'Headline',
           admin: {
-            description: 'Punchy first line of the detail hero, for example "Hot water, without the drama."',
+            description:
+              'The big first line at the top of the page, for example "Hot water, without the drama."',
           },
         },
         {
           name: 'signs',
           type: 'array',
-          label: '"Sound familiar?" signs',
+          label: '"Sound familiar?" checklist',
+          labels: {
+            singular: 'Sign',
+            plural: 'Signs',
+          },
           admin: {
-            description: 'Symptoms a homeowner can check off, for example "Hot water runs out faster than it used to".',
+            description:
+              'Problems a homeowner might recognize, for example "Hot water runs out faster than it used to".',
           },
           fields: [
             {
@@ -137,43 +180,72 @@ export const Services: CollectionConfig = {
           name: 'steps',
           type: 'array',
           label: '"How it works" steps',
+          labels: {
+            singular: 'Step',
+            plural: 'Steps',
+          },
+          admin: {
+            description: 'The steps of the job, in order, for example "1. We inspect" → "2. We quote".',
+          },
           fields: [
             {
               name: 'title',
               type: 'text',
               required: true,
+              label: 'Step title',
             },
             {
               name: 'description',
               type: 'textarea',
               required: true,
+              label: 'Step description',
             },
           ],
         },
         {
           name: 'stats',
           type: 'array',
-          label: 'Proof stats',
+          label: 'Impressive numbers',
+          labels: {
+            singular: 'Number',
+            plural: 'Numbers',
+          },
           admin: {
-            description: 'Short value + label pairs, for example "4000 PSI" / "Hydro-jetting scours pipes to like-new".',
+            description:
+              'Big number + short caption pairs, for example "4000 PSI" with "Hydro-jetting scours pipes to like-new".',
           },
           fields: [
             {
               name: 'value',
               type: 'text',
               required: true,
+              label: 'The number',
+              admin: {
+                description: 'For example "4000 PSI" or "24/7".',
+              },
             },
             {
               name: 'label',
               type: 'text',
               required: true,
+              label: 'Caption',
+              admin: {
+                description: 'What the number means.',
+              },
             },
           ],
         },
         {
           name: 'faqs',
           type: 'array',
-          label: 'Service FAQs',
+          label: 'Common questions',
+          labels: {
+            singular: 'Question',
+            plural: 'Questions',
+          },
+          admin: {
+            description: 'Questions and answers specific to this service.',
+          },
           fields: [
             {
               name: 'question',
@@ -193,8 +265,10 @@ export const Services: CollectionConfig = {
       name: 'sortOrder',
       type: 'number',
       defaultValue: 100,
+      label: 'Display order',
       admin: {
         position: 'sidebar',
+        description: 'Services with lower numbers appear first on the website.',
       },
     },
   ],
