@@ -14,6 +14,7 @@ import { Reviews } from './collections/Reviews'
 import { Services } from './collections/Services'
 import { Users } from './collections/Users'
 import { SiteSettings } from './globals/SiteSettings'
+import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -53,6 +54,11 @@ export default buildConfig({
     pool: {
       connectionString: process.env.POSTGRES_URL || '',
     },
+    // Dev and production share the same Neon database, so schema changes must
+    // always go through migrations (pnpm migrate:create && pnpm migrate).
+    // Push mode silently drifts the schema and breaks the deployed CMS.
+    push: false,
+    prodMigrations: migrations,
   }),
   sharp,
   plugins: [

@@ -222,6 +222,47 @@ export interface Service {
   showcaseBadge?: string | null;
   showcaseImage?: (number | null) | Media;
   detailImage?: (number | null) | Media;
+  /**
+   * Page lives at /services/<slug>, for example "water-heaters".
+   */
+  slug?: string | null;
+  /**
+   * Punchy first line of the detail hero, for example "Hot water, without the drama."
+   */
+  heroHeadline?: string | null;
+  /**
+   * Symptoms a homeowner can check off, for example "Hot water runs out faster than it used to".
+   */
+  signs?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  steps?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Short value + label pairs, for example "4000 PSI" / "Hydro-jetting scours pipes to like-new".
+   */
+  stats?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  faqs?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
   sortOrder?: number | null;
   updatedAt: string;
   createdAt: string;
@@ -472,6 +513,35 @@ export interface ServicesSelect<T extends boolean = true> {
   showcaseBadge?: T;
   showcaseImage?: T;
   detailImage?: T;
+  slug?: T;
+  heroHeadline?: T;
+  signs?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  steps?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  stats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  faqs?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
   sortOrder?: T;
   updatedAt?: T;
   createdAt?: T;
