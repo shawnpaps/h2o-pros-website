@@ -293,7 +293,9 @@ export const getSiteContent = async (): Promise<SiteContent> => {
       count: settings.ratingCount ?? fallbackRatingSummary.count,
       source: settings.ratingSource || fallbackRatingSummary.source,
     },
-    logoUrl: mediaUrl(settings.logo, 'card'),
+    // Always the original upload: the named sizes (card/hero) are fixed-ratio
+    // center-crops meant for photos, and they chop non-4:3 logos.
+    logoUrl: mediaUrl(settings.logo),
   };
 };
 
