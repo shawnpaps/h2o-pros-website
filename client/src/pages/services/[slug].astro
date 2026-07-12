@@ -19,6 +19,11 @@ import ReviewsSpotlight from '../../components/ReviewsSpotlight.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { getServices, getSiteContent } from '../../lib/cms';
 import { getRatingSummary } from '../../lib/reviews';
+import {
+	buildBreadcrumbSchema,
+	buildFaqSchema,
+	buildServiceSchema,
+} from '../../lib/schema';
 import drainImage from '../../assets/services/samuel-sianipar-scUBcasSvbE-unsplash.jpg';
 import heaterImage from '../../assets/services/waterheater.jpg';
 import filtrationImage from '../../assets/services/timur-shakerzianov-c314Gh8dXAo-unsplash.jpg';
@@ -33,11 +38,12 @@ const fallbackImages: Record<string, ImageMetadata> = {
 };
 
 const { slug } = Astro.params;
-const [services, { site }, ratingSummary] = await Promise.all([
+const [services, siteContent, ratingSummary] = await Promise.all([
 	getServices(),
 	getSiteContent(),
 	getRatingSummary(),
 ]);
+const { site, counties } = siteContent;
 
 const index = services.findIndex((item) => item.slug === slug);
 const service = services[index];
@@ -53,12 +59,24 @@ const counter = `${String(index + 1).padStart(2, '0')} / ${String(services.lengt
 
 const prev = services[(index - 1 + services.length) % services.length];
 const next = services[(index + 1) % services.length];
+
+const siteUrl = (Astro.site ?? Astro.url).origin;
 ---
 
 <BaseLayout
 	title={`${service.title} in Tampa Bay`}
 	description={service.blurb}
 	headerVariant="dark"
+	ogImage={heroImageUrl}
+	schemas={[
+		buildServiceSchema(siteUrl, service, counties),
+		buildFaqSchema(service.faqs),
+		buildBreadcrumbSchema(siteUrl, [
+			{ name: 'Home', path: '/' },
+			{ name: 'Our Services', path: '/our-services' },
+			{ name: service.title, path: `/services/${service.slug}` },
+		]),
+	]}
 >
 	<!-- Hero -->
 	<section

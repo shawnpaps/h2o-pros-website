@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import LocationHero from '../../components/LocationHero.astro';
 import HomeSections from '../../components/HomeSections.astro';
 import { getLocations } from '../../lib/cms';
+import { buildBreadcrumbSchema, buildLocationServiceSchema } from '../../lib/schema';
 
 const { slug } = Astro.params;
 const locations = await getLocations();
@@ -11,12 +12,22 @@ const location = locations.find((item) => item.slug === slug);
 if (!location) {
 	return new Response(null, { status: 404 });
 }
+
+const siteUrl = (Astro.site ?? Astro.url).origin;
 ---
 
 <BaseLayout
 	title={`Plumber in ${location.city}, FL`}
 	description={location.metaDescription}
 	headerVariant="dark"
+	ogImage={location.heroImageUrl}
+	schemas={[
+		buildLocationServiceSchema(siteUrl, location),
+		buildBreadcrumbSchema(siteUrl, [
+			{ name: 'Home', path: '/' },
+			{ name: `Plumber in ${location.city}, FL`, path: `/locations/${location.slug}` },
+		]),
+	]}
 >
 	<LocationHero location={location} />
 

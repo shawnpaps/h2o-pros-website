@@ -2,16 +2,19 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HomeHero from '../components/HomeHero.astro';
 import HomeSections from '../components/HomeSections.astro';
-import { getSiteContent } from '../lib/cms';
+import { getFaqs, getSiteContent } from '../lib/cms';
 import { getRatingSummary } from '../lib/reviews';
+import { buildFaqSchema } from '../lib/schema';
 
 const { site } = await getSiteContent();
 const ratingSummary = await getRatingSummary();
+const faqs = await getFaqs();
 ---
 
 <BaseLayout
 	title="Plumbing & Water Filtration in Tampa Bay"
 	headerVariant="dark"
+	schemas={[buildFaqSchema(faqs)]}
 >
 	<!-- Hero -->
 	<HomeHero site={site} ratingSummary={ratingSummary} />

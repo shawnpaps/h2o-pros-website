@@ -128,6 +128,21 @@ pnpm preview
 Env files: `cms/.env` (`POSTGRES_URL`, `PAYLOAD_SECRET`, `BLOB_READ_WRITE_TOKEN`),
 `client/.env` (`PAYLOAD_URL`). Both exist locally and are gitignored.
 
+## SEO / AEO infrastructure
+
+- `client/src/layouts/BaseLayout.astro` owns the whole `<head>`: Google Tag Manager
+  (`GTM-5CG7SGGB`, script in head + noscript after `<body>` — every page must keep
+  going through BaseLayout), canonical URLs, Open Graph/Twitter meta, and site-wide
+  JSON-LD (`Plumber` business schema + `WebSite`). Pages pass extra schemas via the
+  `schemas` prop and a share image via `ogImage`.
+- Schema builders live in `client/src/lib/schema.ts` — Service, FAQPage,
+  BreadcrumbList, ItemList — all fed from CMS content.
+- `sitemap.xml`, `robots.txt`, and `llms.txt` are **server-rendered endpoints** in
+  `client/src/pages/` that pull services/locations/FAQs from the CMS at request time —
+  new CMS content appears in them automatically; don't add static versions in `public/`.
+- The canonical domain is set in `astro.config.mjs` (`site:`); `og-default.jpg` in
+  `client/public/` is the fallback share image (1200×630).
+
 ## Workflow & conventions
 
 - Branch off `main` (`fix/...`, `feat/...`), push, merge via GitHub PR. Both Vercel
