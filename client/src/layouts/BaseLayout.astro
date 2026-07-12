@@ -111,6 +111,15 @@ const jsonLd = [
 			data-color="#0EBFBE"
 			data-organization="69nb9a5a-d869-4878-8294-75253aecc66a"
 			defer></script>
+		<style is:global>
+			/* This page declares a dark color-scheme, and the Housecall Pro chat
+			   iframe doesn't declare one of its own — that mismatch makes browsers
+			   paint an opaque white box behind the iframe's transparent chat
+			   bubble. Pinning the iframe to a light scheme restores transparency. */
+			#proChatIframe {
+				color-scheme: light;
+			}
+		</style>
 	</head>
 	<body class="bg-ink-deep text-ink">
 		{/* Google Tag Manager (noscript) */}
