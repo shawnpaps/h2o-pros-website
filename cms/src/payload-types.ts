@@ -132,6 +132,8 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * The people who can log in and edit this website’s content.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -157,12 +159,20 @@ export interface User {
   collection: 'users';
 }
 /**
+ * Every photo and video used on the website lives here. Upload once, then pick it wherever you need it.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
   id: number;
+  /**
+   * A short description of what’s in the photo, for example "Technician installing a tankless water heater". This helps Google find your site and helps visitors using screen readers.
+   */
   alt: string;
+  /**
+   * Optional note for your own reference.
+   */
   caption?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -195,43 +205,66 @@ export interface Media {
   };
 }
 /**
+ * The plumbing services shown on the Our Services page, the home page showcase, and each service’s own detail page.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "services".
  */
 export interface Service {
   id: number;
+  /**
+   * For example "Water Heaters" or "Drain & Sewer".
+   */
   title: string;
   /**
-   * Keeps existing URLs stable, for example /our-services#WaterHeater.
+   * Keeps existing links to this service working. Please don’t change this without checking with your web developer.
    */
   anchorId: string;
+  /**
+   * One or two sentences shown on this service’s card.
+   */
   blurb: string;
+  /**
+   * Short selling points listed under the description, for example "Same-day service".
+   */
   bullets: {
     text: string;
     id?: string | null;
   }[];
+  /**
+   * The highlight color used on this service’s card.
+   */
   accent: 'blue' | 'red';
   /**
-   * Shows this service in the home-page service showcase.
+   * Check this to feature this service in the big showcase on the home page.
    */
   featured?: boolean | null;
   /**
-   * Short punchy name shown as the giant title in the home-page showcase, for example "Drains & Sewer". Falls back to the service title.
+   * A short, punchy name for the home page showcase, for example "Drains & Sewer". If left blank, the service name is used.
    */
   showcaseTitle?: string | null;
+  /**
+   * A small label shown on the showcase image, for example "Most popular".
+   */
   showcaseBadge?: string | null;
+  /**
+   * The photo shown for this service in the home page showcase.
+   */
   showcaseImage?: (number | null) | Media;
+  /**
+   * The photo shown on this service’s own page.
+   */
   detailImage?: (number | null) | Media;
   /**
-   * Page lives at /services/<slug>, for example "water-heaters".
+   * The last part of this page’s address, for example "water-heaters" makes the page yoursite.com/services/water-heaters. Use lowercase letters and dashes.
    */
   slug?: string | null;
   /**
-   * Punchy first line of the detail hero, for example "Hot water, without the drama."
+   * The big first line at the top of the page, for example "Hot water, without the drama."
    */
   heroHeadline?: string | null;
   /**
-   * Symptoms a homeowner can check off, for example "Hot water runs out faster than it used to".
+   * Problems a homeowner might recognize, for example "Hot water runs out faster than it used to".
    */
   signs?:
     | {
@@ -239,6 +272,9 @@ export interface Service {
         id?: string | null;
       }[]
     | null;
+  /**
+   * The steps of the job, in order, for example "1. We inspect" → "2. We quote".
+   */
   steps?:
     | {
         title: string;
@@ -247,15 +283,24 @@ export interface Service {
       }[]
     | null;
   /**
-   * Short value + label pairs, for example "4000 PSI" / "Hydro-jetting scours pipes to like-new".
+   * Big number + short caption pairs, for example "4000 PSI" with "Hydro-jetting scours pipes to like-new".
    */
   stats?:
     | {
+        /**
+         * For example "4000 PSI" or "24/7".
+         */
         value: string;
+        /**
+         * What the number means.
+         */
         label: string;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Questions and answers specific to this service.
+   */
   faqs?:
     | {
         question: string;
@@ -263,73 +308,153 @@ export interface Service {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Services with lower numbers appear first on the website.
+   */
   sortOrder?: number | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * The city pages on the website — one page for each area you serve.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "locations".
  */
 export interface Location {
   id: number;
+  /**
+   * For example "Sarasota" or "North Port".
+   */
   city: string;
   /**
-   * URL slug under /locations/.
+   * The last part of this page’s address, for example "north-port" makes the page yoursite.com/locations/north-port. Use lowercase letters and dashes, and avoid changing it once the page is live.
    */
   slug: string;
+  /**
+   * For example "Sarasota" — no need to include the word "County".
+   */
   county: string;
+  /**
+   * The welcome paragraph at the top of this city’s page.
+   */
   intro: string;
+  /**
+   * Neighborhoods or communities near this city that you also serve.
+   */
   nearby: {
     area: string;
     id?: string | null;
   }[];
+  /**
+   * The one-or-two-sentence summary Google may show under this page in search results. Mention the city and your key services.
+   */
   metaDescription: string;
+  /**
+   * The large photo at the top of this city’s page.
+   */
   heroImage?: (number | null) | Media;
+  /**
+   * Cities with lower numbers appear first on the website.
+   */
   sortOrder?: number | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Customer reviews shown on the Reviews page and the home page. Tip: also update the overall rating numbers under Site Settings → Review Rating.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "reviews".
  */
 export interface Review {
   id: number;
+  /**
+   * For example "Mike R." — first name and last initial is a nice touch.
+   */
   name: string;
+  /**
+   * From 1 to 5 stars.
+   */
   rating: number;
+  /**
+   * The customer’s words. Feel free to trim long reviews to the best part.
+   */
   text: string;
+  /**
+   * Shown under the name, for example "Sarasota, FL". Optional.
+   */
   location?: string | null;
+  /**
+   * For example "Water heater install". Optional.
+   */
   service?: string | null;
+  /**
+   * For example "Google Reviews" or "Facebook".
+   */
   source?: string | null;
+  /**
+   * Shown with the review, in any format you like — for example "March 2026". Optional.
+   */
   date?: string | null;
+  /**
+   * Uncheck to hide this review from the website without deleting it.
+   */
   published?: boolean | null;
+  /**
+   * Reviews with lower numbers appear first on the website.
+   */
   sortOrder?: number | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * General questions and answers shown on the website. For questions about one specific service, edit that service instead — each service has its own "Common questions" section.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "faqs".
  */
 export interface Faq {
   id: number;
+  /**
+   * Written the way a customer would ask it, for example "Do you offer free estimates?"
+   */
   question: string;
+  /**
+   * Keep it friendly and to the point — a few sentences is plenty.
+   */
   answer: string;
+  /**
+   * Questions with lower numbers appear first on the website.
+   */
   sortOrder?: number | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * The photos shown in the Gallery page grid — great for before-and-afters and finished jobs.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "gallery-items".
  */
 export interface GalleryItem {
   id: number;
+  /**
+   * A short caption shown with the photo, for example "Tankless water heater install".
+   */
   label: string;
   image: number | Media;
+  /**
+   * Check this for portrait-shaped photos — they get a taller spot in the gallery grid.
+   */
   tall?: boolean | null;
+  /**
+   * Uncheck to hide this photo from the gallery without deleting it.
+   */
   published?: boolean | null;
+  /**
+   * Photos with lower numbers appear first in the gallery.
+   */
   sortOrder?: number | null;
   updatedAt: string;
   createdAt: string;
@@ -649,54 +774,137 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * Business info, contact details, and site-wide photos. Changes here show up across the whole website.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings".
  */
 export interface SiteSetting {
   id: number;
+  /**
+   * The full business name, for example "H2O Pros Plumbing".
+   */
   name: string;
+  /**
+   * A shorter version used where space is tight, for example "H2O Pros".
+   */
   shortName: string;
+  /**
+   * A short slogan shown alongside the business name.
+   */
   tagline?: string | null;
+  /**
+   * Shown on the website exactly as typed, for example "(941) 555-0123". The click-to-call link is created automatically.
+   */
   phone: string;
-  /**
-   * For example tel:+15865550123.
-   */
   phoneHref: string;
-  email: string;
   /**
-   * For example mailto:info@example.com.
+   * Where website visitors can email you. The email link is created automatically.
    */
+  email: string;
   emailHref: string;
+  /**
+   * Shown in the website footer, for example "CFC1428968".
+   */
   license: string;
+  /**
+   * A short phrase describing where you work, for example "Sarasota & Manatee Counties".
+   */
   serviceArea: string;
+  /**
+   * One or two sentences about the business. Used in the footer and shown to search engines like Google.
+   */
   description: string;
+  /**
+   * The main logo, shown in the header and on the home page.
+   */
   logo?: (number | null) | Media;
+  /**
+   * The links in the menu at the top of every page. Drag to reorder.
+   */
   nav: {
+    /**
+     * What the link says, for example "Our Services".
+     */
     label: string;
+    /**
+     * The page the link goes to, for example "/our-services".
+     */
     href: string;
     id?: string | null;
   }[];
+  /**
+   * Each row is one line of the hours list, for example "Mon–Fri" and "8am – 6pm".
+   */
   hours: {
+    /**
+     * For example "Mon–Fri" or "Emergencies".
+     */
     label: string;
+    /**
+     * For example "8am – 6pm" or "24/7".
+     */
     value: string;
     id?: string | null;
   }[];
+  /**
+   * The counties listed on the website, for example "Sarasota County".
+   */
   counties: {
     name: string;
     id?: string | null;
   }[];
+  /**
+   * Shown next to the stars across the site, for example "5.0".
+   */
   ratingAverage: string;
+  /**
+   * The total review count, for example 127. Update this as new reviews come in.
+   */
   ratingCount: number;
+  /**
+   * For example "Google Reviews".
+   */
   ratingSource: string;
+  /**
+   * Links to your social media pages, shown in the footer.
+   */
   socials?:
     | {
+        /**
+         * For example "Facebook" or "Instagram".
+         */
         label: string;
+        /**
+         * The full web address, for example "https://facebook.com/h2opros".
+         */
         href: string;
         id?: string | null;
       }[]
     | null;
+  /**
+   * The video that plays behind the home page hero. MP4 format works best; keep it under ~10 MB so the page loads fast.
+   */
   homeHeroVideo?: (number | null) | Media;
+  /**
+   * The smaller, tilted photo on the left.
+   */
+  homeHeroCardLeft?: (number | null) | Media;
+  /**
+   * The large photo in the middle.
+   */
+  homeHeroCardCenter?: (number | null) | Media;
+  /**
+   * The smaller, tilted photo on the right.
+   */
+  homeHeroCardRight?: (number | null) | Media;
+  /**
+   * Shown on the About Us page.
+   */
   teamPhoto?: (number | null) | Media;
+  /**
+   * The map image showing your coverage area.
+   */
   serviceAreaMap?: (number | null) | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -748,6 +956,9 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         id?: T;
       };
   homeHeroVideo?: T;
+  homeHeroCardLeft?: T;
+  homeHeroCardCenter?: T;
+  homeHeroCardRight?: T;
   teamPhoto?: T;
   serviceAreaMap?: T;
   updatedAt?: T;

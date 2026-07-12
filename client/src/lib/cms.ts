@@ -51,6 +51,9 @@ export interface GalleryItem {
 
 export interface SiteSettings {
   homeHeroVideoUrl?: string;
+  homeHeroCardLeftUrl?: string;
+  homeHeroCardCenterUrl?: string;
+  homeHeroCardRightUrl?: string;
   teamPhotoUrl?: string;
   serviceAreaMapUrl?: string;
 }
@@ -297,6 +300,9 @@ export const getSiteContent = async (): Promise<SiteContent> => {
 export const getSiteSettings = async (): Promise<SiteSettings> => {
   const settings = await fetchPayload<{
     homeHeroVideo?: unknown;
+    homeHeroCardLeft?: unknown;
+    homeHeroCardCenter?: unknown;
+    homeHeroCardRight?: unknown;
     teamPhoto?: unknown;
     serviceAreaMap?: unknown;
   }>('/api/globals/site-settings?depth=1');
@@ -305,6 +311,9 @@ export const getSiteSettings = async (): Promise<SiteSettings> => {
 
   return {
     homeHeroVideoUrl: mediaUrl(settings.homeHeroVideo),
+    homeHeroCardLeftUrl: mediaUrl(settings.homeHeroCardLeft, 'card'),
+    homeHeroCardCenterUrl: mediaUrl(settings.homeHeroCardCenter, 'card'),
+    homeHeroCardRightUrl: mediaUrl(settings.homeHeroCardRight, 'card'),
     teamPhotoUrl: mediaUrl(settings.teamPhoto, 'card'),
     serviceAreaMapUrl: mediaUrl(settings.serviceAreaMap, 'card'),
   };

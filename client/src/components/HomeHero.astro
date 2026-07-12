@@ -1,11 +1,13 @@
 ---
 const { site, ratingSummary } = Astro.props;
 import { Image } from 'astro:assets';
-import { getSiteContent } from '../lib/cms';
+import { getSiteContent, getSiteSettings } from '../lib/cms';
 import logo from '../assets/logos/h2o-logo.webp';
 import heroVideo from '../assets/videos/hero-2.mp4';
 
 const { logoUrl } = await getSiteContent();
+const { homeHeroVideoUrl, homeHeroCardLeftUrl, homeHeroCardCenterUrl, homeHeroCardRightUrl } =
+	await getSiteSettings();
 import cardPipes from '../assets/services/waterheater.jpg';
 import cardPlumber from '../assets/services/timur-shakerzianov-c314Gh8dXAo-unsplash.jpg';
 import cardValves from '../assets/services/samuel-sianipar-scUBcasSvbE-unsplash.jpg';
@@ -24,7 +26,7 @@ const tickerItems = [
 
 <section class="relative min-h-screen flex flex-col overflow-hidden bg-ink-deep text-white">
 	<video
-		src={heroVideo}
+		src={homeHeroVideoUrl ?? heroVideo}
 		class="absolute inset-0 h-full w-full object-cover"
 		autoplay
 		muted
@@ -67,13 +69,31 @@ const tickerItems = [
 
 		<div class="order-2 flex items-center justify-center" aria-hidden="true">
 			<div class="hero-card -rotate-6 translate-y-5 -mr-14 z-0 w-44 sm:w-56 lg:w-64">
-				<Image src={cardPipes} alt="" widths={[400, 640]} class="h-full w-full object-cover" />
+				{
+					homeHeroCardLeftUrl ? (
+						<img src={homeHeroCardLeftUrl} alt="" class="h-full w-full object-cover" />
+					) : (
+						<Image src={cardPipes} alt="" widths={[400, 640]} class="h-full w-full object-cover" />
+					)
+				}
 			</div>
 			<div class="hero-card z-10 w-56 sm:w-72 lg:w-80">
-				<Image src={cardPlumber} alt="" widths={[400, 640]} class="h-full w-full object-cover" />
+				{
+					homeHeroCardCenterUrl ? (
+						<img src={homeHeroCardCenterUrl} alt="" class="h-full w-full object-cover" />
+					) : (
+						<Image src={cardPlumber} alt="" widths={[400, 640]} class="h-full w-full object-cover" />
+					)
+				}
 			</div>
 			<div class="hero-card rotate-6 translate-y-5 -ml-14 z-0 w-44 sm:w-56 lg:w-64">
-				<Image src={cardValves} alt="" widths={[400, 640]} class="h-full w-full object-cover" />
+				{
+					homeHeroCardRightUrl ? (
+						<img src={homeHeroCardRightUrl} alt="" class="h-full w-full object-cover" />
+					) : (
+						<Image src={cardValves} alt="" widths={[400, 640]} class="h-full w-full object-cover" />
+					)
+				}
 			</div>
 		</div>
 
