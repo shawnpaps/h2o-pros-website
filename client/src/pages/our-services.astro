@@ -7,14 +7,17 @@ import Drop from '../components/Drop.astro';
 import ImagePlaceholder from '../components/ImagePlaceholder.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getServices, getSiteContent } from '../lib/cms';
+import { buildServiceListSchema } from '../lib/schema';
 
 const { site } = await getSiteContent();
 const services = await getServices();
+const siteUrl = (Astro.site ?? Astro.url).origin;
 ---
 
 <BaseLayout
   title="Our Services"
   description="Drain cleaning, water heaters, whole-home filtration, leak detection, and residential plumbing across Tampa Bay."
+  schemas={[buildServiceListSchema(siteUrl, services)]}
 >
   <PageHero
     eyebrow="Our services"

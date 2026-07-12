@@ -2,6 +2,8 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { getSiteContent } from '../lib/cms';
+import { getRatingSummary } from '../lib/reviews';
+import { buildBusinessSchema, buildWebSiteSchema } from '../lib/schema';
 import { booking } from '../data/site';
 
 interface Props {
@@ -9,30 +11,90 @@ interface Props {
 	description?: string;
 	/** "dark" for the home hero, "light" for interior pages. */
 	headerVariant?: 'dark' | 'light';
+	/** Absolute URL for social share previews; falls back to the default card. */
+	ogImage?: string;
+	/** Keep thin/duplicate pages (404, etc.) out of search indexes. */
+	noindex?: boolean;
+	/** Extra page-specific JSON-LD objects (Service, FAQPage, BreadcrumbList…). */
+	schemas?: Array<Record<string, unknown> | undefined>;
 }
 
-const { site } = await getSiteContent();
+const content = await getSiteContent();
+const ratingSummary = await getRatingSummary();
+const { site } = content;
 const {
 	title,
 	description = site.description,
 	headerVariant = 'light',
+	ogImage,
+	noindex = false,
+	schemas = [],
 } = Astro.props;
+
+const siteUrl = (Astro.site ?? Astro.url).origin;
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
+const ogImageUrl = ogImage ?? new URL('/og-default.jpg', siteUrl).href;
+const fullTitle = `${title} | ${site.name}`;
+
+const jsonLd = [
+	buildBusinessSchema(siteUrl, content, ratingSummary),
+	buildWebSiteSchema(siteUrl, site),
+	...schemas,
+].filter(Boolean);
 ---
 
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		{/* Google Tag Manager */}
+		<script is:inline>
+			(function (w, d, s, l, i) {
+				w[l] = w[l] || [];
+				w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+				var f = d.getElementsByTagName(s)[0],
+					j = d.createElement(s),
+					dl = l != 'dataLayer' ? '&l=' + l : '';
+				j.async = true;
+				j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+				f.parentNode.insertBefore(j, f);
+			})(window, document, 'script', 'dataLayer', 'GTM-5CG7SGGB');
+		</script>
+		{/* End Google Tag Manager */}
 		<meta name="color-scheme" content="dark" />
 		<meta name="description" content={description} />
+		{noindex && <meta name="robots" content="noindex, nofollow" />}
+		<link rel="canonical" href={canonicalUrl} />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="sitemap" href="/sitemap.xml" />
+
+		{/* Social share previews */}
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content={site.name} />
+		<meta property="og:title" content={fullTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:image" content={ogImageUrl} />
+		<meta property="og:locale" content="en_US" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={fullTitle} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImageUrl} />
+
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
 			href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
 			rel="stylesheet"
 		/>
-		<title>{title} | {site.name}</title>
+		<title>{fullTitle}</title>
+
+		{
+			jsonLd.map((schema) => (
+				<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+			))
+		}
+
 		{/* Housecall Pro online booking widget (opened via .hcp-button CTAs) */}
 		<script
 			is:inline
@@ -51,6 +113,15 @@ const {
 			defer></script>
 	</head>
 	<body class="bg-ink-deep text-ink">
+		{/* Google Tag Manager (noscript) */}
+		<noscript>
+			<iframe
+				src="https://www.googletagmanager.com/ns.html?id=GTM-5CG7SGGB"
+				height="0"
+				width="0"
+				style="display:none;visibility:hidden"></iframe>
+		</noscript>
+		{/* End Google Tag Manager (noscript) */}
 		<a
 			href="#main"
 			class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-btn focus:bg-brand-red focus:px-4 focus:py-3 focus:font-bold focus:text-white"

@@ -4,6 +4,7 @@ import tailwind from '@astrojs/tailwind';
 import vercel from '@astrojs/vercel';
 
 export default defineConfig({
+  site: 'https://www.yourfriendlyh20pros.com',
   output: 'server',
   adapter: vercel({
     // Pages are rendered on demand, cached, and re-fetched from the CMS
