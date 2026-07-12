@@ -7,9 +7,9 @@ export default defineConfig({
   output: 'server',
   adapter: vercel({
     // Pages are rendered on demand, cached, and re-fetched from the CMS
-    // after 5 minutes — CMS edits go live without a redeploy.
+    // after 60 seconds — CMS edits go live without a redeploy.
     isr: {
-      expiration: 300,
+      expiration: 60,
     },
     imageService: true,
   }),
