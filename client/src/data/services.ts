@@ -157,7 +157,7 @@ export const services: Service[] = [
     stats: [
       { value: 'Same-day', label: 'Replacement in most cases' },
       { value: '2×', label: 'Longer tank life with an annual flush' },
-      { value: '$0', label: 'Surprise charges — you approve first' },
+      { value: 'Flat Rate', label: 'Pricing — you approve before we start' },
     ],
     faqs: [
       {

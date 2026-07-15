@@ -53,9 +53,9 @@ const trustStats = [
 
 const whyStats = [
 	{ value: '5.0★', label: 'Average rating from real neighbors' },
-	{ value: '1:1', label: 'A real person helps you schedule' },
+	{ value: 'Family', label: 'Owned and operated' },
 	{ value: '100%', label: 'Workmanship guaranteed' },
-	{ value: '$0', label: 'Surprise charges — you approve first' },
+	{ value: 'Flat Rate', label: 'Pricing — you approve before we start' },
 ];
 ---
 
@@ -75,7 +75,7 @@ const whyStats = [
 		<div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 			{
 				whyStats.map((stat) => (
-					<div class="rounded-panel border border-white/10 bg-white/5 p-8 text-center">
+					<div class="rounded-panel border border-white/20 bg-white/10 p-8 text-center backdrop-blur">
 						<p class="font-heading text-3xl font-extrabold text-water-light">
 							{stat.value}
 						</p>

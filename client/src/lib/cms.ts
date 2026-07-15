@@ -180,7 +180,9 @@ export const getServices = async (): Promise<Service[]> => {
     steps: steps.length ? steps : fallback?.steps ?? [],
     stats: stats.length ? stats : fallback?.stats ?? [],
     faqs: faqs.length ? faqs : fallback?.faqs ?? [],
-    showcaseImageUrl: mediaUrl(service.showcaseImage, 'card'),
+    // Original upload, not the 768×576 'card' center-crop — the showcase panel
+    // is much taller than 4:3, so the crop made photos look zoomed way in.
+    showcaseImageUrl: mediaUrl(service.showcaseImage),
     detailImageUrl: mediaUrl(service.detailImage, 'card'),
     };
   });
