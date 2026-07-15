@@ -88,7 +88,9 @@ cms (Payload, Vercel) ──REST──▶ client/src/lib/cms.ts ──▶ Astro 
   by design; writes require login.
 - `seed.ts`, `replace-faqs.ts`, `set-showcase-titles.ts` — one-off `tsx` scripts that
   write to the live DB via the Payload local API. Run deliberately, not casually.
-- Payload admin UI customizations live in `components/` (logo, icon, welcome banner).
+- Payload admin UI customizations live in `components/` (logo, icon, welcome banner, and
+  the editor-facing How-To Guide at `/admin/guide` — a custom view registered in
+  `payload.config.ts`; keep it current when adding editor-facing collections/fields).
 
 ### Adding a CMS-editable field, end to end
 

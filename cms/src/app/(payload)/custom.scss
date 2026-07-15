@@ -67,3 +67,132 @@
     align-items: flex-start;
   }
 }
+
+.h2o-welcome__guide {
+  display: inline-block;
+  margin-top: 0.9rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.15);
+  border: 1px solid rgb(255 255 255 / 0.35);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    background: rgb(255 255 255 / 0.28);
+  }
+}
+
+// Sidebar link to the How-To Guide (afterNavLinks)
+.h2o-guide-link {
+  display: block;
+  margin-top: 1.25rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--theme-elevation-150);
+  background: var(--theme-elevation-50);
+  color: var(--theme-elevation-800);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--theme-elevation-100);
+    color: var(--theme-elevation-1000);
+  }
+}
+
+// The How-To Guide page (/admin/guide)
+.h2o-guide {
+  max-width: 46rem;
+  padding-bottom: 4rem;
+  line-height: 1.6;
+
+  &__intro {
+    margin: 1.5rem 0 1rem;
+
+    h1 {
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      max-width: 62ch;
+      color: var(--theme-elevation-650);
+    }
+  }
+
+  &__toc {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 1rem;
+    margin: 1.25rem 0 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    background: var(--theme-elevation-50);
+    border: 1px solid var(--theme-elevation-100);
+    font-size: 0.9rem;
+
+    a {
+      color: var(--theme-text);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+
+  section {
+    margin-top: 2.5rem;
+  }
+
+  h2 {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--theme-elevation-150);
+  }
+
+  h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+  }
+
+  ul,
+  ol {
+    padding-left: 1.25rem;
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+
+    th,
+    td {
+      padding: 0.6rem 0.75rem;
+      border: 1px solid var(--theme-elevation-150);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--theme-elevation-50);
+    }
+  }
+
+  &__recipe {
+    margin-bottom: 1.25rem;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    border: 1px solid var(--theme-elevation-100);
+    background: var(--theme-elevation-25);
+
+    ol {
+      margin-bottom: 0;
+    }
+  }
+}
