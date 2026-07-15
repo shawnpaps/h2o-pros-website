@@ -15,8 +15,8 @@ export default {
 				star: '#F5A623',
 				copper: '#C9803F',
 				mist: '#0F141C', // raised section background
-				fog: '#151B25', // cards, chips, panels
-				line: '#242B37',
+				fog: '#1C2432', // cards, chips, panels
+				line: '#303A4B',
 			},
 			fontFamily: {
 				heading: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
