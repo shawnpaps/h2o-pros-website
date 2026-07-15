@@ -75,7 +75,8 @@ cms (Payload, Vercel) ──REST──▶ client/src/lib/cms.ts ──▶ Astro 
 
 ## CMS layout (`cms/src/`)
 
-- `collections/` — Users, Media, Services, Locations, Reviews, Faqs, GalleryItems.
+- `collections/` — Users, Media, Services, Locations, Reviews, Faqs, GalleryItems,
+  MainPageHeadlines (per-page heading text), Offers (About-page deals).
   All are grouped in the admin sidebar under "Website Content" (Users under "Admin")
   and default-sorted by their `sortOrder` field.
 - `globals/SiteSettings.ts` — business info, nav, hours, rating summary, socials, and

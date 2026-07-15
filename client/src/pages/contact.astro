@@ -4,9 +4,16 @@ import PageHero from '../components/PageHero.astro';
 import Button from '../components/Button.astro';
 import BookOnlineButton from '../components/BookOnlineButton.astro';
 import Drop from '../components/Drop.astro';
-import { getSiteContent } from '../lib/cms';
+import { getPageHeadline, getSiteContent } from '../lib/cms';
 
 const { site, hours } = await getSiteContent();
+
+const headline = await getPageHeadline('contact', {
+  eyebrow: 'Contact',
+  title: "Let's get your water sorted.",
+  description:
+    "Fill out the form and we'll get right back to you — or skip the typing and call during business hours.",
+});
 
 const serviceOptions = [
   'Drain Cleaning & Hydro-Jetting',
@@ -25,11 +32,7 @@ const inputClasses =
   title="Contact"
   description="Book online or call (813) 702-1118. Serving five counties across Tampa Bay."
 >
-  <PageHero
-    eyebrow="Contact"
-    title="Let's get your water sorted."
-    description="Fill out the form and we'll get right back to you — or skip the typing and call during business hours."
-  />
+  <PageHero {...headline} />
 
   <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
     <div class="grid gap-12 lg:grid-cols-[1fr_minmax(0,1.4fr)]">

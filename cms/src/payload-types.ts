@@ -74,6 +74,8 @@ export interface Config {
     reviews: Review;
     faqs: Faq;
     'gallery-items': GalleryItem;
+    'main-page-headlines': MainPageHeadline;
+    offers: Offer;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -88,6 +90,8 @@ export interface Config {
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     faqs: FaqsSelect<false> | FaqsSelect<true>;
     'gallery-items': GalleryItemsSelect<false> | GalleryItemsSelect<true>;
+    'main-page-headlines': MainPageHeadlinesSelect<false> | MainPageHeadlinesSelect<true>;
+    offers: OffersSelect<false> | OffersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -460,6 +464,64 @@ export interface GalleryItem {
   createdAt: string;
 }
 /**
+ * The heading at the top of each main page — the small label, the big headline, and the sentence under it. Add one entry per page; pages without an entry keep their built-in wording.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "main-page-headlines".
+ */
+export interface MainPageHeadline {
+  id: number;
+  /**
+   * The page this headline appears on. Each page can only have one entry.
+   */
+  page: 'our-services' | 'about-us' | 'reviews' | 'contact' | 'gallery';
+  /**
+   * The short red label above the headline, for example "About us".
+   */
+  eyebrow: string;
+  /**
+   * The big heading at the top of the page, for example "A family owned plumbing company that cares."
+   */
+  title: string;
+  /**
+   * The sentence shown under the headline, for example "Built on trust, quality, and 20+ years of experience in the area." Leave empty to show nothing.
+   */
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * The deals shown in the "Current offers & savings" section of the About Us page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "offers".
+ */
+export interface Offer {
+  id: number;
+  /**
+   * The headline of the deal, for example "$75 Off Any Water Heater Install".
+   */
+  title: string;
+  /**
+   * A sentence explaining the offer, for example "Tank or tankless — mention this offer when you book."
+   */
+  detail: string;
+  /**
+   * The small text at the bottom of the card, for example "One per household. Cannot combine with other offers."
+   */
+  fine?: string | null;
+  /**
+   * Uncheck to take this offer off the website without deleting it.
+   */
+  published?: boolean | null;
+  /**
+   * Offers with lower numbers appear first on the website.
+   */
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -510,6 +572,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'gallery-items';
         value: number | GalleryItem;
+      } | null)
+    | ({
+        relationTo: 'main-page-headlines';
+        value: number | MainPageHeadline;
+      } | null)
+    | ({
+        relationTo: 'offers';
+        value: number | Offer;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -735,6 +805,31 @@ export interface GalleryItemsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "main-page-headlines_select".
+ */
+export interface MainPageHeadlinesSelect<T extends boolean = true> {
+  page?: T;
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "offers_select".
+ */
+export interface OffersSelect<T extends boolean = true> {
+  title?: T;
+  detail?: T;
+  fine?: T;
+  published?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -883,6 +978,35 @@ export interface SiteSetting {
       }[]
     | null;
   /**
+   * Not visible on the page — read by Google and screen readers. For example "We are your friendly, neighborhood plumbing experts".
+   */
+  homeHeroHeadline?: string | null;
+  /**
+   * For example "Friendly plumbers."
+   */
+  homeHeroLeftLine1?: string | null;
+  /**
+   * For example "Honest pricing."
+   */
+  homeHeroLeftLine2?: string | null;
+  /**
+   * For example "Quality workmanship."
+   */
+  homeHeroRightLine1?: string | null;
+  /**
+   * For example "Proven results."
+   */
+  homeHeroRightLine2?: string | null;
+  /**
+   * The service names that scroll across the bottom of the hero, for example "Water Heaters". Drag to reorder.
+   */
+  homeHeroTicker?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * The video that plays behind the home page hero. MP4 format works best; keep it under ~10 MB so the page loads fast.
    */
   homeHeroVideo?: (number | null) | Media;
@@ -953,6 +1077,17 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | {
         label?: T;
         href?: T;
+        id?: T;
+      };
+  homeHeroHeadline?: T;
+  homeHeroLeftLine1?: T;
+  homeHeroLeftLine2?: T;
+  homeHeroRightLine1?: T;
+  homeHeroRightLine2?: T;
+  homeHeroTicker?:
+    | T
+    | {
+        text?: T;
         id?: T;
       };
   homeHeroVideo?: T;

@@ -6,13 +6,29 @@ import logo from '../assets/logos/h2o-logo.webp';
 import heroVideo from '../assets/videos/hero-2.mp4';
 
 const { logoUrl } = await getSiteContent();
-const { homeHeroVideoUrl, homeHeroCardLeftUrl, homeHeroCardCenterUrl, homeHeroCardRightUrl } =
-	await getSiteSettings();
+const {
+	homeHeroVideoUrl,
+	homeHeroCardLeftUrl,
+	homeHeroCardCenterUrl,
+	homeHeroCardRightUrl,
+	homeHeroHeadline,
+	homeHeroLeftLine1,
+	homeHeroLeftLine2,
+	homeHeroRightLine1,
+	homeHeroRightLine2,
+	homeHeroTickerItems,
+} = await getSiteSettings();
 import cardPipes from '../assets/services/waterheater.jpg';
 import cardPlumber from '../assets/services/timur-shakerzianov-c314Gh8dXAo-unsplash.jpg';
 import cardValves from '../assets/services/samuel-sianipar-scUBcasSvbE-unsplash.jpg';
 
-const tickerItems = [
+const headline = homeHeroHeadline ?? 'We are your friendly, neighborhood plumbing experts';
+const leftLine1 = homeHeroLeftLine1 ?? 'Friendly plumbers.';
+const leftLine2 = homeHeroLeftLine2 ?? 'Honest pricing.';
+const rightLine1 = homeHeroRightLine1 ?? 'Quality workmanship.';
+const rightLine2 = homeHeroRightLine2 ?? 'Proven results.';
+
+const tickerItems = homeHeroTickerItems ?? [
 	'Water Heaters',
 	'Filtration',
 	'Hydro-Jetting',
@@ -45,7 +61,7 @@ const tickerItems = [
 	>
 	</div>
 
-	<h1 class="sr-only">We are your friendly, neighborhood plumbing experts</h1>
+	<h1 class="sr-only">{headline}</h1>
 
 	<div class="relative z-10 flex justify-center px-4 pt-36 sm:px-6">
 		<img
@@ -63,8 +79,8 @@ const tickerItems = [
 		<p
 			class="order-1 text-center font-heading text-xl leading-snug uppercase tracking-tight drop-shadow-md md:text-left lg:text-2xl"
 		>
-			<span class="block font-extrabold">Friendly plumbers.</span>
-			<span class="block font-medium">Honest pricing.</span>
+			<span class="block font-extrabold">{leftLine1}</span>
+			<span class="block font-medium">{leftLine2}</span>
 		</p>
 
 		<div class="order-2 flex items-center justify-center" aria-hidden="true">
@@ -100,8 +116,8 @@ const tickerItems = [
 		<p
 			class="order-3 text-center font-heading text-xl leading-snug uppercase tracking-tight drop-shadow-md md:text-right lg:text-2xl"
 		>
-			<span class="block font-medium">Quality workmanship.</span>
-			<span class="block font-extrabold">Proven results.</span>
+			<span class="block font-medium">{rightLine1}</span>
+			<span class="block font-extrabold">{rightLine2}</span>
 		</p>
 	</div>
 

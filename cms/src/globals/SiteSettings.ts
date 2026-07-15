@@ -307,15 +307,91 @@ export const SiteSettings: GlobalConfig = {
           ],
         },
         {
-          label: 'Photos & Video',
+          label: 'Home Page Hero',
+          description:
+            'The big section at the top of the home page: a background video, three photos, the phrases beside them, and the scrolling list of services.',
           fields: [
             {
               type: 'collapsible',
-              label: 'Home page hero',
-              admin: {
-                description:
-                  'The big section at the top of the home page: a background video with three photos over it.',
-              },
+              label: 'Wording',
+              fields: [
+                {
+                  name: 'homeHeroHeadline',
+                  type: 'text',
+                  label: 'Headline for search engines',
+                  admin: {
+                    description:
+                      'Not visible on the page — read by Google and screen readers. For example "We are your friendly, neighborhood plumbing experts".',
+                  },
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'homeHeroLeftLine1',
+                      type: 'text',
+                      label: 'Left phrase — bold line',
+                      admin: {
+                        description: 'For example "Friendly plumbers."',
+                      },
+                    },
+                    {
+                      name: 'homeHeroLeftLine2',
+                      type: 'text',
+                      label: 'Left phrase — light line',
+                      admin: {
+                        description: 'For example "Honest pricing."',
+                      },
+                    },
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'homeHeroRightLine1',
+                      type: 'text',
+                      label: 'Right phrase — light line',
+                      admin: {
+                        description: 'For example "Quality workmanship."',
+                      },
+                    },
+                    {
+                      name: 'homeHeroRightLine2',
+                      type: 'text',
+                      label: 'Right phrase — bold line',
+                      admin: {
+                        description: 'For example "Proven results."',
+                      },
+                    },
+                  ],
+                },
+                {
+                  name: 'homeHeroTicker',
+                  type: 'array',
+                  label: 'Scrolling service list',
+                  labels: {
+                    singular: 'Service name',
+                    plural: 'Service names',
+                  },
+                  admin: {
+                    description:
+                      'The service names that scroll across the bottom of the hero, for example "Water Heaters". Drag to reorder.',
+                  },
+                  fields: [
+                    {
+                      name: 'text',
+                      type: 'text',
+                      required: true,
+                      label: 'Service name',
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: 'collapsible',
+              label: 'Video & photos',
               fields: [
                 {
                   name: 'homeHeroVideo',
@@ -361,6 +437,11 @@ export const SiteSettings: GlobalConfig = {
                 },
               ],
             },
+          ],
+        },
+        {
+          label: 'Photos',
+          fields: [
             {
               name: 'teamPhoto',
               type: 'upload',

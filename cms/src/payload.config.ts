@@ -9,7 +9,9 @@ import sharp from 'sharp'
 import { Faqs } from './collections/Faqs'
 import { GalleryItems } from './collections/GalleryItems'
 import { Locations } from './collections/Locations'
+import { MainPageHeadlines } from './collections/MainPageHeadlines'
 import { Media } from './collections/Media'
+import { Offers } from './collections/Offers'
 import { Reviews } from './collections/Reviews'
 import { Services } from './collections/Services'
 import { Users } from './collections/Users'
@@ -43,7 +45,7 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Users, Media, Services, Locations, Reviews, Faqs, GalleryItems],
+  collections: [Users, Media, Services, Locations, Reviews, Faqs, GalleryItems, MainPageHeadlines, Offers],
   globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

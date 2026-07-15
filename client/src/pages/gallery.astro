@@ -3,9 +3,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import ImagePlaceholder from '../components/ImagePlaceholder.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { getGalleryItems } from '../lib/cms';
+import { getGalleryItems, getPageHeadline } from '../lib/cms';
 
 const galleryItems = await getGalleryItems();
+
+const headline = await getPageHeadline('gallery', {
+	eyebrow: 'Gallery',
+	title: "Work we're proud of.",
+	description:
+		'Installs, repairs, and before-and-afters from around the neighborhood — spread out on the floor. Grab a photo and dig through the pile.',
+});
 
 /**
  * Deterministic scatter presets so the pile looks hand-strewn but renders
@@ -32,11 +39,7 @@ const scatter = [
 	title="Gallery"
 	description="A look at our recent plumbing and water filtration work across Tampa Bay."
 >
-	<PageHero
-		eyebrow="Gallery"
-		title="Work we're proud of."
-		description="Installs, repairs, and before-and-afters from around the neighborhood — spread out on the floor. Grab a photo and dig through the pile."
-	/>
+	<PageHero {...headline} />
 
 	<section aria-label="Project gallery" class="overflow-hidden bg-mist">
 		<p class="px-4 pt-6 text-center text-sm text-ink/50 sm:hidden">

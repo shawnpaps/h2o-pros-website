@@ -1,5 +1,6 @@
 import { locations as fallbackLocations, type Location } from '../data/locations';
 import { faqs as fallbackFaqs, type Faq } from '../data/faqs';
+import { offers as fallbackOffers, type Offer } from '../data/offers';
 import {
   ratingSummary as fallbackRatingSummary,
   reviews as fallbackReviews,
@@ -56,7 +57,21 @@ export interface SiteSettings {
   homeHeroCardRightUrl?: string;
   teamPhotoUrl?: string;
   serviceAreaMapUrl?: string;
+  homeHeroHeadline?: string;
+  homeHeroLeftLine1?: string;
+  homeHeroLeftLine2?: string;
+  homeHeroRightLine1?: string;
+  homeHeroRightLine2?: string;
+  homeHeroTickerItems?: string[];
 }
+
+export interface PageHeadline {
+  eyebrow: string;
+  title: string;
+  description?: string;
+}
+
+export type PageHeadlinePage = 'our-services' | 'about-us' | 'reviews' | 'contact' | 'gallery';
 
 const payloadUrl = (
   import.meta.env.PAYLOAD_URL ||
@@ -307,9 +322,17 @@ export const getSiteSettings = async (): Promise<SiteSettings> => {
     homeHeroCardRight?: unknown;
     teamPhoto?: unknown;
     serviceAreaMap?: unknown;
+    homeHeroHeadline?: string;
+    homeHeroLeftLine1?: string;
+    homeHeroLeftLine2?: string;
+    homeHeroRightLine1?: string;
+    homeHeroRightLine2?: string;
+    homeHeroTicker?: Array<{ text?: string }>;
   }>('/api/globals/site-settings?depth=1');
 
   if (!settings) return {};
+
+  const tickerItems = settings.homeHeroTicker?.map((item) => item.text || '').filter(Boolean);
 
   return {
     homeHeroVideoUrl: mediaUrl(settings.homeHeroVideo),
@@ -318,7 +341,50 @@ export const getSiteSettings = async (): Promise<SiteSettings> => {
     homeHeroCardRightUrl: mediaUrl(settings.homeHeroCardRight, 'card'),
     teamPhotoUrl: mediaUrl(settings.teamPhoto, 'card'),
     serviceAreaMapUrl: mediaUrl(settings.serviceAreaMap, 'card'),
+    homeHeroHeadline: settings.homeHeroHeadline || undefined,
+    homeHeroLeftLine1: settings.homeHeroLeftLine1 || undefined,
+    homeHeroLeftLine2: settings.homeHeroLeftLine2 || undefined,
+    homeHeroRightLine1: settings.homeHeroRightLine1 || undefined,
+    homeHeroRightLine2: settings.homeHeroRightLine2 || undefined,
+    homeHeroTickerItems: tickerItems?.length ? tickerItems : undefined,
   };
+};
+
+// Returns the CMS headline for one of the main pages, or the fallback when the
+// CMS is unreachable or has no entry for that page yet.
+export const getPageHeadline = async (
+  page: PageHeadlinePage,
+  fallback: PageHeadline,
+): Promise<PageHeadline> => {
+  const payload = await fetchPayload<{
+    docs: Array<{ eyebrow?: string; title?: string; description?: string }>;
+  }>(`/api/main-page-headlines?where[page][equals]=${page}&limit=1`);
+
+  const doc = payload?.docs?.[0];
+  if (!doc?.title) return fallback;
+
+  return {
+    eyebrow: doc.eyebrow || fallback.eyebrow,
+    title: doc.title,
+    description: doc.description || fallback.description,
+  };
+};
+
+export const getOffers = async (): Promise<Offer[]> => {
+  const payload = await fetchPayload<{
+    docs: Array<{ title?: string; detail?: string; fine?: string }>;
+  }>('/api/offers?where[published][equals]=true&sort=sortOrder&limit=100');
+
+  const offers =
+    payload?.docs
+      ?.filter((offer) => offer.title && offer.detail)
+      .map((offer) => ({
+        title: offer.title || '',
+        detail: offer.detail || '',
+        fine: offer.fine || undefined,
+      })) ?? [];
+
+  return offers.length ? offers : fallbackOffers;
 };
 
 export const getFaqs = async (): Promise<Faq[]> => {

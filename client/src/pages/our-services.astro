@@ -6,12 +6,19 @@ import BookOnlineButton from '../components/BookOnlineButton.astro';
 import Drop from '../components/Drop.astro';
 import ImagePlaceholder from '../components/ImagePlaceholder.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { getServices, getSiteContent } from '../lib/cms';
+import { getPageHeadline, getServices, getSiteContent } from '../lib/cms';
 import { buildServiceListSchema } from '../lib/schema';
 
 const { site } = await getSiteContent();
 const services = await getServices();
 const siteUrl = (Astro.site ?? Astro.url).origin;
+
+const headline = await getPageHeadline('our-services', {
+  eyebrow: 'Our services',
+  title: 'Everything plumbing. Everything water.',
+  description:
+    'Eight ways we keep Tampa Bay homes flowing — every one backed by upfront pricing and our workmanship guarantee.',
+});
 ---
 
 <BaseLayout
@@ -19,11 +26,7 @@ const siteUrl = (Astro.site ?? Astro.url).origin;
   description="Drain cleaning, water heaters, whole-home filtration, leak detection, and residential plumbing across Tampa Bay."
   schemas={[buildServiceListSchema(siteUrl, services)]}
 >
-  <PageHero
-    eyebrow="Our services"
-    title="Everything plumbing. Everything water."
-    description="Eight ways we keep Tampa Bay homes flowing — every one backed by upfront pricing and our workmanship guarantee."
-  />
+  <PageHero {...headline} />
 
   <nav aria-label="Jump to a service" class="border-b border-line bg-mist">
     <ul class="mx-auto flex max-w-7xl flex-wrap justify-center gap-2 px-4 py-5 sm:px-6 lg:px-8">
