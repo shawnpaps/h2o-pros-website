@@ -5,20 +5,24 @@ import ReviewCard from '../components/ReviewCard.astro';
 import Stars from '../components/Stars.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getReviews, getRatingSummary } from '../lib/reviews';
+import { getPageHeadline } from '../lib/cms';
 
 const reviews = await getReviews();
 const ratingSummary = await getRatingSummary();
+
+const headline = await getPageHeadline('reviews', {
+  eyebrow: 'Reviews',
+  title: "Don't take our word for it.",
+  description:
+    'Real reviews from real neighbors across Hillsborough, Polk, Pasco, Pinellas, and Marion counties. Spin through them below.',
+});
 ---
 
 <BaseLayout
   title="Reviews"
   description="Read what Tampa Bay homeowners say about our plumbing and water filtration work — a perfect 5.0 average rating."
 >
-  <PageHero
-    eyebrow="Reviews"
-    title="Don't take our word for it."
-    description="Real reviews from real neighbors across Hillsborough, Polk, Pasco, Pinellas, and Marion counties. Spin through them below."
-  />
+  <PageHero {...headline} />
 
   <section class="overflow-hidden py-20" aria-label="Customer reviews">
     <div
