@@ -33,6 +33,13 @@ export default buildConfig({
         Icon: '/components/Icon#Icon',
       },
       beforeDashboard: ['/components/WelcomeBanner#WelcomeBanner'],
+      afterNavLinks: ['/components/GuideLink#GuideLink'],
+      views: {
+        guide: {
+          Component: '/components/GuideView#GuideView',
+          path: '/guide',
+        },
+      },
     },
     meta: {
       titleSuffix: ' · H2O Pros CMS',

@@ -14,6 +14,9 @@ export const WelcomeBanner = () => (
         This is your content hub — update services, locations, reviews, FAQs, gallery photos, and
         site settings below. Changes publish to the live website within a few minutes.
       </p>
+      <a className="h2o-welcome__guide" href="/admin/guide">
+        📖 New here? Read the How-To Guide
+      </a>
     </div>
   </div>
 )
