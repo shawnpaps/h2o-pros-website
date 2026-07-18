@@ -214,6 +214,41 @@ export const getLocations = async (): Promise<Location[]> => {
   }));
 };
 
+export interface County {
+  /** e.g. "Hillsborough" — no "County" suffix, matching the CMS field. */
+  name: string;
+  /** URL slug under /counties/ (e.g. "hillsborough"). */
+  slug: string;
+  /** The cities we serve in this county, in their CMS display order. */
+  locations: Location[];
+}
+
+export const countySlug = (name: string) =>
+  name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+// Counties are not their own collection: each Locations entry names its
+// county, and the county pages/chips are derived from that.
+export const getCounties = async (): Promise<County[]> => {
+  const locations = await getLocations();
+  const byName = new Map<string, County>();
+
+  for (const location of locations) {
+    const name = location.county.trim();
+    if (!name) continue;
+    const existing = byName.get(name);
+    if (existing) {
+      existing.locations.push(location);
+    } else {
+      byName.set(name, { name, slug: countySlug(name), locations: [location] });
+    }
+  }
+
+  return [...byName.values()].sort((a, b) => a.name.localeCompare(b.name));
+};
+
 export const getGalleryItems = async (): Promise<GalleryItem[]> => {
   const payload = await fetchPayload<{
     docs: Array<{

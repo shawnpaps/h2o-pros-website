@@ -1,0 +1,173 @@
+---
+/**
+ * County landing pages, derived from the Locations collection: one page per
+ * distinct county named by a city page, linking down to those city pages.
+ */
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Button from '../../components/Button.astro';
+import Stars from '../../components/Stars.astro';
+import Drop from '../../components/Drop.astro';
+import HomeSections from '../../components/HomeSections.astro';
+import heroImage from '../../assets/services/timur-shakerzianov-c314Gh8dXAo-unsplash.jpg';
+import { getCounties, getSiteContent } from '../../lib/cms';
+import { getRatingSummary } from '../../lib/reviews';
+import { buildBreadcrumbSchema, buildCountyServiceSchema } from '../../lib/schema';
+
+const { slug } = Astro.params;
+const counties = await getCounties();
+const county = counties.find((item) => item.slug === slug);
+
+if (!county) {
+	return new Response(null, { status: 404 });
+}
+
+const { site } = await getSiteContent();
+const ratingSummary = await getRatingSummary();
+const siteUrl = (Astro.site ?? Astro.url).origin;
+
+const cityNames = county.locations.map((location) => location.city);
+const namedCities = cityNames.slice(0, 3).join(', ');
+const metaDescription = `Licensed plumber serving ${county.name} County, FL — ${namedCities}${
+	cityNames.length > 3 ? ' and more' : ''
+}. Water heaters, drains, filtration & repiping with upfront flat-rate pricing.`;
+
+// Reuse the first city photo we have for this county as the hero backdrop.
+const countyHeroImageUrl = county.locations.find(
+	(location) => location.heroImageUrl,
+)?.heroImageUrl;
+---
+
+<BaseLayout
+	title={`Plumber in ${county.name} County, FL`}
+	description={metaDescription}
+	headerVariant="dark"
+	ogImage={countyHeroImageUrl}
+	schemas={[
+		buildCountyServiceSchema(siteUrl, county),
+		buildBreadcrumbSchema(siteUrl, [
+			{ name: 'Home', path: '/' },
+			{
+				name: `Plumber in ${county.name} County, FL`,
+				path: `/counties/${county.slug}`,
+			},
+		]),
+	]}
+>
+	<section class="relative overflow-hidden bg-ink-deep text-white">
+		<Image
+			src={heroImage}
+			alt=""
+			width={1920}
+			loading="eager"
+			class={`absolute inset-0 h-full w-full object-cover opacity-40 ${countyHeroImageUrl ? 'hidden' : ''}`}
+		/>
+		{
+			countyHeroImageUrl && (
+				<img
+					src={countyHeroImageUrl}
+					alt=""
+					loading="eager"
+					class="absolute inset-0 h-full w-full object-cover opacity-40"
+				/>
+			)
+		}
+		<div
+			class="absolute inset-0 bg-gradient-to-b from-ink-deep/80 via-ink-deep/50 to-ink-deep"
+			aria-hidden="true"
+		>
+		</div>
+		<div
+			class="pointer-events-none absolute -right-40 top-20 h-[26rem] w-[26rem] rounded-full bg-water/20 blur-3xl"
+			aria-hidden="true"
+		>
+		</div>
+
+		<div
+			class="relative z-10 mx-auto max-w-7xl px-4 pb-28 pt-40 sm:px-6 sm:pt-44 lg:px-8"
+		>
+			<div class="max-w-3xl">
+				<p
+					class="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/10 px-4 py-2 font-heading text-sm font-bold uppercase tracking-[0.15em] text-white/90 backdrop-blur"
+				>
+					<Drop size="sm" color="red" />
+					Serving all of {county.name} County
+				</p>
+				<h1
+					class="mt-6 font-heading text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl"
+				>
+					Plumbing & Water Filtration in
+					<span class="text-water-light">{county.name} County, FL</span>
+				</h1>
+				<p class="mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
+					Our licensed plumbers are in {county.name} County every week — from
+					{cityNames.slice(0, -1).join(', ')}{cityNames.length > 1 ? ' to ' : ''}{
+						cityNames[cityNames.length - 1]
+					}. Upfront flat-rate pricing, tidy workmanship, and water you can
+					trust.
+				</p>
+
+				<div class="mt-9 flex flex-col gap-3 sm:flex-row">
+					<Button href={site.phoneHref} variant="primary">
+						Call {site.phone}
+					</Button>
+					<Button href="/contact" variant="outline" class="text-white">
+						Request Service
+					</Button>
+				</div>
+
+				<div class="mt-7 flex items-center gap-3">
+					<Stars rating={Number(ratingSummary.average)} />
+					<p class="text-sm font-medium text-white/80">
+						{ratingSummary.average} on {ratingSummary.source}
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Cities in this county -->
+	<section
+		class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8"
+		aria-labelledby="county-cities-title"
+	>
+		<h2
+			id="county-cities-title"
+			class="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl"
+		>
+			Where we work in {county.name} County
+		</h2>
+		<p class="mt-4 max-w-2xl text-ink/60">
+			Pick your city for local details, or <a
+				href={site.phoneHref}
+				class="font-bold text-brand-red underline-offset-4 hover:underline"
+				>give us a call</a
+			> — if you're in {county.name} County, we've got you covered.
+		</p>
+		<div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+			{
+				county.locations.map((location) => (
+					<a
+						href={`/locations/${location.slug}`}
+						class="group rounded-panel border border-line bg-mist p-8 transition hover:border-water"
+					>
+						<p class="inline-flex items-center gap-2 font-heading text-xl font-extrabold">
+							<Drop size="sm" />
+							{location.city}
+						</p>
+						<p class="mt-3 leading-relaxed text-ink/60">
+							{location.intro.length > 140
+								? `${location.intro.slice(0, 140).trimEnd()}…`
+								: location.intro}
+						</p>
+						<p class="mt-4 font-semibold text-water group-hover:underline">
+							Plumbing in {location.city} →
+						</p>
+					</a>
+				))
+			}
+		</div>
+	</section>
+
+	<HomeSections />
+</BaseLayout>
