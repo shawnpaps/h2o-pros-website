@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getLocations, getServices } from '../lib/cms';
+import { getCounties, getLocations, getServices } from '../lib/cms';
 
 const STATIC_PATHS = [
   '/',
@@ -16,14 +16,16 @@ const STATIC_PATHS = [
  */
 export const GET: APIRoute = async ({ site, url }) => {
   const base = (site ?? url).origin;
-  const [services, locations] = await Promise.all([
+  const [services, locations, counties] = await Promise.all([
     getServices(),
     getLocations(),
+    getCounties(),
   ]);
 
   const paths = [
     ...STATIC_PATHS,
     ...services.map((service) => `/services/${service.slug}`),
+    ...counties.map((county) => `/counties/${county.slug}`),
     ...locations.map((location) => `/locations/${location.slug}`),
   ];
 

@@ -4,7 +4,7 @@
  * All content comes from the CMS (with the usual static fallbacks) so schema
  * stays in sync with what's on the page.
  */
-import type { RatingSummary, SiteContent, SiteInfo } from './cms';
+import type { County, RatingSummary, SiteContent, SiteInfo } from './cms';
 import type { Service } from '../data/services';
 import type { Location } from '../data/locations';
 import type { Faq } from '../data/faqs';
@@ -107,6 +107,27 @@ export const buildLocationServiceSchema = (
       '@type': 'AdministrativeArea',
       name: `${location.county} County`,
     },
+  },
+});
+
+/** County pages: the business's service offering scoped to one county. */
+export const buildCountyServiceSchema = (siteUrl: string, county: County) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: 'Plumbing and water filtration',
+  name: `Plumber in ${county.name} County, FL`,
+  description: `Licensed plumbing and water filtration service across ${county.name} County, Florida, including ${county.locations
+    .map((location) => location.city)
+    .join(', ')}.`,
+  url: absolute(siteUrl, `/counties/${county.slug}`),
+  provider: { '@id': absolute(siteUrl, `/${BUSINESS_ID}`) },
+  areaServed: {
+    '@type': 'AdministrativeArea',
+    name: `${county.name} County`,
+    containsPlace: county.locations.map((location) => ({
+      '@type': 'City',
+      name: location.city,
+    })),
   },
 });
 

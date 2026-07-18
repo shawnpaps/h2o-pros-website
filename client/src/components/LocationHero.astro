@@ -9,7 +9,7 @@ import Stars from './Stars.astro';
 import Drop from './Drop.astro';
 import heroImage from '../assets/services/timur-shakerzianov-c314Gh8dXAo-unsplash.jpg';
 import type { Location } from '../data/locations';
-import { getSiteContent } from '../lib/cms';
+import { countySlug, getSiteContent } from '../lib/cms';
 import { getRatingSummary } from '../lib/reviews';
 
 interface Props {
@@ -58,7 +58,11 @@ const ratingSummary = await getRatingSummary();
 				class="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/10 px-4 py-2 font-heading text-sm font-bold uppercase tracking-[0.15em] text-white/90 backdrop-blur"
 			>
 				<Drop size="sm" color="red" />
-				Serving {location.city} & {location.county} County
+				Serving {location.city} &&nbsp;<a
+					href={`/counties/${countySlug(location.county)}`}
+					class="underline decoration-white/40 underline-offset-4 hover:decoration-white"
+					>{location.county} County</a
+				>
 			</p>
 			<h1
 				class="mt-6 font-heading text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl"

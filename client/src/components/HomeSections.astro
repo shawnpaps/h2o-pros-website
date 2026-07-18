@@ -12,8 +12,8 @@ import ServicesShowcase from './ServicesShowcase.astro';
 import { Image } from 'astro:assets';
 import tampaServiceAreaImage from '../assets/tampa-service-area.jpg';
 import {
+	getCounties,
 	getFaqs,
-	getLocations,
 	getSiteContent,
 	getSiteSettings,
 } from '../lib/cms';
@@ -21,12 +21,9 @@ import {
 const { site } = await getSiteContent();
 const settings = await getSiteSettings();
 const faqs = await getFaqs();
-const locations = await getLocations();
 
-// Derive the county list from the cities we actually serve.
-const counties = [
-	...new Set(locations.map((location) => location.county)),
-].sort();
+// Derived from the Locations collection — each chip links to its county page.
+const counties = await getCounties();
 const countWords = [
 	'zero',
 	'one',
@@ -107,9 +104,14 @@ const whyStats = [
 			<ul class="mt-8 flex flex-wrap gap-3">
 				{
 					counties.map((county) => (
-						<li class="inline-flex items-center gap-2 rounded-full border border-line bg-mist px-5 py-2.5 font-semibold text-ink/70">
-							<Drop size="sm" />
-							{county} County
+						<li>
+							<a
+								href={`/counties/${county.slug}`}
+								class="inline-flex items-center gap-2 rounded-full border border-line bg-mist px-5 py-2.5 font-semibold text-ink/70 transition hover:border-water hover:text-water"
+							>
+								<Drop size="sm" />
+								{county.name} County
+							</a>
 						</li>
 					))
 				}
