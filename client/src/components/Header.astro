@@ -11,8 +11,12 @@ interface Props {
 
 const { variant = 'light' } = Astro.props;
 const { site, nav } = await getSiteContent();
+// getCounties() already sorts by name; the menu lists cities alphabetically
+// too, rather than in the CMS display order the location pages use.
 const counties = await getCounties();
-const cities = await getLocations();
+const cities = [...(await getLocations())].sort((a, b) =>
+	a.city.localeCompare(b.city),
+);
 const isDark = variant === 'dark';
 
 // The Service Areas menu slots in right after the Services link; if the CMS nav
