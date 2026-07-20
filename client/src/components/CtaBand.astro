@@ -8,11 +8,10 @@ interface Props {
   description?: string;
 }
 
-const {
-  title = 'Ready for water you can trust?',
-  description = 'Book online in 60 seconds or call during business hours.',
-} = Astro.props;
-const { site } = await getSiteContent();
+const { site, cta } = await getSiteContent();
+// Pages can override the wording per-page; otherwise fall back to the
+// site-wide Call-to-Action Band text edited in the CMS.
+const { title = cta.title, description = cta.description } = Astro.props;
 ---
 
 <section class="bg-brand-red" aria-labelledby="cta-band-title">

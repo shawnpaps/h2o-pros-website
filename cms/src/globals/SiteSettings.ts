@@ -440,6 +440,31 @@ export const SiteSettings: GlobalConfig = {
           ],
         },
         {
+          label: 'Call-to-Action Band',
+          description:
+            'The red "Ready for water you can trust?" strip near the bottom of most pages, with the Book Online and Call buttons. The buttons update automatically from your phone number and booking settings — only the wording is edited here.',
+          fields: [
+            {
+              name: 'ctaTitle',
+              type: 'text',
+              label: 'Heading',
+              admin: {
+                description:
+                  'The big bold line, for example "Ready for water you can trust?".',
+              },
+            },
+            {
+              name: 'ctaDescription',
+              type: 'text',
+              label: 'Subheading',
+              admin: {
+                description:
+                  'The smaller line under the heading, for example "Book online in 60 seconds or call during business hours.".',
+              },
+            },
+          ],
+        },
+        {
           label: 'Photos',
           fields: [
             {

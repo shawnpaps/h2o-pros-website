@@ -12,6 +12,12 @@ export const site = {
     'Licensed, insured & bonded plumbing and water filtration pros serving the greater Tampa Bay area. Upfront pricing, tidy workmanship, and water you can trust.',
 } as const;
 
+/** Default wording for the site-wide call-to-action band (CtaBand). */
+export const cta = {
+  title: 'Ready for water you can trust?',
+  description: 'Book online in 60 seconds or call during business hours.',
+} as const;
+
 /** Housecall Pro online booking widget credentials. */
 export const booking = {
   token: '961c3db58034464aab709dba3edd7cd2',

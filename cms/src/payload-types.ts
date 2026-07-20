@@ -1023,6 +1023,14 @@ export interface SiteSetting {
    */
   homeHeroCardRight?: (number | null) | Media;
   /**
+   * The big bold line, for example "Ready for water you can trust?".
+   */
+  ctaTitle?: string | null;
+  /**
+   * The smaller line under the heading, for example "Book online in 60 seconds or call during business hours.".
+   */
+  ctaDescription?: string | null;
+  /**
    * Shown on the About Us page.
    */
   teamPhoto?: (number | null) | Media;
@@ -1094,6 +1102,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   homeHeroCardLeft?: T;
   homeHeroCardCenter?: T;
   homeHeroCardRight?: T;
+  ctaTitle?: T;
+  ctaDescription?: T;
   teamPhoto?: T;
   serviceAreaMap?: T;
   updatedAt?: T;
