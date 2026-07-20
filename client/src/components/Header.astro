@@ -2,7 +2,7 @@
 import Logo from './Logo.astro';
 import Button from './Button.astro';
 import BookOnlineButton from './BookOnlineButton.astro';
-import { getSiteContent } from '../lib/cms';
+import { getCounties, getLocations, getSiteContent } from '../lib/cms';
 
 interface Props {
 	/** "dark" sits transparently over the home hero; "light" is for interior pages. */
@@ -11,7 +11,16 @@ interface Props {
 
 const { variant = 'light' } = Astro.props;
 const { site, nav } = await getSiteContent();
+const counties = await getCounties();
+const cities = await getLocations();
 const isDark = variant === 'dark';
+
+// The Service Areas menu slots in right after the Services link; if the CMS nav
+// ever drops that link, it lands at the end instead.
+const servicesIndex = nav.findIndex((item) => item.href === '/our-services');
+const splitAt = servicesIndex === -1 ? nav.length : servicesIndex + 1;
+const navBefore = nav.slice(0, splitAt);
+const navAfter = nav.slice(splitAt);
 
 const wrapper = isDark
 	? 'absolute inset-x-0 top-0 z-50'
@@ -22,6 +31,15 @@ const linkColor = isDark
 const phoneColor = isDark ? 'text-white' : 'text-ink';
 const phoneSub = isDark ? 'text-white/60' : 'text-ink/50';
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const areasActive =
+	currentPath.startsWith('/counties') || currentPath.startsWith('/locations');
+
+const navLink = `rounded-btn py-2 font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-water ${linkColor}`;
+const mobileNavLink = `block rounded-btn px-3 py-3 font-heading text-lg font-bold ${isDark ? 'text-white hover:bg-white/10' : 'text-ink hover:bg-mist'} focus:outline-none focus-visible:ring-2 focus-visible:ring-water`;
+const panelHeading =
+	'text-[0.65rem] font-bold uppercase tracking-[0.2em] text-ink/50';
+const panelLink =
+	'block rounded-btn px-2 py-1.5 text-sm font-semibold text-ink/80 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-water';
 ---
 
 <header class={wrapper}>
@@ -32,11 +50,87 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 
 		<nav class="hidden items-center gap-7 lg:flex" aria-label="Main">
 			{
-				nav.map((item) => (
+				navBefore.map((item) => (
 					<a
 						href={item.href}
 						aria-current={currentPath === item.href ? 'page' : undefined}
-						class={`rounded-btn py-2 font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-water ${linkColor} ${currentPath === item.href ? 'text-brand-red' : ''}`}>
+						class={`${navLink} ${currentPath === item.href ? 'text-brand-red' : ''}`}>
+						{item.label}
+					</a>
+				))
+			}
+
+			<div class="relative" data-areas-menu>
+				<button
+					type="button"
+					data-areas-toggle
+					aria-expanded="false"
+					aria-controls="service-areas-panel"
+					class={`flex items-center gap-1.5 ${navLink} ${areasActive ? 'text-brand-red' : ''}`}
+				>
+					Service Areas
+					<svg
+						data-areas-chevron
+						class="h-4 w-4 transition-transform"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path d="M6 9l6 6 6-6"></path>
+					</svg>
+				</button>
+
+				<div
+					id="service-areas-panel"
+					data-areas-panel
+					hidden
+					class="absolute left-1/2 top-full z-50 w-[min(40rem,85vw)] -translate-x-1/2 pt-3"
+				>
+					<div
+						class="grid max-h-[70vh] gap-8 overflow-y-auto rounded-panel border border-line bg-ink-deep/95 p-6 shadow-soft backdrop-blur-lg sm:grid-cols-2"
+					>
+						<div>
+							<p class={panelHeading}>Counties</p>
+							<ul class="mt-3 space-y-1">
+								{
+									counties.map((county) => (
+										<li>
+											<a href={`/counties/${county.slug}`} class={panelLink}>
+												{county.name} County
+											</a>
+										</li>
+									))
+								}
+							</ul>
+						</div>
+						<div>
+							<p class={panelHeading}>Cities</p>
+							<ul class="mt-3 space-y-1">
+								{
+									cities.map((city) => (
+										<li>
+											<a href={`/locations/${city.slug}`} class={panelLink}>
+												{city.city}
+											</a>
+										</li>
+									))
+								}
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{
+				navAfter.map((item) => (
+					<a
+						href={item.href}
+						aria-current={currentPath === item.href ? 'page' : undefined}
+						class={`${navLink} ${currentPath === item.href ? 'text-brand-red' : ''}`}>
 						{item.label}
 					</a>
 				))
@@ -110,11 +204,71 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 			aria-label="Mobile"
 		>
 			{
-				nav.map((item) => (
+				navBefore.map((item) => (
 					<a
 						href={item.href}
 						aria-current={currentPath === item.href ? 'page' : undefined}
-						class={`block rounded-btn px-3 py-3 font-heading text-lg font-bold ${isDark ? 'text-white hover:bg-white/10' : 'text-ink hover:bg-mist'} focus:outline-none focus-visible:ring-2 focus-visible:ring-water`}>
+						class={mobileNavLink}>
+						{item.label}
+					</a>
+				))
+			}
+
+			<button
+				type="button"
+				data-areas-mobile-toggle
+				aria-expanded="false"
+				aria-controls="mobile-service-areas"
+				class={`flex w-full items-center justify-between ${mobileNavLink}`}
+			>
+				Service Areas
+				<svg
+					data-areas-chevron
+					class="h-5 w-5 transition-transform"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<path d="M6 9l6 6 6-6"></path>
+				</svg>
+			</button>
+			<div id="mobile-service-areas" hidden class="px-3 pb-2">
+				<p class={panelHeading}>Counties</p>
+				<ul class="mb-4 mt-2 space-y-1">
+					{
+						counties.map((county) => (
+							<li>
+								<a href={`/counties/${county.slug}`} class={panelLink}>
+									{county.name} County
+								</a>
+							</li>
+						))
+					}
+				</ul>
+				<p class={panelHeading}>Cities</p>
+				<ul class="mt-2 space-y-1">
+					{
+						cities.map((city) => (
+							<li>
+								<a href={`/locations/${city.slug}`} class={panelLink}>
+									{city.city}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+
+			{
+				navAfter.map((item) => (
+					<a
+						href={item.href}
+						aria-current={currentPath === item.href ? 'page' : undefined}
+						class={mobileNavLink}>
 						{item.label}
 					</a>
 				))
@@ -146,5 +300,56 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 		toggle
 			.querySelector('[data-icon-close]')
 			?.classList.toggle('hidden', !open);
+	});
+
+	// Desktop "Service Areas" dropdown: opens on hover or click, closes on
+	// outside click, Escape, or when the pointer leaves the menu entirely.
+	const areasMenu = document.querySelector<HTMLElement>('[data-areas-menu]');
+	const areasToggle = areasMenu?.querySelector<HTMLButtonElement>(
+		'[data-areas-toggle]',
+	);
+	const areasPanel = areasMenu?.querySelector<HTMLElement>('[data-areas-panel]');
+
+	const setAreasOpen = (open: boolean) => {
+		if (!areasPanel || !areasToggle) return;
+		areasPanel.hidden = !open;
+		areasToggle.setAttribute('aria-expanded', String(open));
+		areasToggle
+			.querySelector('[data-areas-chevron]')
+			?.classList.toggle('rotate-180', open);
+	};
+
+	areasToggle?.addEventListener('click', () => {
+		setAreasOpen(Boolean(areasPanel?.hidden));
+	});
+	areasMenu?.addEventListener('mouseenter', () => setAreasOpen(true));
+	areasMenu?.addEventListener('mouseleave', () => setAreasOpen(false));
+	areasMenu?.addEventListener('focusout', (event) => {
+		if (!areasMenu.contains(event.relatedTarget as Node)) setAreasOpen(false);
+	});
+	document.addEventListener('click', (event) => {
+		if (areasMenu && !areasMenu.contains(event.target as Node))
+			setAreasOpen(false);
+	});
+	document.addEventListener('keydown', (event) => {
+		if (event.key !== 'Escape') return;
+		setAreasOpen(false);
+		areasToggle?.blur();
+	});
+
+	// Mobile accordion version of the same menu.
+	const areasMobileToggle = document.querySelector<HTMLButtonElement>(
+		'[data-areas-mobile-toggle]',
+	);
+	const areasMobilePanel = document.getElementById('mobile-service-areas');
+
+	areasMobileToggle?.addEventListener('click', () => {
+		if (!areasMobilePanel) return;
+		const open = areasMobilePanel.hidden;
+		areasMobilePanel.hidden = !open;
+		areasMobileToggle.setAttribute('aria-expanded', String(open));
+		areasMobileToggle
+			.querySelector('[data-areas-chevron]')
+			?.classList.toggle('rotate-180', open);
 	});
 </script>
