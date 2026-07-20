@@ -258,6 +258,28 @@ export function GuideView({ initPageResult, params, searchParams }: AdminViewSer
             </div>
 
             <div className="h2o-guide__recipe">
+              <h3>…change the red &ldquo;Ready for water you can trust?&rdquo; strip?</h3>
+              <ol>
+                <li>
+                  Click <strong>Site Settings</strong>, then open the{' '}
+                  <strong>Call-to-Action Band</strong> tab.
+                </li>
+                <li>
+                  <strong>Heading</strong> is the big bold line and <strong>Subheading</strong> is
+                  the smaller line under it. This is the red strip near the bottom of most pages.
+                </li>
+                <li>
+                  The <strong>Book Online</strong> and <strong>Call</strong> buttons update on their
+                  own from your phone number and booking settings — there&apos;s nothing to edit
+                  there.
+                </li>
+                <li>
+                  Click <strong>Save</strong> when you&apos;re done.
+                </li>
+              </ol>
+            </div>
+
+            <div className="h2o-guide__recipe">
               <h3>…swap out a photo anywhere on the site?</h3>
               <ol>
                 <li>Go to the section that shows the photo (for example Site Settings for the team photo, or a Service for its photos).</li>

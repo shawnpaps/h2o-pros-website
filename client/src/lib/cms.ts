@@ -9,6 +9,7 @@ import {
 import { services as fallbackServices, type Service } from '../data/services';
 import {
   counties as fallbackCounties,
+  cta as fallbackCta,
   hours as fallbackHours,
   nav as fallbackNav,
   site as fallbackSite,
@@ -34,6 +35,11 @@ export interface SiteInfo {
   description: string;
 }
 
+export interface CtaContent {
+  title: string;
+  description: string;
+}
+
 export interface SiteContent {
   site: SiteInfo;
   hours: Array<{ label: string; value: string }>;
@@ -41,6 +47,7 @@ export interface SiteContent {
   socials: Array<{ label: string; href: string }>;
   nav: Array<{ label: string; href: string }>;
   ratingSummary: RatingSummary;
+  cta: CtaContent;
   logoUrl?: string;
 }
 
@@ -285,6 +292,8 @@ type PayloadSiteSettings = {
   ratingAverage?: string;
   ratingCount?: number;
   ratingSource?: string;
+  ctaTitle?: string;
+  ctaDescription?: string;
   logo?: unknown;
   homeHeroVideo?: unknown;
   teamPhoto?: unknown;
@@ -305,6 +314,7 @@ export const getSiteContent = async (): Promise<SiteContent> => {
       socials: [...fallbackSocials],
       nav: [...fallbackNav],
       ratingSummary: fallbackRatingSummary,
+      cta: { ...fallbackCta },
     };
   }
 
@@ -344,6 +354,10 @@ export const getSiteContent = async (): Promise<SiteContent> => {
       average: settings.ratingAverage || fallbackRatingSummary.average,
       count: settings.ratingCount ?? fallbackRatingSummary.count,
       source: settings.ratingSource || fallbackRatingSummary.source,
+    },
+    cta: {
+      title: settings.ctaTitle || fallbackCta.title,
+      description: settings.ctaDescription || fallbackCta.description,
     },
     // Always the original upload: the named sizes (card/hero) are fixed-ratio
     // center-crops meant for photos, and they chop non-4:3 logos.

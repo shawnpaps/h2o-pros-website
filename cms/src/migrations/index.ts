@@ -1,6 +1,7 @@
 import * as migration_20260712_172356_initial from './20260712_172356_initial';
 import * as migration_20260712_180154_home_hero_cards from './20260712_180154_home_hero_cards';
 import * as migration_20260715_173958_cms_text_control from './20260715_173958_cms_text_control';
+import * as migration_20260720_140226_cta_band from './20260720_140226_cta_band';
 
 export const migrations = [
   {
@@ -16,6 +17,11 @@ export const migrations = [
   {
     up: migration_20260715_173958_cms_text_control.up,
     down: migration_20260715_173958_cms_text_control.down,
-    name: '20260715_173958_cms_text_control'
+    name: '20260715_173958_cms_text_control',
+  },
+  {
+    up: migration_20260720_140226_cta_band.up,
+    down: migration_20260720_140226_cta_band.down,
+    name: '20260720_140226_cta_band'
   },
 ];
