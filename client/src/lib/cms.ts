@@ -11,6 +11,7 @@ import {
   counties as fallbackCounties,
   cta as fallbackCta,
   hours as fallbackHours,
+  locationHeadings as fallbackLocationHeadings,
   nav as fallbackNav,
   site as fallbackSite,
   socials as fallbackSocials,
@@ -40,6 +41,12 @@ export interface CtaContent {
   description: string;
 }
 
+/** Heading templates for the city / county landing pages (see splitHeadline). */
+export interface LocationHeadings {
+  city: string;
+  county: string;
+}
+
 export interface SiteContent {
   site: SiteInfo;
   hours: Array<{ label: string; value: string }>;
@@ -48,8 +55,23 @@ export interface SiteContent {
   nav: Array<{ label: string; href: string }>;
   ratingSummary: RatingSummary;
   cta: CtaContent;
+  locationHeadings: LocationHeadings;
   logoUrl?: string;
 }
+
+/**
+ * Fills a heading template such as "Plumbing & Filtration in {city}, FL" and
+ * splits it at the placeholder, so the page can render the tail in the accent
+ * colour. If the editor drops the placeholder, the whole line is accented.
+ */
+export const splitHeadline = (template: string, token: string, value: string) => {
+  const index = template.indexOf(token);
+  if (index === -1) return { lead: '', accent: template.trim() };
+  return {
+    lead: template.slice(0, index).trim(),
+    accent: template.slice(index).replace(token, value).trim(),
+  };
+};
 
 export interface GalleryItem {
   label: string;
@@ -294,6 +316,8 @@ type PayloadSiteSettings = {
   ratingSource?: string;
   ctaTitle?: string;
   ctaDescription?: string;
+  cityPageHeadline?: string;
+  countyPageHeadline?: string;
   logo?: unknown;
   homeHeroVideo?: unknown;
   teamPhoto?: unknown;
@@ -315,6 +339,7 @@ export const getSiteContent = async (): Promise<SiteContent> => {
       nav: [...fallbackNav],
       ratingSummary: fallbackRatingSummary,
       cta: { ...fallbackCta },
+      locationHeadings: { ...fallbackLocationHeadings },
     };
   }
 
@@ -358,6 +383,10 @@ export const getSiteContent = async (): Promise<SiteContent> => {
     cta: {
       title: settings.ctaTitle || fallbackCta.title,
       description: settings.ctaDescription || fallbackCta.description,
+    },
+    locationHeadings: {
+      city: settings.cityPageHeadline || fallbackLocationHeadings.city,
+      county: settings.countyPageHeadline || fallbackLocationHeadings.county,
     },
     // Always the original upload: the named sizes (card/hero) are fixed-ratio
     // center-crops meant for photos, and they chop non-4:3 logos.

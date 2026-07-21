@@ -9,7 +9,7 @@ import Stars from './Stars.astro';
 import Drop from './Drop.astro';
 import heroImage from '../assets/services/timur-shakerzianov-c314Gh8dXAo-unsplash.jpg';
 import type { Location } from '../data/locations';
-import { countySlug, getSiteContent } from '../lib/cms';
+import { countySlug, getSiteContent, splitHeadline } from '../lib/cms';
 import { getRatingSummary } from '../lib/reviews';
 
 interface Props {
@@ -17,8 +17,13 @@ interface Props {
 }
 
 const { location } = Astro.props;
-const { site } = await getSiteContent();
+const { site, locationHeadings } = await getSiteContent();
 const ratingSummary = await getRatingSummary();
+const headline = splitHeadline(
+	locationHeadings.city,
+	'{city}',
+	location.city,
+);
 ---
 
 <section class="relative overflow-hidden bg-ink-deep text-white">
@@ -67,8 +72,8 @@ const ratingSummary = await getRatingSummary();
 			<h1
 				class="mt-6 font-heading text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl"
 			>
-				Plumbing & Filtration in
-				<span class="text-water-light">{location.city}, FL</span>
+				{headline.lead}{' '}
+				<span class="text-water-light">{headline.accent}</span>
 			</h1>
 			<p class="mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
 				{location.intro}

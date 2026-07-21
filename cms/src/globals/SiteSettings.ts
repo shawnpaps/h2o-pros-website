@@ -42,7 +42,8 @@ export const SiteSettings: GlobalConfig = {
               required: true,
               label: 'Business name',
               admin: {
-                description: 'The full business name, for example "H2O Pros Plumbing".',
+                description:
+                  'The full business name, for example "H2O Pros Plumbing". Shown next to the logo at the top of every page.',
               },
             },
             {
@@ -59,7 +60,8 @@ export const SiteSettings: GlobalConfig = {
               type: 'text',
               label: 'Tagline',
               admin: {
-                description: 'A short slogan shown alongside the business name.',
+                description:
+                  'A short slogan shown in smaller text under the business name at the top of every page, for example "Plumbing & Filtration".',
               },
             },
             {
@@ -460,6 +462,31 @@ export const SiteSettings: GlobalConfig = {
               admin: {
                 description:
                   'The smaller line under the heading, for example "Book online in 60 seconds or call during business hours.".',
+              },
+            },
+          ],
+        },
+        {
+          label: 'City & County Page Headings',
+          description:
+            'The big heading at the top of every city page and every county page. Write it once here and it is used on all of them, with the city or county name filled in automatically.',
+          fields: [
+            {
+              name: 'cityPageHeadline',
+              type: 'text',
+              label: 'City page heading',
+              admin: {
+                description:
+                  'Write {city} where the city name should go, for example "Plumbing & Filtration in {city}, FL". On the Tampa page that reads "Plumbing & Filtration in Tampa, FL". Everything from {city} onward is shown in light blue.',
+              },
+            },
+            {
+              name: 'countyPageHeadline',
+              type: 'text',
+              label: 'County page heading',
+              admin: {
+                description:
+                  'Write {county} where the county name should go, for example "Plumbing & Water Filtration in {county} County, FL". Everything from {county} onward is shown in light blue.',
               },
             },
           ],
