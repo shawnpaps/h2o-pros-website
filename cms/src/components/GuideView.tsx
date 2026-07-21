@@ -280,6 +280,46 @@ export function GuideView({ initPageResult, params, searchParams }: AdminViewSer
             </div>
 
             <div className="h2o-guide__recipe">
+              <h3>…change the big heading on the city and county pages?</h3>
+              <ol>
+                <li>
+                  Click <strong>Site Settings</strong>, then open the{' '}
+                  <strong>City &amp; County Page Headings</strong> tab.
+                </li>
+                <li>
+                  There are two boxes: one for every city page and one for every county page. You
+                  only write the heading once — the city or county name is filled in for you.
+                </li>
+                <li>
+                  Type <strong>{'{city}'}</strong> (or <strong>{'{county}'}</strong>) wherever the
+                  place name should appear, for example &ldquo;Plumbing &amp; Filtration in{' '}
+                  {'{city}'}, FL&rdquo;. Everything from there to the end of the line is shown in
+                  light blue.
+                </li>
+                <li>
+                  Click <strong>Save</strong>. The heading on every city or county page changes at
+                  once.
+                </li>
+              </ol>
+            </div>
+
+            <div className="h2o-guide__recipe">
+              <h3>…change the business name shown next to the logo?</h3>
+              <ol>
+                <li>
+                  Click <strong>Site Settings</strong>, then open the <strong>Business</strong> tab.
+                </li>
+                <li>
+                  <strong>Business name</strong> is the bold line beside the logo at the top of
+                  every page, and <strong>Tagline</strong> is the smaller line under it.
+                </li>
+                <li>
+                  Click <strong>Save</strong> when you&apos;re done.
+                </li>
+              </ol>
+            </div>
+
+            <div className="h2o-guide__recipe">
               <h3>…swap out a photo anywhere on the site?</h3>
               <ol>
                 <li>Go to the section that shows the photo (for example Site Settings for the team photo, or a Service for its photos).</li>

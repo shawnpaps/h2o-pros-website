@@ -10,7 +10,7 @@ import Stars from '../../components/Stars.astro';
 import Drop from '../../components/Drop.astro';
 import HomeSections from '../../components/HomeSections.astro';
 import heroImage from '../../assets/services/timur-shakerzianov-c314Gh8dXAo-unsplash.jpg';
-import { getCounties, getSiteContent } from '../../lib/cms';
+import { getCounties, getSiteContent, splitHeadline } from '../../lib/cms';
 import { getRatingSummary } from '../../lib/reviews';
 import { buildBreadcrumbSchema, buildCountyServiceSchema } from '../../lib/schema';
 
@@ -22,8 +22,13 @@ if (!county) {
 	return new Response(null, { status: 404 });
 }
 
-const { site } = await getSiteContent();
+const { site, locationHeadings } = await getSiteContent();
 const ratingSummary = await getRatingSummary();
+const headline = splitHeadline(
+	locationHeadings.county,
+	'{county}',
+	county.name,
+);
 const siteUrl = (Astro.site ?? Astro.url).origin;
 
 const cityNames = county.locations.map((location) => location.city);
@@ -96,8 +101,8 @@ const countyHeroImageUrl = county.locations.find(
 				<h1
 					class="mt-6 font-heading text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl"
 				>
-					Plumbing & Water Filtration in
-					<span class="text-water-light">{county.name} County, FL</span>
+					{headline.lead}{' '}
+					<span class="text-water-light">{headline.accent}</span>
 				</h1>
 				<p class="mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
 					Our licensed plumbers are in {county.name} County every week — from

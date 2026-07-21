@@ -1031,6 +1031,14 @@ export interface SiteSetting {
    */
   ctaDescription?: string | null;
   /**
+   * Write {city} where the city name should go, for example "Plumbing & Filtration in {city}, FL". On the Tampa page that reads "Plumbing & Filtration in Tampa, FL". Everything from {city} onward is shown in light blue.
+   */
+  cityPageHeadline?: string | null;
+  /**
+   * Write {county} where the county name should go, for example "Plumbing & Water Filtration in {county} County, FL". Everything from {county} onward is shown in light blue.
+   */
+  countyPageHeadline?: string | null;
+  /**
    * Shown on the About Us page.
    */
   teamPhoto?: (number | null) | Media;
@@ -1104,6 +1112,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   homeHeroCardRight?: T;
   ctaTitle?: T;
   ctaDescription?: T;
+  cityPageHeadline?: T;
+  countyPageHeadline?: T;
   teamPhoto?: T;
   serviceAreaMap?: T;
   updatedAt?: T;

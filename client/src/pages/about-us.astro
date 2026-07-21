@@ -8,10 +8,27 @@ import CtaBand from '../components/CtaBand.astro';
 import { Image } from 'astro:assets';
 import teamPhotoImage from '../assets/team-photo.jpg';
 import tampaServiceAreaImage from '../assets/tampa-service-area.jpg';
-import { getOffers, getPageHeadline, getSiteContent, getSiteSettings } from '../lib/cms';
+import {
+  getCounties,
+  getOffers,
+  getPageHeadline,
+  getSiteContent,
+  getSiteSettings,
+} from '../lib/cms';
 
 const { site, counties } = await getSiteContent();
 const settings = await getSiteSettings();
+
+// Only counties that actually have a landing page (i.e. at least one city page
+// names them) become links; the rest stay as plain chips.
+const countyPages = await getCounties();
+const countyLinks = new Map(
+  countyPages.map((county) => [county.name.toLowerCase(), `/counties/${county.slug}`]),
+);
+const countyChips = counties.map((name) => ({
+  name,
+  href: countyLinks.get(name.trim().toLowerCase()),
+}));
 
 const headline = await getPageHeadline('about-us', {
   eyebrow: 'About us',
@@ -246,12 +263,24 @@ const communities = [
         </div>
         <ul class="mt-8 flex flex-wrap gap-3">
           {
-            counties.map((county) => (
-              <li class="inline-flex items-center gap-2 rounded-full border border-line bg-fog px-5 py-2.5 font-semibold text-ink/70 shadow-card">
-                <Drop size="sm" />
-                {county} County
-              </li>
-            ))
+            countyChips.map((county) =>
+              county.href ? (
+                <li>
+                  <a
+                    href={county.href}
+                    class="inline-flex items-center gap-2 rounded-full border border-line bg-fog px-5 py-2.5 font-semibold text-ink/70 shadow-card transition hover:border-water hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-water"
+                  >
+                    <Drop size="sm" />
+                    {county.name} County
+                  </a>
+                </li>
+              ) : (
+                <li class="inline-flex items-center gap-2 rounded-full border border-line bg-fog px-5 py-2.5 font-semibold text-ink/70 shadow-card">
+                  <Drop size="sm" />
+                  {county.name} County
+                </li>
+              ),
+            )
           }
         </ul>
         <p class="mt-6 text-sm font-semibold uppercase tracking-wide text-ink/45">

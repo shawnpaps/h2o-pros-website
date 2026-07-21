@@ -18,6 +18,16 @@ export const cta = {
   description: 'Book online in 60 seconds or call during business hours.',
 } as const;
 
+/**
+ * Default headings for the city and county landing pages. `{city}` / `{county}`
+ * are replaced with the place name; everything from the placeholder onward is
+ * rendered in the light-blue accent.
+ */
+export const locationHeadings = {
+  city: 'Plumbing & Filtration in {city}, FL',
+  county: 'Plumbing & Water Filtration in {county} County, FL',
+} as const;
+
 /** Housecall Pro online booking widget credentials. */
 export const booking = {
   token: '961c3db58034464aab709dba3edd7cd2',
