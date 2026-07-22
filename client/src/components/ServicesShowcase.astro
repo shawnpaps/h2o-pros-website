@@ -43,13 +43,13 @@ const total = String(items.length).padStart(2, '0');
 ---
 
 <section
-	class="relative overflow-hidden bg-mist"
+	class="relative flex flex-col overflow-hidden bg-mist"
 	aria-labelledby="services-title"
 	data-svc-root
 >
 	<h2 id="services-title" class="sr-only">What we do — featured services</h2>
 
-	<div class="relative grid lg:min-h-[44rem] lg:grid-cols-[45fr_55fr]">
+	<div class="relative grid lg:min-h-[40rem] lg:grid-cols-[45fr_55fr]">
 		<!-- Photo side -->
 		<div
 			class="relative aspect-[4/3] overflow-hidden bg-ink-deep sm:aspect-[16/9] lg:aspect-auto"
@@ -103,18 +103,21 @@ const total = String(items.length).padStart(2, '0');
 		</div>
 
 		<!-- Spec-sheet panel -->
-		<div class="relative px-6 pb-16 pt-12 sm:px-10 lg:px-16 lg:pb-20 lg:pt-72">
-			<Image
-				src={cardBackground}
-				alt=""
-				aria-hidden="true"
-				class="absolute inset-x-0 top-0 w-full h-full blur-lg object-cover"
-			/>
-			<div class="grid">
+		<div class="relative px-6 pb-16 pt-12 sm:px-10 lg:px-12 lg:pb-14 lg:pt-56">
+			<!-- Sits behind the cards (not inside one) so their backdrop-blur
+			     still frosts it. Every card is stretched to this grid cell, so
+			     inset-0 tracks the card box exactly. -->
+			<div class="relative grid overflow-hidden rounded-panel">
+				<Image
+					src={cardBackground}
+					alt=""
+					aria-hidden="true"
+					class="absolute inset-0 h-full w-full blur-lg object-cover"
+				/>
 				{
 					items.map((item, i) => (
 						<div
-							class="svc-fade col-start-1 row-start-1 flex flex-col border border-white/15 bg-white/20 backdrop-blur-2xl rounded-panel p-6 sm:p-10 lg:p-16 z-10"
+							class="svc-fade col-start-1 row-start-1 flex flex-col border border-white/15 bg-white/20 backdrop-blur-2xl rounded-panel p-6 sm:p-10 lg:p-10 z-10"
 							role="tabpanel"
 							id={`svc-panel-${item.id}`}
 							aria-labelledby={`svc-tab-${item.id}`}
@@ -129,7 +132,7 @@ const total = String(items.length).padStart(2, '0');
 								<p class="max-w-xl leading-relaxed text-ink/75">{item.blurb}</p>
 							</div>
 
-							<div class="mt-10 grid gap-3 border-t border-line pt-6 sm:grid-cols-[8rem_1fr] sm:gap-8">
+							<div class="mt-8 grid gap-3 border-t border-line pt-6 sm:grid-cols-[8rem_1fr] sm:gap-8">
 								<p class="font-mono text-[0.65rem] font-bold uppercase tracking-[0.25em] text-ink/45">
 									Services Include:
 								</p>
@@ -143,12 +146,12 @@ const total = String(items.length).padStart(2, '0');
 							</div>
 
 							{item.badge && (
-								<p class="mt-10 font-heading text-sm font-extrabold uppercase tracking-wide text-water-light">
+								<p class="mt-8 font-heading text-sm font-extrabold uppercase tracking-wide text-water-light">
 									→ {item.badge}
 								</p>
 							)}
 
-							<div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
+							<div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
 								<BookOnlineButton>Book Online</BookOnlineButton>
 								<a
 									href={`/services/${item.slug}`}
@@ -163,7 +166,7 @@ const total = String(items.length).padStart(2, '0');
 			</div>
 
 			<p
-				class="mt-14 text-right font-mono text-xs tracking-[0.25em] text-ink/40"
+				class="mt-8 text-right font-mono text-xs tracking-[0.25em] text-ink/40"
 				aria-hidden="true"
 			>
 				<span data-svc-counter>01</span>
@@ -199,8 +202,10 @@ const total = String(items.length).padStart(2, '0');
 		</div>
 	</div>
 
-	<!-- Horizontal service selector -->
-	<div class="border-t border-line bg-ink-deep">
+	<!-- Horizontal service selector (above the split on mobile, below it on desktop) -->
+	<div
+		class="order-first border-b border-line bg-ink-deep lg:order-none lg:border-b-0 lg:border-t"
+	>
 		<div
 			class="flex overflow-x-auto"
 			role="tablist"
