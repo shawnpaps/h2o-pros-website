@@ -173,10 +173,21 @@ const headline = await getPageHeadline('reviews', {
     // Shortest signed circular distance from the active slide.
     const offsetOf = (i: number) => ((((i - current) % n) + n * 1.5) % n) - n / 2;
 
+    // How many slides on each side of the active one stay mounted. Slides
+    // past this are hidden with `display: none` so iOS Safari doesn't allocate
+    // a GPU compositing layer (from `will-change`) for every one of the ~230+
+    // reviews at once — that layer explosion is what crashed the page.
+    const WINDOW = 3;
+
     const render = () => {
       for (const [i, slide] of slides.entries()) {
         const d = offsetOf(i);
         const abs = Math.abs(d);
+        if (abs > WINDOW) {
+          slide.style.display = 'none';
+          continue;
+        }
+        slide.style.display = '';
         slide.style.transform =
           `translate(-50%, -50%) translateX(${d * spacing}px) ` +
           `translateZ(${-abs * 160}px) rotateY(${d * -30}deg)`;
