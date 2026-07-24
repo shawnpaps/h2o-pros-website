@@ -63,7 +63,10 @@ const jsonLd = [
 		{/* End Google Tag Manager */}
 
 		{/* Google Tag Manager — GTM-TVJQ7NXF */}
-		<script is:inline async src="https://www.googletagmanager.com/gtm.js?id=GTM-TVJQ7NXF"></script>
+		<script
+			is:inline
+			async
+			src="https://www.googletagmanager.com/gtm.js?id=GTM-TVJQ7NXF"></script>
 		<script is:inline>
 			window.dataLayer = window.dataLayer || [];
 			function gtag() {
@@ -72,7 +75,17 @@ const jsonLd = [
 			gtag('js', new Date());
 		</script>
 		{/* End Google Tag Manager — GTM-TVJQ7NXF */}
-		<meta name="color-scheme" content="dark" />
+		{/* Google tag (gtag.js) — AW-17540222998 */}
+			<script
+				is:inline
+				async
+				src="https://www.googletagmanager.com/gtag/js?id=AW-17540222998"
+			></script>
+			<script is:inline>
+				gtag('config', 'AW-17540222998');
+			</script>
+			{/* End Google tag (gtag.js) — AW-17540222998 */}
+			<meta name="color-scheme" content="dark" />
 		<meta name="description" content={description} />
 		{noindex && <meta name="robots" content="noindex, nofollow" />}
 		<link rel="canonical" href={canonicalUrl} />
@@ -123,6 +136,7 @@ const jsonLd = [
 			data-color="#0E6FBE"
 			data-organization="697b9a5a-d869-4878-8294-75253aecc66a"
 			defer></script>
+
 		<style is:global>
 			/* This page declares a dark color-scheme, and the Housecall Pro chat
 			   iframe doesn't declare one of its own — that mismatch makes browsers
