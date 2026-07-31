@@ -34,6 +34,12 @@ export const booking = {
   orgName: 'Your-Friendly-H2O-Pros-Plumbing-and-Filtration',
 } as const;
 
+/** Housecall Pro lead capture form (embedded on the contact page). */
+export const leadForm = {
+  token: '07046d90d43b42d882a4ac0e74deff66',
+  orgName: 'Your-Friendly-H2O-Pros-Plumbing-and-Filtration',
+} as const;
+
 export const hours = [
   { label: 'Monday – Friday', value: '8:00am – 5:00pm' },
   { label: 'Saturday – Sunday', value: 'Closed' },
