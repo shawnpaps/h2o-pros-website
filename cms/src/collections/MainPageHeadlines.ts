@@ -67,5 +67,52 @@ export const MainPageHeadlines: CollectionConfig = {
           'The sentence shown under the headline, for example "Built on trust, quality, and 20+ years of experience in the area." Leave empty to show nothing.',
       },
     },
+    {
+      type: 'collapsible',
+      label: 'Red banner at the bottom of this page',
+      admin: {
+        initCollapsed: true,
+        description:
+          'Overrides the site-wide Call-to-Action Band from Site Settings, for this page only. Leave any field empty to keep the wording the page already uses. (The Contact page has no red banner, so these do nothing there.)',
+      },
+      fields: [
+        {
+          name: 'ctaTitle',
+          type: 'text',
+          label: 'Banner heading',
+          admin: {
+            description:
+              'The big bold line in the red banner, for example "Ready to become our next 5-star review?".',
+          },
+        },
+        {
+          name: 'ctaDescription',
+          type: 'text',
+          label: 'Banner subheading',
+          admin: {
+            description:
+              'The smaller line under it, for example "Book online or give us a call — we\'ll earn it.".',
+          },
+        },
+        {
+          name: 'ctaBookLabel',
+          type: 'text',
+          label: 'Booking button text',
+          admin: {
+            description:
+              'Wording on the white button that opens online booking. Defaults to "Book Online".',
+          },
+        },
+        {
+          name: 'ctaCallLabel',
+          type: 'text',
+          label: 'Call button text',
+          admin: {
+            description:
+              'Wording on the outlined call button. Defaults to "Call" followed by your phone number — if you change it, type the number in yourself if you still want it shown.',
+          },
+        },
+      ],
+    },
   ],
 }

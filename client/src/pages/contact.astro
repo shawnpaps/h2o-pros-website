@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
-import Button from '../components/Button.astro';
 import BookOnlineButton from '../components/BookOnlineButton.astro';
 import Drop from '../components/Drop.astro';
 import { getPageHeadline, getSiteContent } from '../lib/cms';
+import { leadForm } from '../data/site';
 
 const { site, hours } = await getSiteContent();
 
@@ -15,17 +15,6 @@ const headline = await getPageHeadline('contact', {
 		"Fill out the form and we'll get right back to you — or skip the typing and call during business hours.",
 });
 
-const serviceOptions = [
-	'Drain Cleaning & Hydro-Jetting',
-	'Water Heater Services',
-	'Whole-Home Filtration & RO',
-	'Leak Detection & Pipe Repair',
-	'General / Residential Plumbing',
-	'Something else',
-];
-
-const inputClasses =
-	'w-full rounded-btn border border-line bg-ink-deep px-4 py-3 text-ink placeholder:text-ink/40 focus:border-water focus:outline-none focus:ring-2 focus:ring-water/30';
 ---
 
 <BaseLayout
@@ -140,12 +129,8 @@ const inputClasses =
 				</div>
 			</div>
 
-			<!-- Booking form -->
-			<form
-				class="rounded-panel border border-line bg-fog p-7 shadow-soft sm:p-10"
-				method="POST"
-				action="#"
-			>
+			<!-- Housecall Pro lead capture form -->
+			<div class="rounded-panel border border-line bg-fog p-7 shadow-soft sm:p-10">
 				<h2 class="font-heading text-2xl font-extrabold text-ink">
 					Request an appointment
 				</h2>
@@ -154,100 +139,29 @@ const inputClasses =
 					hour during business hours.
 				</p>
 
-				<div class="mt-8 grid gap-5 sm:grid-cols-2">
-					<div>
-						<label for="name" class="mb-1.5 block font-semibold text-ink"
-							>Full name</label
-						>
-						<input
-							id="name"
-							name="name"
-							type="text"
-							required
-							autocomplete="name"
-							class={inputClasses}
-						/>
-					</div>
-					<div>
-						<label for="phone" class="mb-1.5 block font-semibold text-ink"
-							>Phone</label
-						>
-						<input
-							id="phone"
-							name="phone"
-							type="tel"
-							required
-							autocomplete="tel"
-							class={inputClasses}
-						/>
-					</div>
-					<div class="sm:col-span-2">
-						<label for="email" class="mb-1.5 block font-semibold text-ink"
-							>Email</label
-						>
-						<input
-							id="email"
-							name="email"
-							type="email"
-							required
-							autocomplete="email"
-							class={inputClasses}
-						/>
-					</div>
-					<div class="sm:col-span-2">
-						<label for="address" class="mb-1.5 block font-semibold text-ink">
-							Service address <span class="font-normal text-ink/50"
-								>(city & county help too)</span
-							>
-						</label>
-						<input
-							id="address"
-							name="address"
-							type="text"
-							autocomplete="street-address"
-							class={inputClasses}
-						/>
-					</div>
-					<div class="sm:col-span-2">
-						<label for="service" class="mb-1.5 block font-semibold text-ink"
-							>What do you need?</label
-						>
-						<select id="service" name="service" class={inputClasses}>
-							{
-								serviceOptions.map((option) => (
-									<option value={option}>{option}</option>
-								))
-							}
-						</select>
-					</div>
-					<div class="sm:col-span-2">
-						<label for="message" class="mb-1.5 block font-semibold text-ink"
-							>Tell us more</label
-						>
-						<textarea
-							id="message"
-							name="message"
-							rows="4"
-							class={inputClasses}
-							placeholder="Slow drain in the hall bath, water heater making noise, curious about filtration…"
-						></textarea>
-					</div>
-				</div>
+				<!--Start of Housecallpro Lead Capture code-->
+				<script
+					is:inline
+					async
+					src={`https://online-booking.housecallpro.com/script.js?token=${leadForm.token}&orgName=${leadForm.orgName}`}
+				></script>
+				<iframe
+					id="hcp-lead-iframe"
+					title="Request an appointment"
+					src={`https://book.housecallpro.com/lead-form/${leadForm.orgName}/${leadForm.token}`}
+					class="mt-8 block w-full border-none"
+					style="min-height: 620px;"></iframe>
+				<!--End of Housecallpro Lead Capture code-->
 
-				<div class="mt-8">
-					<Button type="submit" size="lg" class="w-full sm:w-auto"
-						>Request my appointment</Button
+				<p class="mt-4 text-sm text-ink/50">
+					Prefer to talk it through? <a
+						href={site.phoneHref}
+						class="font-bold text-brand-red underline-offset-4 hover:underline"
 					>
-					<p class="mt-4 text-sm text-ink/50">
-						Prefer to talk it through? <a
-							href={site.phoneHref}
-							class="font-bold text-brand-red underline-offset-4 hover:underline"
-						>
-							Call {site.phone}</a
-						> during business hours.
-					</p>
-				</div>
-			</form>
+						Call {site.phone}</a
+					> during business hours.
+				</p>
+			</div>
 		</div>
 	</section>
 </BaseLayout>
