@@ -4,7 +4,10 @@ import tailwind from '@astrojs/tailwind';
 import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-  site: 'https://www.yourfriendlyh20pros.com',
+  // Canonical origin for the whole site. Note the "h2o" (letter O) — the
+  // "h20" (zero) spelling is a separate, parked domain, and pointing canonical
+  // tags/sitemap/JSON-LD at it de-indexed the site in Google Search Console.
+  site: 'https://www.yourfriendlyh2opros.com',
   output: 'server',
   adapter: vercel({
     // Pages are rendered on demand, cached, and re-fetched from the CMS

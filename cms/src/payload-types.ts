@@ -487,6 +487,22 @@ export interface MainPageHeadline {
    * The sentence shown under the headline, for example "Built on trust, quality, and 20+ years of experience in the area." Leave empty to show nothing.
    */
   description?: string | null;
+  /**
+   * The big bold line in the red banner, for example "Ready to become our next 5-star review?".
+   */
+  ctaTitle?: string | null;
+  /**
+   * The smaller line under it, for example "Book online or give us a call — we'll earn it.".
+   */
+  ctaDescription?: string | null;
+  /**
+   * Wording on the white button that opens online booking. Defaults to "Book Online".
+   */
+  ctaBookLabel?: string | null;
+  /**
+   * Wording on the outlined call button. Defaults to "Call" followed by your phone number — if you change it, type the number in yourself if you still want it shown.
+   */
+  ctaCallLabel?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -812,6 +828,10 @@ export interface MainPageHeadlinesSelect<T extends boolean = true> {
   eyebrow?: T;
   title?: T;
   description?: T;
+  ctaTitle?: T;
+  ctaDescription?: T;
+  ctaBookLabel?: T;
+  ctaCallLabel?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -877,7 +897,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface SiteSetting {
   id: number;
   /**
-   * The full business name, for example "H2O Pros Plumbing".
+   * The full business name, for example "H2O Pros Plumbing". Shown next to the logo at the top of every page.
    */
   name: string;
   /**
@@ -885,7 +905,7 @@ export interface SiteSetting {
    */
   shortName: string;
   /**
-   * A short slogan shown alongside the business name.
+   * A short slogan shown in smaller text under the business name at the top of every page, for example "Plumbing & Filtration".
    */
   tagline?: string | null;
   /**

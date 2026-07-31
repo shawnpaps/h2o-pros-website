@@ -5,7 +5,7 @@ import React from 'react'
 import config from '@/payload.config'
 import './styles.css'
 
-const liveSiteURL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.yourfriendlyh20pros.com'
+const liveSiteURL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.yourfriendlyh2opros.com'
 
 export default async function HomePage() {
   const headers = await getHeaders()

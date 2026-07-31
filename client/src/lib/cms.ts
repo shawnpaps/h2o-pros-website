@@ -450,6 +450,39 @@ export const getPageHeadline = async (
   };
 };
 
+/**
+ * Per-page overrides for the red call-to-action band. Every field is optional:
+ * anything the editor leaves blank falls back to the page's built-in wording,
+ * then to the site-wide band in Site Settings.
+ */
+export interface PageCta {
+  title?: string;
+  description?: string;
+  bookLabel?: string;
+  callLabel?: string;
+}
+
+export const getPageCta = async (page: PageHeadlinePage): Promise<PageCta> => {
+  const payload = await fetchPayload<{
+    docs: Array<{
+      ctaTitle?: string;
+      ctaDescription?: string;
+      ctaBookLabel?: string;
+      ctaCallLabel?: string;
+    }>;
+  }>(`/api/main-page-headlines?where[page][equals]=${page}&limit=1`);
+
+  const doc = payload?.docs?.[0];
+  if (!doc) return {};
+
+  return {
+    title: doc.ctaTitle || undefined,
+    description: doc.ctaDescription || undefined,
+    bookLabel: doc.ctaBookLabel || undefined,
+    callLabel: doc.ctaCallLabel || undefined,
+  };
+};
+
 export const getOffers = async (): Promise<Offer[]> => {
   const payload = await fetchPayload<{
     docs: Array<{ title?: string; detail?: string; fine?: string }>;

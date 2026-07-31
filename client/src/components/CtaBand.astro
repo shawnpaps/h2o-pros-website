@@ -1,17 +1,29 @@
 ---
 import Button from './Button.astro';
 import BookOnlineButton from './BookOnlineButton.astro';
-import { getSiteContent } from '../lib/cms';
+import { getPageCta, getSiteContent, type PageHeadlinePage } from '../lib/cms';
 
 interface Props {
+  /** Built-in wording for the page this band sits on. */
   title?: string;
   description?: string;
+  /**
+   * Lets the editor override this page's band (wording and button text) from
+   * the page's Main Page Headline entry in the CMS.
+   */
+  page?: PageHeadlinePage;
 }
 
 const { site, cta } = await getSiteContent();
-// Pages can override the wording per-page; otherwise fall back to the
-// site-wide Call-to-Action Band text edited in the CMS.
-const { title = cta.title, description = cta.description } = Astro.props;
+const { title: pageTitle, description: pageDescription, page } = Astro.props;
+const override = page ? await getPageCta(page) : {};
+
+// Most specific wins: the CMS entry for this page, then the wording the page
+// passes in, then the site-wide Call-to-Action Band text.
+const title = override.title || pageTitle || cta.title;
+const description = override.description || pageDescription || cta.description;
+const bookLabel = override.bookLabel || 'Book Online';
+const callLabel = override.callLabel || `Call ${site.phone}`;
 ---
 
 <section class="bg-brand-red" aria-labelledby="cta-band-title">
@@ -29,10 +41,10 @@ const { title = cta.title, description = cta.description } = Astro.props;
         size="lg"
         class="!bg-white !text-brand-red hover:!bg-white/90 focus-visible:!ring-white"
       >
-        Book Online
+        {bookLabel}
       </BookOnlineButton>
       <Button href={site.phoneHref} variant="outline" size="lg" class="text-white">
-        Call {site.phone}
+        {callLabel}
       </Button>
     </div>
   </div>
