@@ -60,15 +60,13 @@ const panelLink =
 	<div
 		class="mx-auto flex max-w-[90rem] items-center bg-white/10 hover:bg-white/15 transition-all ease-linear backdrop-blur-lg my-4 rounded-panel justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8"
 	>
-		<Logo />
+		<Logo compact />
 
-		<!-- Seven links plus the wordmark, phone, and CTA only fit on one line
-		     from ~1440px up; below that the hamburger carries the same menu
-		     rather than letting the row wrap onto two lines. -->
-		<nav
-			class="hidden items-center gap-5 min-[1440px]:flex 2xl:gap-7"
-			aria-label="Main"
-		>
+		<!-- Seven links plus the phone block and CTA only fit on one line from
+		     xl up (and only because the wordmark drops out below 2xl); below
+		     that the hamburger carries the same menu rather than letting the
+		     row wrap onto two lines. -->
+		<nav class="hidden items-center gap-5 xl:flex" aria-label="Main">
 			{
 				navBefore.map((item) => (
 					<a
@@ -159,7 +157,7 @@ const panelLink =
 			<a href={faqHref} data-faq-link class={navLink}>FAQs</a>
 		</nav>
 
-		<div class="hidden items-center gap-4 md:flex 2xl:gap-5">
+		<div class="hidden items-center gap-4 md:flex">
 			<a
 				href={site.phoneHref}
 				class="shrink-0 rounded-btn text-right leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-water"
@@ -183,7 +181,7 @@ const panelLink =
 			data-nav-toggle
 			aria-expanded="false"
 			aria-controls="mobile-menu"
-			class={`grid h-11 w-11 shrink-0 place-items-center rounded-btn min-[1440px]:hidden ${isDark ? 'text-white' : 'text-ink'} focus:outline-none focus-visible:ring-2 focus-visible:ring-water`}
+			class={`grid h-11 w-11 shrink-0 place-items-center rounded-btn xl:hidden ${isDark ? 'text-white' : 'text-ink'} focus:outline-none focus-visible:ring-2 focus-visible:ring-water`}
 		>
 			<span class="sr-only">Open menu</span>
 			<svg
@@ -219,7 +217,7 @@ const panelLink =
 	<div
 		id="mobile-menu"
 		hidden
-		class={`min-[1440px]:hidden ${isDark ? 'bg-ink-deep/95 backdrop-blur' : 'border-b border-line bg-ink-deep/95 backdrop-blur'}`}
+		class={`xl:hidden ${isDark ? 'bg-ink-deep/95 backdrop-blur' : 'border-b border-line bg-ink-deep/95 backdrop-blur'}`}
 	>
 		<nav
 			class="mx-auto max-w-7xl space-y-1 px-4 py-4 sm:px-6"
