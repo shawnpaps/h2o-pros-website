@@ -84,9 +84,12 @@ const total = String(items.length).padStart(2, '0');
 				))
 			}
 
-			<!-- Mobile title (desktop uses the split title below) -->
+			<!-- Mobile title (desktop uses the split title below). Every title
+			     shares one grid cell and hugs its bottom edge, so the active one
+			     always sits on the bottom of the photo no matter how many lines
+			     it wraps to. -->
 			<div
-				class="absolute inset-x-0 bottom-0 grid p-6 sm:p-10 lg:hidden"
+				class="absolute inset-x-0 bottom-0 grid items-end p-6 sm:p-10 lg:hidden"
 				aria-hidden="true"
 			>
 				{
