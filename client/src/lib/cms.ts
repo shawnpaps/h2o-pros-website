@@ -485,7 +485,7 @@ export const getPageCta = async (page: PageHeadlinePage): Promise<PageCta> => {
 
 export const getOffers = async (): Promise<Offer[]> => {
   const payload = await fetchPayload<{
-    docs: Array<{ title?: string; detail?: string; fine?: string }>;
+    docs: Array<{ title?: string; detail?: string; fine?: string; image?: unknown }>;
   }>('/api/offers?where[published][equals]=true&sort=sortOrder&limit=100');
 
   const offers =
@@ -495,6 +495,7 @@ export const getOffers = async (): Promise<Offer[]> => {
         title: offer.title || '',
         detail: offer.detail || '',
         fine: offer.fine || undefined,
+        imageUrl: mediaUrl(offer.image, 'card'),
       })) ?? [];
 
   return offers.length ? offers : fallbackOffers;

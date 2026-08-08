@@ -43,6 +43,16 @@ export const Offers: CollectionConfig = {
       },
     },
     {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Offer photo',
+      admin: {
+        description:
+          'Optional photo shown at the top of this offer card. Leave empty for a text-only card.',
+      },
+    },
+    {
       name: 'fine',
       type: 'text',
       label: 'Fine print',
