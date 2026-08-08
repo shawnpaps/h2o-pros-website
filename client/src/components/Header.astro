@@ -28,9 +28,14 @@ const splitAt = servicesIndex === -1 ? nav.length : servicesIndex + 1;
 const navBefore = nav.slice(0, splitAt);
 const navAfter = nav.slice(splitAt);
 
-const wrapper = isDark
-	? 'absolute inset-x-0 top-0 z-50'
-	: 'sticky top-0 z-50 border-b border-line bg-ink-deep/90 backdrop-blur';
+// The bar itself is the floating panel. Once the viewport is wide enough for
+// the panel to reach its new 90rem cap, a gutter out here keeps it off the
+// screen edges; below that it stays flush, exactly as before.
+const wrapper = `min-[1440px]:px-6 ${
+	isDark
+		? 'absolute inset-x-0 top-0 z-50'
+		: 'sticky top-0 z-50 border-b border-line bg-ink-deep/90 backdrop-blur'
+}`;
 const linkColor = isDark
 	? 'text-ink/80 hover:text-white'
 	: 'text-ink/70 hover:text-white';
@@ -43,7 +48,7 @@ const faqHref = '/#faqs';
 const areasActive =
 	currentPath.startsWith('/counties') || currentPath.startsWith('/locations');
 
-const navLink = `rounded-btn py-2 font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-water ${linkColor}`;
+const navLink = `whitespace-nowrap rounded-btn py-2 font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-water ${linkColor}`;
 const mobileNavLink = `block rounded-btn px-3 py-3 font-heading text-lg font-bold ${isDark ? 'text-white hover:bg-white/10' : 'text-ink hover:bg-mist'} focus:outline-none focus-visible:ring-2 focus-visible:ring-water`;
 const panelHeading =
 	'text-[0.65rem] font-bold uppercase tracking-[0.2em] text-ink/50';
@@ -53,11 +58,17 @@ const panelLink =
 
 <header class={wrapper}>
 	<div
-		class="mx-auto flex max-w-7xl items-center bg-white/10 hover:bg-white/15 transition-all ease-linear backdrop-blur-lg my-4 rounded-panel justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8"
+		class="mx-auto flex max-w-[90rem] items-center bg-white/10 hover:bg-white/15 transition-all ease-linear backdrop-blur-lg my-4 rounded-panel justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8"
 	>
 		<Logo />
 
-		<nav class="hidden items-center gap-7 lg:flex" aria-label="Main">
+		<!-- Seven links plus the wordmark, phone, and CTA only fit on one line
+		     from ~1440px up; below that the hamburger carries the same menu
+		     rather than letting the row wrap onto two lines. -->
+		<nav
+			class="hidden items-center gap-5 min-[1440px]:flex 2xl:gap-7"
+			aria-label="Main"
+		>
 			{
 				navBefore.map((item) => (
 					<a
@@ -148,18 +159,18 @@ const panelLink =
 			<a href={faqHref} data-faq-link class={navLink}>FAQs</a>
 		</nav>
 
-		<div class="hidden items-center gap-5 md:flex">
+		<div class="hidden items-center gap-4 md:flex 2xl:gap-5">
 			<a
 				href={site.phoneHref}
-				class="rounded-btn text-right leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-water"
+				class="shrink-0 rounded-btn text-right leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-water"
 			>
 				<span
-					class={`block text-[0.65rem] font-bold uppercase tracking-[0.2em] ${phoneSub}`}
+					class={`block whitespace-nowrap text-[0.65rem] font-bold uppercase tracking-[0.2em] ${phoneSub}`}
 				>
 					Call or text
 				</span>
 				<span
-					class={`mt-1 block font-heading text-lg font-extrabold ${phoneColor}`}
+					class={`mt-1 block whitespace-nowrap font-heading text-lg font-extrabold ${phoneColor}`}
 				>
 					{site.phone}
 				</span>
@@ -172,7 +183,7 @@ const panelLink =
 			data-nav-toggle
 			aria-expanded="false"
 			aria-controls="mobile-menu"
-			class={`grid h-11 w-11 place-items-center rounded-btn lg:hidden ${isDark ? 'text-white' : 'text-ink'} focus:outline-none focus-visible:ring-2 focus-visible:ring-water`}
+			class={`grid h-11 w-11 shrink-0 place-items-center rounded-btn min-[1440px]:hidden ${isDark ? 'text-white' : 'text-ink'} focus:outline-none focus-visible:ring-2 focus-visible:ring-water`}
 		>
 			<span class="sr-only">Open menu</span>
 			<svg
@@ -208,7 +219,7 @@ const panelLink =
 	<div
 		id="mobile-menu"
 		hidden
-		class={`lg:hidden ${isDark ? 'bg-ink-deep/95 backdrop-blur' : 'border-b border-line bg-ink-deep/95 backdrop-blur'}`}
+		class={`min-[1440px]:hidden ${isDark ? 'bg-ink-deep/95 backdrop-blur' : 'border-b border-line bg-ink-deep/95 backdrop-blur'}`}
 	>
 		<nav
 			class="mx-auto max-w-7xl space-y-1 px-4 py-4 sm:px-6"
