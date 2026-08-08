@@ -4,15 +4,9 @@ import { getSiteContent } from '../lib/cms';
 
 interface Props {
 	tone?: 'light' | 'dark';
-	/**
-	 * Drops the wordmark down to just the mark until there is room for it
-	 * (2xl). The header uses this so the nav row fits on one line; the link
-	 * keeps its aria-label, so the name is still announced either way.
-	 */
-	compact?: boolean;
 }
 
-const { tone = 'light', compact = false } = Astro.props;
+const { tone = 'light' } = Astro.props;
 const { site, logoUrl } = await getSiteContent();
 const wordColor = tone === 'dark' ? 'text-white' : 'text-ink';
 const subColor = tone === 'dark' ? 'text-white/60' : 'text-ink/50';
@@ -30,9 +24,7 @@ const subColor = tone === 'dark' ? 'text-white/60' : 'text-ink/50';
 		alt=""
 		class="h-20 w-auto"
 	/>
-	<span
-		class={`font-heading text-lg font-extrabold ${compact ? 'hidden 2xl:block ' : ''}${wordColor}`}
-	>
+	<span class={`font-heading text-lg font-extrabold ${wordColor}`}>
 		{site.name}
 		{
 			site.tagline && (
