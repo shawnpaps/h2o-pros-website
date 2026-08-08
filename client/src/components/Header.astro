@@ -88,7 +88,7 @@ const panelLink =
 					data-menu-toggle
 					aria-expanded="false"
 					aria-controls="service-areas-panel"
-					class={`flex items-center gap-1.5 ${navLink} ${areasActive ? 'text-brand-red' : ''}`}
+					class={`flex items-center gap-1.5 whitespace-nowrap ${navLink} ${areasActive ? 'text-brand-red' : ''}`}
 				>
 					Service Areas
 					<svg
@@ -215,12 +215,12 @@ const panelLink =
 				class="rounded-btn text-right leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-water"
 			>
 				<span
-					class={`block text-[0.65rem] font-bold uppercase tracking-[0.2em] ${phoneSub}`}
+					class={`block whitespace-nowrap text-[0.65rem] font-bold uppercase tracking-[0.2em] ${phoneSub}`}
 				>
 					Call or text
 				</span>
 				<span
-					class={`mt-1 block font-heading text-lg font-extrabold ${phoneColor}`}
+					class={`mt-1 block whitespace-nowrap font-heading text-lg font-extrabold ${phoneColor}`}
 				>
 					{site.phone}
 				</span>
