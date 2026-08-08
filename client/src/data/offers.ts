@@ -2,6 +2,8 @@ export interface Offer {
   title: string;
   detail: string;
   fine?: string;
+  /** Optional card photo, set per offer in the CMS. */
+  imageUrl?: string;
 }
 
 export const offers: Offer[] = [

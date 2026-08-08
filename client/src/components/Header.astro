@@ -21,12 +21,24 @@ const cities = [...(await getLocations())].sort((a, b) =>
 );
 const isDark = variant === 'dark';
 
+type NavItem = { label: string; href: string };
+
 // The Service Areas menu slots in right after the Services link; if the CMS nav
 // ever drops that link, it lands at the end instead.
-const servicesIndex = nav.findIndex((item) => item.href === '/our-services');
-const splitAt = servicesIndex === -1 ? nav.length : servicesIndex + 1;
-const navBefore = nav.slice(0, splitAt);
-const navAfter = nav.slice(splitAt);
+const splitAtServices = (items: NavItem[]) => {
+	const index = items.findIndex((item) => item.href === '/our-services');
+	const at = index === -1 ? items.length : index + 1;
+	return [items.slice(0, at), items.slice(at)] as const;
+};
+
+// The secondary pages collapse into a "More" menu so the desktop row stays on
+// one line. The mobile menu has the room to list them flat, so it still does.
+const moreHrefs = ['/about-us', '/gallery', '/contact'];
+const moreItems = nav.filter((item) => moreHrefs.includes(item.href));
+const [navBefore, navAfter] = splitAtServices(
+	nav.filter((item) => !moreHrefs.includes(item.href)),
+);
+const [mobileBefore, mobileAfter] = splitAtServices([...nav]);
 
 const wrapper = isDark
 	? 'absolute inset-x-0 top-0 z-50'
@@ -37,8 +49,12 @@ const linkColor = isDark
 const phoneColor = isDark ? 'text-white' : 'text-ink';
 const phoneSub = isDark ? 'text-white/60' : 'text-ink/50';
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+// The FAQs live on the home page, so the link is an anchor from there and a
+// jump back home from anywhere else.
+const faqHref = '/#faqs';
 const areasActive =
 	currentPath.startsWith('/counties') || currentPath.startsWith('/locations');
+const moreActive = moreItems.some((item) => item.href === currentPath);
 
 const navLink = `rounded-btn py-2 font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-water ${linkColor}`;
 const mobileNavLink = `block rounded-btn px-3 py-3 font-heading text-lg font-bold ${isDark ? 'text-white hover:bg-white/10' : 'text-ink hover:bg-mist'} focus:outline-none focus-visible:ring-2 focus-visible:ring-water`;
@@ -66,17 +82,17 @@ const panelLink =
 				))
 			}
 
-			<div class="relative" data-areas-menu>
+			<div class="relative" data-menu>
 				<button
 					type="button"
-					data-areas-toggle
+					data-menu-toggle
 					aria-expanded="false"
 					aria-controls="service-areas-panel"
-					class={`flex items-center gap-1.5 ${navLink} ${areasActive ? 'text-brand-red' : ''}`}
+					class={`flex items-center gap-1.5 whitespace-nowrap ${navLink} ${areasActive ? 'text-brand-red' : ''}`}
 				>
 					Service Areas
 					<svg
-						data-areas-chevron
+						data-menu-chevron
 						class="h-4 w-4 transition-transform"
 						viewBox="0 0 24 24"
 						fill="none"
@@ -92,7 +108,7 @@ const panelLink =
 
 				<div
 					id="service-areas-panel"
-					data-areas-panel
+					data-menu-panel
 					hidden
 					class="absolute left-1/2 top-full z-50 w-[min(40rem,85vw)] -translate-x-1/2 pt-3"
 				>
@@ -141,6 +157,56 @@ const panelLink =
 					</a>
 				))
 			}
+
+			<a href={faqHref} data-faq-link class={navLink}>FAQs</a>
+
+			{
+				moreItems.length > 0 && (
+					<div class="relative" data-menu>
+						<button
+							type="button"
+							data-menu-toggle
+							aria-expanded="false"
+							aria-controls="more-panel"
+							class={`flex items-center gap-1.5 ${navLink} ${moreActive ? 'text-brand-red' : ''}`}>
+							More
+							<svg
+								data-menu-chevron
+								class="h-4 w-4 transition-transform"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2.5"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true">
+								<path d="M6 9l6 6 6-6" />
+							</svg>
+						</button>
+
+						<div
+							id="more-panel"
+							data-menu-panel
+							hidden
+							class="absolute left-1/2 top-full z-50 w-56 -translate-x-1/2 pt-3">
+							<ul class="rounded-panel border border-line bg-ink-deep/95 p-3 shadow-soft backdrop-blur-lg">
+								{moreItems.map((item) => (
+									<li>
+										<a
+											href={item.href}
+											aria-current={
+												currentPath === item.href ? 'page' : undefined
+											}
+											class={`${panelLink} ${currentPath === item.href ? 'text-brand-red' : ''}`}>
+											{item.label}
+										</a>
+									</li>
+								))}
+							</ul>
+						</div>
+					</div>
+				)
+			}
 		</nav>
 
 		<div class="hidden items-center gap-5 md:flex">
@@ -149,12 +215,12 @@ const panelLink =
 				class="rounded-btn text-right leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-water"
 			>
 				<span
-					class={`block text-[0.65rem] font-bold uppercase tracking-[0.2em] ${phoneSub}`}
+					class={`block whitespace-nowrap text-[0.65rem] font-bold uppercase tracking-[0.2em] ${phoneSub}`}
 				>
 					Call or text
 				</span>
 				<span
-					class={`mt-1 block font-heading text-lg font-extrabold ${phoneColor}`}
+					class={`mt-1 block whitespace-nowrap font-heading text-lg font-extrabold ${phoneColor}`}
 				>
 					{site.phone}
 				</span>
@@ -210,7 +276,7 @@ const panelLink =
 			aria-label="Mobile"
 		>
 			{
-				navBefore.map((item) => (
+				mobileBefore.map((item) => (
 					<a
 						href={item.href}
 						aria-current={currentPath === item.href ? 'page' : undefined}
@@ -270,7 +336,7 @@ const panelLink =
 			</div>
 
 			{
-				navAfter.map((item) => (
+				mobileAfter.map((item) => (
 					<a
 						href={item.href}
 						aria-current={currentPath === item.href ? 'page' : undefined}
@@ -279,6 +345,9 @@ const panelLink =
 					</a>
 				))
 			}
+
+			<a href={faqHref} data-faq-link class={mobileNavLink}>FAQs</a>
+
 			<div class="flex flex-col gap-3 pt-4">
 				<BookOnlineButton class="w-full">Book Online</BookOnlineButton>
 				<Button
@@ -297,50 +366,67 @@ const panelLink =
 	const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
 	const menu = document.getElementById('mobile-menu');
 
-	toggle?.addEventListener('click', () => {
-		if (!menu) return;
-		const open = menu.hidden;
+	const setMenuOpen = (open: boolean) => {
+		if (!menu || !toggle) return;
 		menu.hidden = !open;
 		toggle.setAttribute('aria-expanded', String(open));
 		toggle.querySelector('[data-icon-open]')?.classList.toggle('hidden', open);
 		toggle
 			.querySelector('[data-icon-close]')
 			?.classList.toggle('hidden', !open);
-	});
-
-	// Desktop "Service Areas" dropdown: opens on hover or click, closes on
-	// outside click, Escape, or when the pointer leaves the menu entirely.
-	const areasMenu = document.querySelector<HTMLElement>('[data-areas-menu]');
-	const areasToggle = areasMenu?.querySelector<HTMLButtonElement>(
-		'[data-areas-toggle]',
-	);
-	const areasPanel = areasMenu?.querySelector<HTMLElement>('[data-areas-panel]');
-
-	const setAreasOpen = (open: boolean) => {
-		if (!areasPanel || !areasToggle) return;
-		areasPanel.hidden = !open;
-		areasToggle.setAttribute('aria-expanded', String(open));
-		areasToggle
-			.querySelector('[data-areas-chevron]')
-			?.classList.toggle('rotate-180', open);
 	};
 
-	areasToggle?.addEventListener('click', () => {
-		setAreasOpen(Boolean(areasPanel?.hidden));
-	});
-	areasMenu?.addEventListener('mouseenter', () => setAreasOpen(true));
-	areasMenu?.addEventListener('mouseleave', () => setAreasOpen(false));
-	areasMenu?.addEventListener('focusout', (event) => {
-		if (!areasMenu.contains(event.relatedTarget as Node)) setAreasOpen(false);
-	});
-	document.addEventListener('click', (event) => {
-		if (areasMenu && !areasMenu.contains(event.target as Node))
-			setAreasOpen(false);
-	});
-	document.addEventListener('keydown', (event) => {
-		if (event.key !== 'Escape') return;
-		setAreasOpen(false);
-		areasToggle?.blur();
+	toggle?.addEventListener('click', () => setMenuOpen(Boolean(menu?.hidden)));
+
+	// FAQs link: already on the home page, so scroll to the section instead of
+	// reloading it. Elsewhere the href takes over and lands on /#faqs.
+	document.querySelectorAll<HTMLAnchorElement>('[data-faq-link]').forEach(
+		(link) => {
+			link.addEventListener('click', (event) => {
+				const target = document.getElementById('faqs');
+				if (!target) return;
+				event.preventDefault();
+				setMenuOpen(false);
+				target.scrollIntoView({
+					behavior: window.matchMedia('(prefers-reduced-motion: reduce)')
+						.matches
+						? 'auto'
+						: 'smooth',
+				});
+				history.replaceState(null, '', '#faqs');
+			});
+		},
+	);
+
+	// Desktop dropdowns ("Service Areas" and "More"): each opens on hover or
+	// click and closes on outside click, Escape, or when the pointer leaves.
+	document.querySelectorAll<HTMLElement>('[data-menu]').forEach((menu) => {
+		const toggle = menu.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+		const panel = menu.querySelector<HTMLElement>('[data-menu-panel]');
+		if (!toggle || !panel) return;
+
+		const setOpen = (open: boolean) => {
+			panel.hidden = !open;
+			toggle.setAttribute('aria-expanded', String(open));
+			toggle
+				.querySelector('[data-menu-chevron]')
+				?.classList.toggle('rotate-180', open);
+		};
+
+		toggle.addEventListener('click', () => setOpen(panel.hidden));
+		menu.addEventListener('mouseenter', () => setOpen(true));
+		menu.addEventListener('mouseleave', () => setOpen(false));
+		menu.addEventListener('focusout', (event) => {
+			if (!menu.contains(event.relatedTarget as Node)) setOpen(false);
+		});
+		document.addEventListener('click', (event) => {
+			if (!menu.contains(event.target as Node)) setOpen(false);
+		});
+		document.addEventListener('keydown', (event) => {
+			if (event.key !== 'Escape') return;
+			setOpen(false);
+			toggle.blur();
+		});
 	});
 
 	// Mobile accordion version of the same menu.

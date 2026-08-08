@@ -523,6 +523,10 @@ export interface Offer {
    */
   detail: string;
   /**
+   * Optional photo shown at the top of this offer card. Leave empty for a text-only card.
+   */
+  image?: (number | null) | Media;
+  /**
    * The small text at the bottom of the card, for example "One per household. Cannot combine with other offers."
    */
   fine?: string | null;
@@ -842,6 +846,7 @@ export interface MainPageHeadlinesSelect<T extends boolean = true> {
 export interface OffersSelect<T extends boolean = true> {
   title?: T;
   detail?: T;
+  image?: T;
   fine?: T;
   published?: T;
   sortOrder?: T;
