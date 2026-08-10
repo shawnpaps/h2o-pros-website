@@ -34,7 +34,16 @@ const splitAtServices = (items: NavItem[]) => {
 // The secondary pages collapse into a "More" menu so the desktop row stays on
 // one line. The mobile menu has the room to list them flat, so it still does.
 const moreHrefs = ['/about-us', '/gallery', '/contact'];
-const moreItems = nav.filter((item) => moreHrefs.includes(item.href));
+// The offers live in a section of the About page, so the menu links straight
+// to that anchor rather than to a page of its own.
+const offersItem: NavItem = {
+	label: 'Current Offers',
+	href: '/about-us#CurrentOffersandSavings',
+};
+const moreItems = [
+	...nav.filter((item) => moreHrefs.includes(item.href)),
+	offersItem,
+];
 const [navBefore, navAfter] = splitAtServices(
 	nav.filter((item) => !moreHrefs.includes(item.href)),
 );
@@ -347,6 +356,8 @@ const panelLink =
 			}
 
 			<a href={faqHref} data-faq-link class={mobileNavLink}>FAQs</a>
+
+			<a href={offersItem.href} class={mobileNavLink}>{offersItem.label}</a>
 
 			<div class="flex flex-col gap-3 pt-4">
 				<BookOnlineButton class="w-full">Book Online</BookOnlineButton>
