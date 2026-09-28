@@ -1,3 +1,4 @@
+import { memoizePayloadRead } from './payload-request-cache';
 import { locations as fallbackLocations, type Location } from '../data/locations';
 import { faqs as fallbackFaqs, type Faq } from '../data/faqs';
 import { offers as fallbackOffers, type Offer } from '../data/offers';
@@ -139,9 +140,11 @@ export const fetchPayload = async <T>(path: string): Promise<T | undefined> => {
   if (!payloadUrl) return undefined;
 
   try {
-    const response = await fetch(`${payloadUrl}${path}`);
-    if (!response.ok) return undefined;
-    return (await response.json()) as T;
+    return await memoizePayloadRead(`${payloadUrl}${path}`, async () => {
+      const response = await fetch(`${payloadUrl}${path}`);
+      if (!response.ok) return undefined;
+      return (await response.json()) as T;
+    });
   } catch {
     return undefined;
   }
