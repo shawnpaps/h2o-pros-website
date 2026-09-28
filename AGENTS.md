@@ -17,7 +17,7 @@ the root README's "root commands" table is stale — there is no root `package.j
 
 | Directory | Stack | Deployed at |
 | --- | --- | --- |
-| `client/` | Astro 7 + Tailwind CSS 3, static output | the public website (Vercel) |
+| `client/` | Astro 7 + Tailwind CSS 3, SSR + Vercel ISR | the public website (Vercel) |
 | `cms/` | Payload CMS 3 on Next.js | https://h2o-pros-website-23g2.vercel.app (Vercel) |
 
 ## ⚠️ The one rule that matters: database schema changes
@@ -54,20 +54,19 @@ Because the DB is shared and live:
 ## Architecture: how content flows
 
 ```
-cms (Payload, Vercel) ──REST──▶ client/src/lib/cms.ts ──▶ Astro pages (static build)
+cms (Payload, Vercel) ──REST──▶ client/src/lib/cms.ts ──▶ Astro pages (request-time ISR)
         │                              │
    Neon Postgres                fallback: client/src/data/*.ts
    Vercel Blob (media)
 ```
 
 - `client/src/lib/cms.ts` is the **only** place the client talks to the CMS. It reads
-  `PAYLOAD_URL` (see `client/.env`) and fetches the public REST API at build time.
+  `PAYLOAD_URL` (see `client/.env`) and fetches the public REST API during server rendering. Request-local middleware deduplicates identical reads within each render.
 - **Every fetch has a silent fallback** to static content in `client/src/data/*.ts`
   (services, locations, reviews, faqs, site info). If the CMS is unreachable or a
   collection is empty, the site builds with fallback content and *no error*. When
   debugging "my CMS change isn't showing", check whether the fallback is being served.
-- The client is statically built — **content changes in the CMS require a client
-  rebuild/redeploy to appear on the site.**
+- The client uses server output with Vercel ISR (60-second expiration). **CMS changes appear on request-driven cache regeneration without a redeploy.** Expiration is not a scheduled refresh.
 - Media files live in Vercel Blob (`@payloadcms/storage-vercel-blob`). `mediaUrl()` in
   `cms.ts` resolves relative URLs against `PAYLOAD_URL` and picks a named size
   (`card` 768×576 or `hero` 1920×1080, defined in `cms/src/collections/Media.ts`).
@@ -124,7 +123,7 @@ pnpm migrate / migrate:create / migrate:status / generate:types
 
 # Client (cd client)
 pnpm dev              # Astro dev on :4321
-pnpm build            # static build to dist/ (set PAYLOAD_URL to pull CMS content)
+pnpm build            # Vercel server build (PAYLOAD_URL supplies CMS content)
 pnpm preview
 ```
 
@@ -140,9 +139,10 @@ Env files: `cms/.env` (`POSTGRES_URL`, `PAYLOAD_SECRET`, `BLOB_READ_WRITE_TOKEN`
   `schemas` prop and a share image via `ogImage`.
 - Schema builders live in `client/src/lib/schema.ts` — Service, FAQPage,
   BreadcrumbList, ItemList — all fed from CMS content.
-- `sitemap.xml`, `robots.txt`, and `llms.txt` are **server-rendered endpoints** in
+- `sitemap.xml` and `llms.txt` are **server-rendered endpoints** in
   `client/src/pages/` that pull services/locations/FAQs from the CMS at request time —
-  new CMS content appears in them automatically; don't add static versions in `public/`.
+  new CMS content appears through cache regeneration; don't add static versions in `public/`.
+  `robots.txt` is prerendered and does not query the CMS.
 - The canonical domain is set in `astro.config.mjs` (`site:`); `og-default.jpg` in
   `client/public/` is the fallback share image (1200×630).
 

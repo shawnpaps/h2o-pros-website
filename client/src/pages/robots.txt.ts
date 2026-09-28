@@ -1,5 +1,7 @@
 import type { APIRoute } from 'astro';
 
+export const prerender = true;
+
 /**
  * Everything is crawlable — including AI crawlers (GPTBot, ClaudeBot,
  * PerplexityBot, etc.), which matter for answer-engine visibility. A
