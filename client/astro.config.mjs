@@ -3,6 +3,12 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import vercel from '@astrojs/vercel';
 
+// Set only on the production deployment, with the same secret in the CMS.
+const refreshSecret = process.env.VERCEL_ENV === 'production'
+  ? process.env.WEBSITE_REVALIDATION_SECRET
+  : undefined;
+const editDrivenRefresh = Boolean(refreshSecret && refreshSecret.length >= 32);
+
 export default defineConfig({
   // Canonical origin for the whole site. Note the "h2o" (letter O) — the
   // "h20" (zero) spelling is a separate, parked domain, and pointing canonical
@@ -10,10 +16,11 @@ export default defineConfig({
   site: 'https://www.yourfriendlyh2opros.com',
   output: 'server',
   adapter: vercel({
-    // Pages are rendered on demand, cached, and re-fetched from the CMS
-    // after 60 seconds — CMS edits go live without a redeploy.
+    // CMS saves refresh affected routes on demand. A daily expiration recovers
+    // missed notifications; unconfigured deployments retain the 60-second policy.
     isr: {
-      expiration: 60,
+      expiration: editDrivenRefresh ? 60 * 60 * 24 : 60,
+      bypassToken: editDrivenRefresh ? refreshSecret : undefined,
     },
     imageService: true,
   }),

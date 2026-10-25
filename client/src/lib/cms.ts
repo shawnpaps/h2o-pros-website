@@ -1,4 +1,4 @@
-import { memoizePayloadRead } from './payload-request-cache';
+import { isStrictPayloadRead, memoizePayloadRead } from './payload-request-cache';
 import { locations as fallbackLocations, type Location } from '../data/locations';
 import { faqs as fallbackFaqs, type Faq } from '../data/faqs';
 import { offers as fallbackOffers, type Offer } from '../data/offers';
@@ -137,15 +137,22 @@ const mediaUrl = (media: unknown, preferredSize?: string) => {
 };
 
 export const fetchPayload = async <T>(path: string): Promise<T | undefined> => {
-  if (!payloadUrl) return undefined;
+  if (!payloadUrl) {
+    if (isStrictPayloadRead()) throw new Error('CMS URL missing during website refresh');
+    return undefined;
+  }
 
   try {
     return await memoizePayloadRead(`${payloadUrl}${path}`, async () => {
       const response = await fetch(`${payloadUrl}${path}`);
-      if (!response.ok) return undefined;
+      if (!response.ok) {
+        if (isStrictPayloadRead()) throw new Error('CMS read failed during website refresh');
+        return undefined;
+      }
       return (await response.json()) as T;
     });
   } catch {
+    if (isStrictPayloadRead()) throw new Error('CMS read failed during website refresh');
     return undefined;
   }
 };
@@ -170,7 +177,7 @@ export const getServices = async (): Promise<Service[]> => {
       stats?: Array<{ value?: string; label?: string }>;
       faqs?: Array<{ question?: string; answer?: string }>;
     }>;
-  }>('/api/services?sort=sortOrder&limit=100&depth=1');
+  }>('/api/services?sort=sortOrder&pagination=false&limit=100&depth=1');
 
   if (!payload?.docs?.length) return fallbackServices;
 
@@ -231,7 +238,7 @@ export const getLocations = async (): Promise<Location[]> => {
       metaDescription: string;
       heroImage?: unknown;
     }>;
-  }>('/api/locations?sort=sortOrder&limit=100&depth=1');
+  }>('/api/locations?sort=sortOrder&pagination=false&limit=100&depth=1');
 
   if (!payload?.docs?.length) return fallbackLocations;
 
@@ -288,7 +295,7 @@ export const getGalleryItems = async (): Promise<GalleryItem[]> => {
       tall?: boolean;
       image?: unknown;
     }>;
-  }>('/api/gallery-items?where[published][equals]=true&sort=sortOrder&limit=100&depth=1');
+  }>('/api/gallery-items?where[published][equals]=true&sort=sortOrder&pagination=false&limit=100&depth=1');
 
   if (!payload?.docs?.length) return fallbackGalleryItems;
 
@@ -441,7 +448,7 @@ export const getPageHeadline = async (
 ): Promise<PageHeadline> => {
   const payload = await fetchPayload<{
     docs: Array<{ eyebrow?: string; title?: string; description?: string }>;
-  }>(`/api/main-page-headlines?where[page][equals]=${page}&limit=1`);
+  }>(`/api/main-page-headlines?where[page][equals]=${page}&pagination=false&limit=1`);
 
   const doc = payload?.docs?.[0];
   if (!doc?.title) return fallback;
@@ -473,7 +480,7 @@ export const getPageCta = async (page: PageHeadlinePage): Promise<PageCta> => {
       ctaBookLabel?: string;
       ctaCallLabel?: string;
     }>;
-  }>(`/api/main-page-headlines?where[page][equals]=${page}&limit=1`);
+  }>(`/api/main-page-headlines?where[page][equals]=${page}&pagination=false&limit=1`);
 
   const doc = payload?.docs?.[0];
   if (!doc) return {};
@@ -489,7 +496,7 @@ export const getPageCta = async (page: PageHeadlinePage): Promise<PageCta> => {
 export const getOffers = async (): Promise<Offer[]> => {
   const payload = await fetchPayload<{
     docs: Array<{ title?: string; detail?: string; fine?: string; image?: unknown }>;
-  }>('/api/offers?where[published][equals]=true&sort=sortOrder&limit=100');
+  }>('/api/offers?where[published][equals]=true&sort=sortOrder&pagination=false&limit=100');
 
   const offers =
     payload?.docs
@@ -510,7 +517,7 @@ export const getFaqs = async (): Promise<Faq[]> => {
       question: string;
       answer: string;
     }>;
-  }>('/api/faqs?sort=sortOrder&limit=100');
+  }>('/api/faqs?sort=sortOrder&pagination=false&limit=100');
 
   if (!payload?.docs?.length) return fallbackFaqs;
 
@@ -523,7 +530,7 @@ export const getFaqs = async (): Promise<Faq[]> => {
 export const getCmsReviews = async (): Promise<Review[] | undefined> => {
   const payload = await fetchPayload<{
     docs: Array<Review>;
-  }>('/api/reviews?where[published][equals]=true&sort=sortOrder&limit=100');
+  }>('/api/reviews?where[published][equals]=true&sort=sortOrder&pagination=false&limit=100');
 
   return payload?.docs?.length ? payload.docs : undefined;
 };
