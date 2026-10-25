@@ -38,7 +38,6 @@ ${paths.map((path) => `  <url><loc>${base}${path}</loc></url>`).join('\n')}
   return new Response(xml, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600',
     },
   });
 };

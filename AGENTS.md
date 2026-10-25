@@ -66,7 +66,7 @@ cms (Payload, Vercel) ──REST──▶ client/src/lib/cms.ts ──▶ Astro 
   (services, locations, reviews, faqs, site info). If the CMS is unreachable or a
   collection is empty, the site builds with fallback content and *no error*. When
   debugging "my CMS change isn't showing", check whether the fallback is being served.
-- The client uses server output with Vercel ISR (60-second expiration). **CMS changes appear on request-driven cache regeneration without a redeploy.** Expiration is not a scheduled refresh.
+- The client uses server output with Vercel ISR. Configured production uses CMS-triggered refreshes after committed edits, with a 24-hour expiration as a recovery backstop. Without the shared secret (and in previews/dev), expiration remains 60 seconds. See `docs/cms-cache-refresh.md` for setup, dependencies, failures and rollback. Expiration is request-driven, not scheduled.
 - Media files live in Vercel Blob (`@payloadcms/storage-vercel-blob`). `mediaUrl()` in
   `cms.ts` resolves relative URLs against `PAYLOAD_URL` and picks a named size
   (`card` 768×576 or `hero` 1920×1080, defined in `cms/src/collections/Media.ts`).
@@ -87,6 +87,7 @@ cms (Payload, Vercel) ──REST──▶ client/src/lib/cms.ts ──▶ Astro 
   by design; writes require login.
 - `seed.ts`, `replace-faqs.ts`, `set-showcase-titles.ts` — one-off `tsx` scripts that
   write to the live DB via the Payload local API. Run deliberately, not casually.
+- Public-content hooks are registered in `payload.config.ts` through `hooks/revalidateWebsite.ts`. Next `after()` schedules refreshes after the response so they read committed data. Do not refresh directly inside a pre-commit hook. No schema fields or migrations are needed for these hooks.
 - Payload admin UI customizations live in `components/` (logo, icon, welcome banner, and
   the editor-facing How-To Guide at `/admin/guide` — a custom view registered in
   `payload.config.ts`; keep it current when adding editor-facing collections/fields).

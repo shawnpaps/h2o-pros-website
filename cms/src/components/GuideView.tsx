@@ -60,9 +60,10 @@ export function GuideView({ initPageResult, params, searchParams }: AdminViewSer
                 changes are discarded.
               </li>
               <li>
-                <strong>Saved changes go live right away.</strong> Open the website in another tab
-                and refresh the page to see your change. If it doesn&apos;t show up, refresh again
-                after a minute — and see the troubleshooting section at the bottom.
+                <strong>Saving also refreshes the website.</strong> Changes usually appear within
+                a minute. Open the website in another tab and refresh the page. If an update
+                still does not appear after a few minutes, contact your website manager so
+                they can check the automatic refresh.
               </li>
               <li>
                 <strong>Prefer hiding over deleting.</strong> Reviews, offers, and gallery photos

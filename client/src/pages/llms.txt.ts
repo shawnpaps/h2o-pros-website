@@ -68,7 +68,6 @@ export const GET: APIRoute = async ({ site, url }) => {
   return new Response(lines.join('\n'), {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600',
     },
   });
 };

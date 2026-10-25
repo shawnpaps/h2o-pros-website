@@ -146,3 +146,6 @@ vite.config.ts.timestamp-*
 .astro/
 .vercel
 .env*
+
+# Local database investigation; do not publish
+/docs/neon-compute-investigation.md

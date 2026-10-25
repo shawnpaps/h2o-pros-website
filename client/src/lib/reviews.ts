@@ -4,6 +4,7 @@ import {
   type Review,
 } from '../data/reviews';
 import { getCmsRatingSummary, getCmsReviews } from './cms';
+import { memoizePayloadRead } from './payload-request-cache';
 
 export interface RatingSummary {
   average: string;
@@ -64,11 +65,9 @@ const toReview = (review: HcpReview): Review => ({
     : undefined,
 });
 
-let reviewsPromise: Promise<Review[]> | undefined;
-
 /** Every customer review with text, newest first. */
 export const getReviews = (): Promise<Review[]> => {
-  reviewsPromise ??= (async () => {
+  return memoizePayloadRead('hcp:reviews', async () => {
     const pageSize = 100;
     type Page = { total_pages_count?: number; data?: HcpReview[] };
     const first = await fetchJson<Page>(
@@ -87,15 +86,12 @@ export const getReviews = (): Promise<Review[]> => {
     return [...first.data, ...rest.flatMap((page) => page?.data ?? [])]
       .map(toReview)
       .filter((review) => review.text);
-  })();
-  return reviewsPromise;
+  });
 };
-
-let summaryPromise: Promise<RatingSummary> | undefined;
 
 /** The business's live Google rating, with a static fallback. */
 export const getRatingSummary = (): Promise<RatingSummary> => {
-  summaryPromise ??= (async () => {
+  return memoizePayloadRead('hcp:rating-summary', async () => {
     const ratings = await fetchJson<
       Array<{ overall_rating?: number; total_ratings?: number; source?: string }>
     >(`${HCP_BASE}/ratings/${HCP_WIDGET_ID}`);
@@ -108,6 +104,5 @@ export const getRatingSummary = (): Promise<RatingSummary> => {
       count: google.total_ratings,
       source: 'Google Reviews',
     };
-  })();
-  return summaryPromise;
+  });
 };

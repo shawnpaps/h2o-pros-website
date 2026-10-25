@@ -17,6 +17,7 @@ import { Services } from './collections/Services'
 import { Users } from './collections/Users'
 import { SiteSettings } from './globals/SiteSettings'
 import { migrations } from './migrations'
+import { revalidateSiteSettings, withWebsiteRevalidation } from './hooks/revalidateWebsite'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -52,8 +53,8 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Users, Media, Services, Locations, Reviews, Faqs, GalleryItems, MainPageHeadlines, Offers],
-  globals: [SiteSettings],
+  collections: [Users, ...[Media, Services, Locations, Reviews, Faqs, GalleryItems, MainPageHeadlines, Offers].map(withWebsiteRevalidation)],
+  globals: [{ ...SiteSettings, hooks: { ...SiteSettings.hooks, afterChange: [...(SiteSettings.hooks?.afterChange || []), revalidateSiteSettings] } }],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { withPayloadReads, memoizePayloadRead } from '../src/lib/payload-request-cache.ts';
+import { isStrictPayloadRead, withPayloadReads, memoizePayloadRead } from '../src/lib/payload-request-cache.ts';
 
 test('deduplicates concurrent and sequential identical reads within one render', async () => {
   let calls = 0;
@@ -30,4 +30,16 @@ test('failures do not persist into the next request; outside requests is uncache
   await memoizePayloadRead('/settings', async () => ++calls);
   await memoizePayloadRead('/settings', async () => ++calls);
   assert.equal(calls, 2);
+});
+
+// Concurrent ordinary visits keep fallbacks even while an authenticated refresh fails closed.
+test('strict refresh mode is request-local and does not leak to normal visitors', async () => {
+  assert.deepEqual(await Promise.all([
+    withPayloadReads(async () => {
+      await new Promise(resolve => setTimeout(resolve, 5));
+      return isStrictPayloadRead();
+    }, true),
+    withPayloadReads(async () => isStrictPayloadRead()),
+  ]), [true, false]);
+  assert.equal(isStrictPayloadRead(), false);
 });
